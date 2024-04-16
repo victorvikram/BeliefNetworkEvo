@@ -133,8 +133,11 @@
 # Issues that have been important over the years
 from here: https://www.nytimes.com/interactive/2017/02/27/us/politics/most-important-problem-gallup-polling-question.html
 
+Gallup poll asking "What do you think is the most important problem facing this country today?” since 1935
+
+
 ```
-{
+[
   'budget',
    'civil rights and race',
    'civil rights and race relations',
@@ -155,6 +158,6 @@ from here: https://www.nytimes.com/interactive/2017/02/27/us/politics/most-impor
    'unemployment',
    'unification of country',
    'war'
- }
+ ]
 ```
 
