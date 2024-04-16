@@ -12,3 +12,6 @@ This file contains questions we would like to ask about the belief networks.
 
 # Relationship with voting behavior
 1. Which beliefs are most correlated with voting behavior? What placement do they have in the belief network?
+
+# Invalid ideologies
+1. see tim
