@@ -1,3 +1,6 @@
+# Source of data
+Here is the GSS data: https://gssdataexplorer.norc.org/gss_data
+
 # Variables that might be of interest
 
 ```
