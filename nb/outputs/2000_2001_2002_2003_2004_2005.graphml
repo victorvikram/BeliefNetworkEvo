@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><key id="d0" for="edge" attr.name="weight" attr.type="float"/>
+<graph edgedefault="undirected"><node id="GRASS (mapped)"/>
+<node id="POLVIEWS (mapped)"/>
+<node id="POSTLIFE (mapped)"/>
+<edge source="GRASS (mapped)" target="POLVIEWS (mapped)">
+  <data key="d0">-0.20651356178536892</data>
+</edge>
+<edge source="GRASS (mapped)" target="POSTLIFE (mapped)">
+  <data key="d0">-0.03808014967704607</data>
+</edge>
+<edge source="POLVIEWS (mapped)" target="POSTLIFE (mapped)">
+  <data key="d0">0.09947624929669693</data>
+</edge>
+</graph></graphml>
