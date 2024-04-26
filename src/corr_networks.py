@@ -1,11 +1,72 @@
 import numpy as np
 import pandas as pd
 from pingouin import partial_corr
+from semopy.polycorr import polychoric_corr
 
+from sklearn.covariance import graphical_lasso
+
+def cov_mat_to_regularized_partial_corr(cov_mat, alpha=0):
+    """
+    takes a covariance matrix and returns the estimated regularized covariances and partial
+    correlations. 
+    
+    note that a corr_mat can also be passed in since the correlation matrix is
+    simply the covariance of the standardized variables, and the partial correlations between
+    the standardized variables should be equal to the partial correlations between the untransformed
+    variables
+    """
+
+    cov, precision = graphical_lasso(cov_mat, alpha=alpha)
+    partial_cor_mat = precision_mat_to_partial_corr(precision)
+
+    return partial_cor_mat
+
+
+def precision_mat_to_partial_corr(precision_mat):
+    # Calculate the partial correlation matrix
+    partial_corr_mat = - precision_mat / np.sqrt(np.outer(np.diag(precision_mat), np.diag(precision_mat)))
+    
+    # Set diagonal elements to 1
+    np.fill_diagonal(partial_corr_mat, 1)
+
+    return partial_corr_mat
+
+
+def pairwise_polychoric_correlations(vars, data):
+
+    polychor_corr_mat = np.zeros((len(vars), len(vars))) + np.identity(len(vars))
+    for i in range(len(vars)):
+        for j in range(i + 1, len(vars)):
+            corr = polychoric_corr(data.loc[:,vars[i]], data.loc[:, vars[j]], x_ints=None, y_ints=None)
+            polychor_corr_mat[i, j] = polychor_corr_mat[j, i] = corr
+
+    return polychor_corr_mat
+
+
+def my_pairwise_correlations(vars, data, method, partial=True):
+    relevant_df = data.loc[:, vars]
+
+    
+    corr_mat = np.array(relevant_df.corr(method=method))
+
+    # ranked_df = relevant_df.rank(axis=0, method="average")
+    # corr_mat_test = ranked_df.corr(method="pearson")
+    # they should be the same
+    # print(corr_mat)
+    # print(corr_mat_test)
+
+    if partial:
+        precision_mat = np.linalg.inv(corr_mat)
+        corr_mat = precision_mat_to_partial_corr(precision_mat)
+
+    return corr_mat 
+        
 def pairwise_correlations(vars, data, method, partial=True):
     """
     for list of variables `vars` which are names of columns in the dataframe `data`, calculate the  partial correlations of
     all pairs of variables conditioned on all other variables. use correlation type `method` (either "spearman" or "pearson")
+
+    `partial` is `True` to calculate partial correlations, otherwise it is `False`
     """
     corr_dfs = []
     corr_mat = np.zeros((len(vars), len(vars)))
@@ -17,6 +78,8 @@ def pairwise_correlations(vars, data, method, partial=True):
                 covar_list = vars[:i] + vars[i+1:j] + vars[j+1:]
             else:
                 covar_list = None
+
+            # print(f"{vars[i]}, {vars[j]}, {covar_list}")
             
             corr_df = partial_corr(data=data, x=vars[i], y=vars[j], covar=covar_list, alternative='two-sided', method=method)
             corr_df["x"] = i
