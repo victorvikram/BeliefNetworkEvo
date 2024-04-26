@@ -14,7 +14,7 @@ def make_variable_df(data_file, variable_list):
     """
     makes a dataframe with the variable names and their descriptions
     """
-    gss_df, meta = load_gss(data_file, variable_list, metadataonly=True)
+    gss_df, meta = load_gss_sas(data_file, variable_list, metadataonly=True)
     variable_dict = meta.column_names_to_labels
     variable_df = pd.DataFrame(list(variable_dict.items()), columns=['var_name', 'var_desc'])
     return variable_df
