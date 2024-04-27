@@ -1,5 +1,5 @@
 # Import necessary modules for correlation analysis, graph construction, and visualization.
-from corr_networks import pairwise_correlations
+from corr_networks import my_pairwise_correlations, pairwise_polychoric_correlations, cov_mat_to_regularized_partial_corr
 import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
@@ -20,7 +20,11 @@ def make_belief_network(dataframe, variables_of_interest=None, years_of_interest
     all_variables = list(df_subset.columns)
     
     # Calculate pairwise correlations (and associated information) between variables using the specified method.
-    corr_info, correlation_matrix = pairwise_correlations(all_variables, df_subset, method, partial=is_partial)
+    correlation_matrix = my_pairwise_correlations(all_variables, df_subset, method, partial=is_partial)
+
+    # Calculate pairwise correlations using the polychoric method.
+    # correlation_matrix = pairwise_polychoric_correlations(all_variables, df_subset)
+    # correlation_matrix = cov_mat_to_regularized_partial_corr(correlation_matrix, alpha=0)
 
     # Initialize an undirected graph to represent the belief network.
     graph = nx.Graph()
@@ -37,6 +41,4 @@ def make_belief_network(dataframe, variables_of_interest=None, years_of_interest
                 graph.add_edge(variables_of_interest[i], variables_of_interest[j], weight=correlation_matrix[i, j])
 
     # Return the graph, correlation information, and the correlation matrix itself.
-    return graph, corr_info, correlation_matrix
-
-
+    return graph, correlation_matrix

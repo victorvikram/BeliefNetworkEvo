@@ -1,0 +1,272 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><key id="d0" for="edge" attr.name="weight" attr.type="float"/>
+<graph edgedefault="undirected"><node id="PARTYID"/>
+<node id="POLVIEWS"/>
+<node id="EQWLTH"/>
+<node id="CAPPUN"/>
+<node id="GUNLAW"/>
+<node id="COLATH"/>
+<node id="COLMIL"/>
+<node id="SPKATH"/>
+<node id="SPKRAC"/>
+<node id="COLRAC"/>
+<node id="LIBCOM"/>
+<node id="LIBMIL"/>
+<node id="LIBATH"/>
+<node id="SPKCOM"/>
+<node id="COLCOM"/>
+<node id="SPKMIL"/>
+<node id="SPKHOMO"/>
+<node id="LIBHOMO"/>
+<node id="SPKMSLM"/>
+<node id="LIBRAC"/>
+<node id="COLMSLM"/>
+<node id="LIBMSLM"/>
+<node id="COLHOMO"/>
+<edge source="PARTYID" target="POLVIEWS">
+  <data key="d0">0.48722412174845603</data>
+</edge>
+<edge source="PARTYID" target="EQWLTH">
+  <data key="d0">-0.19169580644669257</data>
+</edge>
+<edge source="PARTYID" target="CAPPUN">
+  <data key="d0">0.17400844529296666</data>
+</edge>
+<edge source="PARTYID" target="GUNLAW">
+  <data key="d0">-0.12948103886814893</data>
+</edge>
+<edge source="POLVIEWS" target="EQWLTH">
+  <data key="d0">-0.27656369493773225</data>
+</edge>
+<edge source="POLVIEWS" target="COLATH">
+  <data key="d0">-0.10973331820244672</data>
+</edge>
+<edge source="POLVIEWS" target="COLMIL">
+  <data key="d0">0.07011411235248742</data>
+</edge>
+<edge source="EQWLTH" target="SPKATH">
+  <data key="d0">-0.07962418809916456</data>
+</edge>
+<edge source="EQWLTH" target="SPKRAC">
+  <data key="d0">0.07125494471684467</data>
+</edge>
+<edge source="EQWLTH" target="COLRAC">
+  <data key="d0">-0.08903381605977127</data>
+</edge>
+<edge source="EQWLTH" target="LIBCOM">
+  <data key="d0">0.07459865454234986</data>
+</edge>
+<edge source="EQWLTH" target="LIBMIL">
+  <data key="d0">0.09840062031181451</data>
+</edge>
+<edge source="EQWLTH" target="CAPPUN">
+  <data key="d0">-0.10843772621391592</data>
+</edge>
+<edge source="EQWLTH" target="GUNLAW">
+  <data key="d0">0.10291445138266678</data>
+</edge>
+<edge source="GUNLAW" target="SPKHOMO">
+  <data key="d0">-0.07046630592847426</data>
+</edge>
+<edge source="GUNLAW" target="COLHOMO">
+  <data key="d0">0.09558060663872502</data>
+</edge>
+<edge source="COLATH" target="SPKATH">
+  <data key="d0">0.27872508452507244</data>
+</edge>
+<edge source="COLATH" target="LIBATH">
+  <data key="d0">-0.08081156403291333</data>
+</edge>
+<edge source="COLATH" target="COLRAC">
+  <data key="d0">0.17335785159510378</data>
+</edge>
+<edge source="COLATH" target="COLCOM">
+  <data key="d0">-0.18171207329261774</data>
+</edge>
+<edge source="COLATH" target="SPKMIL">
+  <data key="d0">-0.13267545680088322</data>
+</edge>
+<edge source="COLATH" target="COLMIL">
+  <data key="d0">0.24654095478901228</data>
+</edge>
+<edge source="COLATH" target="SPKMSLM">
+  <data key="d0">-0.07521477347721404</data>
+</edge>
+<edge source="COLMIL" target="SPKRAC">
+  <data key="d0">-0.14402947618672343</data>
+</edge>
+<edge source="COLMIL" target="COLRAC">
+  <data key="d0">0.29441009693445297</data>
+</edge>
+<edge source="COLMIL" target="LIBRAC">
+  <data key="d0">0.07868417566817067</data>
+</edge>
+<edge source="COLMIL" target="COLCOM">
+  <data key="d0">-0.12003468746826142</data>
+</edge>
+<edge source="COLMIL" target="SPKMIL">
+  <data key="d0">0.46407766878841716</data>
+</edge>
+<edge source="COLMIL" target="LIBMIL">
+  <data key="d0">-0.19487307072911267</data>
+</edge>
+<edge source="COLMIL" target="COLMSLM">
+  <data key="d0">0.20896712089753816</data>
+</edge>
+<edge source="SPKATH" target="LIBATH">
+  <data key="d0">-0.18929402312967533</data>
+</edge>
+<edge source="SPKATH" target="SPKRAC">
+  <data key="d0">0.15284727435705386</data>
+</edge>
+<edge source="SPKATH" target="SPKCOM">
+  <data key="d0">0.15022404877160594</data>
+</edge>
+<edge source="SPKATH" target="COLCOM">
+  <data key="d0">0.13045347296743076</data>
+</edge>
+<edge source="SPKATH" target="SPKMIL">
+  <data key="d0">0.15747950871855318</data>
+</edge>
+<edge source="SPKATH" target="SPKHOMO">
+  <data key="d0">0.11668894171463645</data>
+</edge>
+<edge source="SPKATH" target="LIBHOMO">
+  <data key="d0">-0.10094738239370799</data>
+</edge>
+<edge source="SPKRAC" target="COLRAC">
+  <data key="d0">0.4629252537279671</data>
+</edge>
+<edge source="SPKRAC" target="LIBRAC">
+  <data key="d0">-0.23087766576388397</data>
+</edge>
+<edge source="SPKRAC" target="SPKCOM">
+  <data key="d0">0.1337719406540362</data>
+</edge>
+<edge source="SPKRAC" target="SPKMIL">
+  <data key="d0">0.18729712655031813</data>
+</edge>
+<edge source="SPKRAC" target="SPKMSLM">
+  <data key="d0">0.25825141837819193</data>
+</edge>
+<edge source="SPKRAC" target="COLMSLM">
+  <data key="d0">-0.0919953164845705</data>
+</edge>
+<edge source="COLRAC" target="LIBRAC">
+  <data key="d0">-0.16396448184167162</data>
+</edge>
+<edge source="COLRAC" target="SPKMIL">
+  <data key="d0">-0.15009984185564756</data>
+</edge>
+<edge source="COLRAC" target="SPKMSLM">
+  <data key="d0">-0.12083752339741141</data>
+</edge>
+<edge source="COLRAC" target="COLMSLM">
+  <data key="d0">0.2161727351009004</data>
+</edge>
+<edge source="LIBCOM" target="LIBATH">
+  <data key="d0">0.21440269772008352</data>
+</edge>
+<edge source="LIBCOM" target="LIBRAC">
+  <data key="d0">0.11887205915810878</data>
+</edge>
+<edge source="LIBCOM" target="SPKCOM">
+  <data key="d0">-0.24329833439725285</data>
+</edge>
+<edge source="LIBCOM" target="COLCOM">
+  <data key="d0">0.2850842896288051</data>
+</edge>
+<edge source="LIBCOM" target="SPKMIL">
+  <data key="d0">0.0851100861671452</data>
+</edge>
+<edge source="LIBCOM" target="LIBMIL">
+  <data key="d0">0.2818280002484817</data>
+</edge>
+<edge source="LIBCOM" target="LIBHOMO">
+  <data key="d0">0.07016717157139557</data>
+</edge>
+<edge source="LIBCOM" target="LIBMSLM">
+  <data key="d0">0.12638762467241763</data>
+</edge>
+<edge source="LIBMIL" target="LIBATH">
+  <data key="d0">0.11561549762331003</data>
+</edge>
+<edge source="LIBMIL" target="LIBRAC">
+  <data key="d0">0.17809233680289982</data>
+</edge>
+<edge source="LIBMIL" target="SPKCOM">
+  <data key="d0">0.09957623416820202</data>
+</edge>
+<edge source="LIBMIL" target="SPKMIL">
+  <data key="d0">-0.22882746215043576</data>
+</edge>
+<edge source="LIBMIL" target="LIBHOMO">
+  <data key="d0">0.12232071922902492</data>
+</edge>
+<edge source="LIBMIL" target="LIBMSLM">
+  <data key="d0">0.21483809627919</data>
+</edge>
+<edge source="LIBATH" target="LIBRAC">
+  <data key="d0">0.12484363672930941</data>
+</edge>
+<edge source="LIBATH" target="LIBHOMO">
+  <data key="d0">0.09073797406151939</data>
+</edge>
+<edge source="SPKCOM" target="LIBRAC">
+  <data key="d0">0.07413339135759807</data>
+</edge>
+<edge source="SPKCOM" target="COLCOM">
+  <data key="d0">-0.2727704285286401</data>
+</edge>
+<edge source="SPKCOM" target="SPKMIL">
+  <data key="d0">0.24440543565623665</data>
+</edge>
+<edge source="SPKCOM" target="SPKHOMO">
+  <data key="d0">0.10792309294980955</data>
+</edge>
+<edge source="SPKCOM" target="LIBHOMO">
+  <data key="d0">-0.08245158890485761</data>
+</edge>
+<edge source="SPKCOM" target="SPKMSLM">
+  <data key="d0">0.18911924793665288</data>
+</edge>
+<edge source="SPKCOM" target="COLMSLM">
+  <data key="d0">-0.08896728460416053</data>
+</edge>
+<edge source="COLCOM" target="COLMSLM">
+  <data key="d0">-0.10502508326714077</data>
+</edge>
+<edge source="SPKMIL" target="SPKMSLM">
+  <data key="d0">0.1500553643283274</data>
+</edge>
+<edge source="SPKMIL" target="COLMSLM">
+  <data key="d0">-0.08253130326924811</data>
+</edge>
+<edge source="SPKHOMO" target="COLHOMO">
+  <data key="d0">0.5980301939039031</data>
+</edge>
+<edge source="SPKHOMO" target="LIBHOMO">
+  <data key="d0">-0.11874044362082911</data>
+</edge>
+<edge source="LIBHOMO" target="COLHOMO">
+  <data key="d0">-0.15207197024763733</data>
+</edge>
+<edge source="LIBHOMO" target="LIBMSLM">
+  <data key="d0">0.09078232099872456</data>
+</edge>
+<edge source="SPKMSLM" target="LIBRAC">
+  <data key="d0">0.07168757984009444</data>
+</edge>
+<edge source="SPKMSLM" target="COLMSLM">
+  <data key="d0">0.460470724990568</data>
+</edge>
+<edge source="SPKMSLM" target="LIBMSLM">
+  <data key="d0">-0.27269523693778225</data>
+</edge>
+<edge source="LIBRAC" target="LIBMSLM">
+  <data key="d0">0.2351655677772824</data>
+</edge>
+<edge source="COLMSLM" target="LIBMSLM">
+  <data key="d0">-0.18278826744674895</data>
+</edge>
+</graph></graphml>
