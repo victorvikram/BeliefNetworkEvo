@@ -5,6 +5,8 @@ from semopy.polycorr import polychoric_corr
 
 from sklearn.covariance import graphical_lasso
 
+
+
 def cov_mat_to_regularized_partial_corr(cov_mat, alpha=0):
     """
     takes a covariance matrix and returns the estimated regularized covariances and partial
@@ -20,6 +22,7 @@ def cov_mat_to_regularized_partial_corr(cov_mat, alpha=0):
     partial_cor_mat = precision_mat_to_partial_corr(precision)
 
     return partial_cor_mat
+
 
 
 def precision_mat_to_partial_corr(precision_mat):
@@ -46,8 +49,11 @@ def pairwise_polychoric_correlations(vars, data):
 def my_pairwise_correlations(vars, data, method, partial=True):
     relevant_df = data.loc[:, vars]
 
-    
-    corr_mat = np.array(relevant_df.corr(method=method))
+    corr_mat_pd = relevant_df.corr(method=method)
+
+    corr_mat = np.array(corr_mat_pd)
+    print(corr_mat)
+
 
     # ranked_df = relevant_df.rank(axis=0, method="average")
     # corr_mat_test = ranked_df.corr(method="pearson")
@@ -56,11 +62,26 @@ def my_pairwise_correlations(vars, data, method, partial=True):
     # print(corr_mat_test)
 
     if partial:
+        corr_mat, i_removed = filter_nans(corr_mat)
+        vars = [var for i, var in enumerate(vars) if i not in i_removed]
         precision_mat = np.linalg.inv(corr_mat)
         corr_mat = precision_mat_to_partial_corr(precision_mat)
 
-    return corr_mat 
-        
+    return vars, corr_mat
+
+def filter_nans(mat):
+    is_to_remove = []
+    while (nan_sums := np.isnan(mat).sum(axis=0)).sum() > 0:
+        i_to_remove = np.argmax(nan_sums)
+        mat[i_to_remove,:] = 0
+        mat[:, i_to_remove] = 0
+        is_to_remove.append(i_to_remove)
+
+    mat = np.delete(mat, is_to_remove, axis=0)
+    mat = np.delete(mat, is_to_remove, axis=1)
+
+    return mat, is_to_remove
+    
 def pairwise_correlations(vars, data, method, partial=True):
     """
     for list of variables `vars` which are names of columns in the dataframe `data`, calculate the  partial correlations of
