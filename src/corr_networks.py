@@ -40,7 +40,9 @@ def pairwise_polychoric_correlations(vars, data):
     polychor_corr_mat = np.zeros((len(vars), len(vars))) + np.identity(len(vars))
     for i in range(len(vars)):
         for j in range(i + 1, len(vars)):
-            corr = polychoric_corr(data.loc[:,vars[i]], data.loc[:, vars[j]], x_ints=None, y_ints=None)
+            subdf = data.loc[:, [vars[i], vars[j]]]
+            subdf = subdf[~subdf.isna().any(axis=1)]
+            corr = polychoric_corr(subdf.loc[:,vars[i]], subdf.loc[:, vars[j]], x_ints=None, y_ints=None)
             polychor_corr_mat[i, j] = polychor_corr_mat[j, i] = corr
 
     return polychor_corr_mat
