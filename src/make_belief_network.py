@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
 # Define a function to create a belief network based on correlation analysis of a given DataFrame.
-def make_belief_network(dataframe, variables_of_interest=None, years_of_interest=None, method="spearman", is_partial=True, threshold=None):
-    
+def make_belief_network(dataframe, variables_of_interest=None, years_of_interest=None, method="spearman", is_partial=True, threshold=None, sample_threshold=0):
+
     # Start with the full dataframe and filter it according to specified years if provided.
     df_subset = dataframe
     if years_of_interest:
@@ -20,25 +20,21 @@ def make_belief_network(dataframe, variables_of_interest=None, years_of_interest
     all_variables = list(df_subset.columns)
     
     # Calculate pairwise correlations (and associated information) between variables using the specified method.
-    correlation_matrix = my_pairwise_correlations(all_variables, df_subset, method, partial=is_partial)
-
-    # Calculate pairwise correlations using the polychoric method.
-    # correlation_matrix = pairwise_polychoric_correlations(all_variables, df_subset)
-    # correlation_matrix = cov_mat_to_regularized_partial_corr(correlation_matrix, alpha=0)
+    variables_list, correlation_matrix = my_pairwise_correlations(all_variables, df_subset, method, partial=is_partial, sample_threshold=sample_threshold)
 
     # Initialize an undirected graph to represent the belief network.
     graph = nx.Graph()
     
     # Add edges between nodes (variables) with significant correlations as per the threshold.
-    for i in range(len(variables_of_interest)):
-        for j in range(i+1, len(variables_of_interest)):
+    for i in range(len(variables_list)):
+        for j in range(i+1, len(variables_list)):
             if threshold:
                 # If a threshold is specified, only add an edge if the absolute correlation exceeds it.
                 if abs(correlation_matrix[i, j]) > threshold:
-                    graph.add_edge(variables_of_interest[i], variables_of_interest[j], weight=correlation_matrix[i, j])
+                    graph.add_edge(variables_list[i], variables_list[j], weight=correlation_matrix[i, j])
             else:
                 # If no threshold is specified, add an edge for all pairs.
-                graph.add_edge(variables_of_interest[i], variables_of_interest[j], weight=correlation_matrix[i, j])
+                graph.add_edge(variables_list[i], variables_list[j], weight=correlation_matrix[i, j])
 
     # Return the graph, correlation information, and the correlation matrix itself.
-    return graph, correlation_matrix
+    return graph, variables_list, correlation_matrix
