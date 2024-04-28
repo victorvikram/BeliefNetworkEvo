@@ -5,10 +5,17 @@ from semopy.polycorr import polychoric_corr
 
 from sklearn.covariance import graphical_lasso
 
+"""
+things to do to fix the problem
+- unit test all the functions
+- see if the problem arises once nans start to get filtered (which variables add problems?)
+- possibly require a certain number of samples to include the element in the network 
+- see if old code has the same issue 
 
 
+"""
 
-def my_pairwise_correlations(vars, data, method, partial=True, regularization=0):
+def my_pairwise_correlations(vars, data, method, partial=True, regularization=0, sample_threshold=0):
 
     """
     `vars` list of variable names 
@@ -29,8 +36,16 @@ def my_pairwise_correlations(vars, data, method, partial=True, regularization=0)
     - test with known correlations, polychoric
     - compare with alt_pairwise correlations
     """
-
     relevant_df = data.loc[:, vars]
+
+    num_samples = relevant_df.shape[0]
+    num_vars = relevant_df.shape[1]
+
+    non_nan_mat = ~np.isnan(np.array(relevant_df))
+    sample_count = np.logical_and(non_nan_mat[:, :, np.newaxis], non_nan_mat[:, np.newaxis, :]).sum(axis=0)
+    sample_pct = sample_count / num_samples
+    # print(sample_pct)
+    # print(sample_count)
 
     if method in ["spearman", "pearson"]:
         corr_mat_pd = relevant_df.corr(method=method)
@@ -39,13 +54,17 @@ def my_pairwise_correlations(vars, data, method, partial=True, regularization=0)
         corr_mat = pairwise_polychoric_correlations(vars, data)
         
     if partial:
+        corr_mat = np.where(sample_pct < sample_threshold, np.nan, corr_mat) # set variables below the threshold to nan
         corr_mat, i_removed = filter_nans(corr_mat)
         vars = [var for i, var in enumerate(vars) if i not in i_removed]
 
-        if regularization:
-            corr_mat = cov_mat_to_regularized_partial_corr(corr_mat, alpha=regularization)
+        print(corr_mat)
+
+        if regularization == 0 and method != "polychoric":
+            corr_mat = corr_mat_to_partial_corr_mat(corr_mat)  
         else:
-            corr_mat = corr_mat_to_partial_corr_mat(corr_mat)
+            corr_mat = cov_mat_to_regularized_partial_corr(corr_mat, alpha=regularization)
+            
 
     return vars, corr_mat
 
@@ -69,8 +88,6 @@ def alt_pairwise_correlations(vars, data, method, partial=True):
                 covar_list = vars[:i] + vars[i+1:j] + vars[j+1:]
             else:
                 covar_list = None
-
-            # print(f"{vars[i]}, {vars[j]}, {covar_list}")
             
             corr_df = partial_corr(data=data, x=vars[i], y=vars[j], covar=covar_list, alternative='two-sided', method=method)
             corr_df["x"] = i
@@ -83,47 +100,13 @@ def alt_pairwise_correlations(vars, data, method, partial=True):
     np.fill_diagonal(corr_mat, 1)
     return corr_info, corr_mat  
 
-
-
-def corr_mat_to_partial_corr_mat(corr_mat):
-    """
-    `corr_mat` is a numpy array representing a correlation matrix 
-
-    calculates the partial correlation matrix by inverting the correlation matrix 
-    """
-    precision_mat = np.linalg.inv(corr_mat)
-    partial_corr_mat = precision_mat_to_partial_corr(precision_mat)
-
-    return partial_corr_mat
-
-def precision_mat_to_partial_corr(precision_mat):
-    # Calculate the partial correlation matrix
-    partial_corr_mat = - precision_mat / np.sqrt(np.outer(np.diag(precision_mat), np.diag(precision_mat)))
-    
-    # Set diagonal elements to 1
-    np.fill_diagonal(partial_corr_mat, 1)
-
-    return partial_corr_mat
-
-def cov_mat_to_regularized_partial_corr(cov_mat, alpha=0):
-    """
-    takes a covariance matrix and returns the estimated regularized covariances and partial
-    correlations. 
-    
-    note that a corr_mat can also be passed in since the correlation matrix is
-    simply the covariance of the standardized variables, and the partial correlations between
-    the standardized variables should be equal to the partial correlations between the untransformed
-    variables
-    """
-
-    cov, precision = graphical_lasso(cov_mat, alpha=alpha)
-    partial_cor_mat = precision_mat_to_partial_corr(precision)
-
-    return partial_cor_mat
-
-
-
 def pairwise_polychoric_correlations(vars, data):
+    """
+    `vars` list of variable names
+    `data` are the column names
+
+    calculates a correlation matrix 
+    """
 
     polychor_corr_mat = np.zeros((len(vars), len(vars))) + np.identity(len(vars))
     for i in range(len(vars)):
@@ -135,14 +118,74 @@ def pairwise_polychoric_correlations(vars, data):
 
     return polychor_corr_mat
 
+def cov_mat_to_regularized_partial_corr(cov_mat, alpha=0):
+    """
+    `cov_mat` is a covariance matrix
+    `alpha` is the regularization parameter
+
+    takes a covariance matrix and returns the estimated regularized covariances and partial
+    correlations. 
+    
+    Note that a correlation matrix can also be passed in since the correlation matrix is
+    simply the covariance of the standardized variables, and the partial correlations between
+    the standardized variables should be equal to the partial correlations between the untransformed
+    variables
+
+    **tested**
+    """
+    cov, precision = graphical_lasso(cov_mat, alpha=alpha)
+    partial_cor_mat = precision_mat_to_partial_corr(precision)
+
+    return partial_cor_mat
+
+
+def corr_mat_to_partial_corr_mat(corr_mat):
+    """
+    `corr_mat` is a numpy array representing a correlation matrix 
+
+    calculates the partial correlation matrix by inverting the correlation matrix 
+
+    **tested**
+    """
+    precision_mat = np.linalg.inv(corr_mat)
+    partial_corr_mat = precision_mat_to_partial_corr(precision_mat)
+    return partial_corr_mat
+
+def precision_mat_to_partial_corr(precision_mat):
+    """
+    `precision_mat` is a numpy array representing the inverse of the correlation matrix
+
+    calculates the partial correlations by correctly scaling the precision matrix
+
+    **tested**
+    """
+    # Calculate the partial correlation matrix
+    outer_product = np.outer(np.diag(precision_mat), np.diag(precision_mat))
+    div = np.sqrt(outer_product)
+    partial_corr_mat = - precision_mat / div
+
+    # Set diagonal elements to 1
+    np.fill_diagonal(partial_corr_mat, 1)
+
+    return partial_corr_mat
+
 def filter_nans(mat):
+    """
+    `mat` is a symmetric matrix
+
+    the function removes nan values by finding the row/col with the most nans, removes it, and then 
+    repeats the process on the shrunken array until there are no more nans
+
+    **tested**
+    """
+    mat = np.copy(mat)
     is_to_remove = []
     while (nan_sums := np.isnan(mat).sum(axis=0)).sum() > 0:
         i_to_remove = np.argmax(nan_sums)
         mat[i_to_remove,:] = 0
         mat[:, i_to_remove] = 0
         is_to_remove.append(i_to_remove)
-
+    
     mat = np.delete(mat, is_to_remove, axis=0)
     mat = np.delete(mat, is_to_remove, axis=1)
 
