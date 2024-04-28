@@ -58,7 +58,7 @@ def my_pairwise_correlations(vars, data, method, partial=True, regularization=0,
         corr_mat, i_removed = filter_nans(corr_mat)
         vars = [var for i, var in enumerate(vars) if i not in i_removed]
 
-        print(corr_mat)
+        # print(corr_mat)
 
         if regularization == 0 and method != "polychoric":
             corr_mat = corr_mat_to_partial_corr_mat(corr_mat)  
