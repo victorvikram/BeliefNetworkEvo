@@ -10,7 +10,7 @@ variables = ["PARTYID","POLVIEWS","NATSPAC","NATENVIR","NATHEAL","NATCITY","NATC
 The child variables are all part of one question and are correlated as a result of being a ranking. Once we figure out how to partial out a subset of the variables, we'll be good. 
 
 ```
-child_variables = ["OBEY","POPULAR","THNKSELF", "WORKHARD","HELPOTH","GETAHEAD"]
+child_variables = ["OBEY","POPULAR","THNKSELF", "WORKHARD","HELPOTH"]
 ```
 
 Variables about who people voted for 
