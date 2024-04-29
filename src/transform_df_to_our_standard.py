@@ -349,7 +349,7 @@ def transform_dataframe(df):
     transformed_df['PRES68_WALLACE'] = df['PRES68'].map(category_map_C)
     transformed_df['PRES68_OTHER'] = df['PRES68'].map(category_map_D)
     transformed_df['PRES68_REFUSED'] = df['PRES68'].map(category_map_E)
-    transformed_df['PRES68_DONT_KNOW)'] = df['PRES68'].map(DONT_KNOW_map)
+    # transformed_df['PRES68_DONT_KNOW)'] = df['PRES68'].map(DONT_KNOW_map)
 
     transformed_df['PRES72_MCGOVERN'] = df['PRES72'].map(category_map_A)
     transformed_df['PRES72_NIXON'] = df['PRES72'].map(category_map_B)
