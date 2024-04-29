@@ -8,6 +8,8 @@ This file contains questions we would like to ask about the belief networks.
   a. Is it easier to enter a module than to leave it?
   b. Do modules aggregate and split in different ways (e.g. does merging happen gradually while splitting is sudden)?
   c. Is there a defined and persistent module structure to the beliefs (beyond just different question types or something)? Do different modules correspond to salient value dimensions?
+  d. This may relate to 9, since modules 
+  d. How flexible is the correlation structure? That is 
 4. **Ideology clusters**
   a. Are there unallowable regions of the ideology space?
   b. Do moving clusters follow ideology-respecting paths?
@@ -22,8 +24,8 @@ This file contains questions we would like to ask about the belief networks.
 7. **Voting**
   a. are beliefs correlated with voting more central?
   b. are beliefs associated with voting slower-changing?
-8. **Party and ideology**
-  a. how do the variables that most strongly influence party identification change over time? is there some pattern where, for instance, certain variables are particularly well-suited to becoming associated with a particular party?
+8. **Party and ideology** how do the variables that most strongly influence party identification change over time? is there some pattern where, for instance, certain variables are particularly well-suited to becoming associated with a particular party?
+9. **Structure flexibility** ising models have energy valleys of configurations that work together. I wonder if there is an analog of that for this system. Can we look at how many "allowable configurations" there are, and how distributed they are in the space? This might be tied up with modules because modules might be sets of nodes that can vary relatively independently of one another.
 
 # Exploratory Analysis
 1. **Rate of change**
