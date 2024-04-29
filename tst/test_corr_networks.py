@@ -1,16 +1,17 @@
 import unittest
+import pandas as pd
 import numpy as np
 from numpy.testing import assert_almost_equal
 
 import sys
 sys.path.append('../src')
 
-from corr_networks import filter_nans, precision_mat_to_partial_corr, corr_mat_to_partial_corr_mat, cov_mat_to_regularized_partial_corr
+from corr_networks import *
 
 class TestModuleFunctions(unittest.TestCase):
     def test_my_pairwise_correlations(self):
         # Define mean vector and covariance matrix
-        dim = 4
+        dim = 6
         random_mat = 2 * np.random.rand(dim, dim) - 1 # get a matrix with values from -1 to 1
         random_cov_mat = np.dot(random_mat, random_mat.T) # make it pos semi-definite
 
@@ -20,7 +21,7 @@ class TestModuleFunctions(unittest.TestCase):
         mean = np.zeros((dim,))  # Mean vector
 
         # Generate random samples from the multivariate normal distribution
-        num_samples = 20000
+        num_samples = 120000
         samples = np.random.multivariate_normal(mean, random_cov_mat, size=num_samples)
 
         sample_df = pd.DataFrame(samples)
@@ -28,8 +29,58 @@ class TestModuleFunctions(unittest.TestCase):
         # Print the first few samples
 
         precision_matrix = np.linalg.inv(random_cov_mat)
-        scale_factor = np.matmul(np.diag(precision_matrix).reshape(-1, 1), np.diag(precision_matrix).reshape(1, -1))
+        scale_factor = np.sqrt(np.outer(np.diag(precision_matrix), np.diag(precision_matrix)))
         partial_corr_mat = (- precision_matrix / scale_factor) + (2 * np.identity(dim))
+        
+        vars, corr_mat = my_pairwise_correlations([0, 1, 2, 3, 4, 5], sample_df, method="pearson", partial=False, regularization=0)
+        assert_almost_equal(corr_mat, random_cor_mat, decimal=2)
+        self.assertEqual(vars, [0, 1, 2, 3, 4, 5])
+
+        vars, corr_mat = my_pairwise_correlations([0, 1, 2, 3, 4, 5], sample_df, method="pearson", partial=True, regularization=0)
+        assert_almost_equal(corr_mat, partial_corr_mat, decimal=2)
+        self.assertEqual(vars, [0, 1, 2, 3, 4, 5])
+
+        vars, corr_mat = my_pairwise_correlations([0, 1, 2, 3, 4, 5], sample_df, method="pearson", partial=True, regularization=0.1)
+        self.assertGreater((np.abs(random_cor_mat) - np.abs(corr_mat)).sum(), 0)
+
+        non_overlapping_df = sample_df.copy()
+        non_overlapping_df.loc[0:50000,[4, 5]] = np.nan
+        non_overlapping_df.loc[50000:,[0, 1, 2, 3]] = np.nan
+
+        vars, corr_mat = my_pairwise_correlations([0, 1, 2, 3, 4, 5], non_overlapping_df, method="pearson", partial=True, regularization=0)
+        truncated_partial_corr = corr_mat_to_partial_corr_mat(random_cor_mat[0:4, 0:4])
+        assert_almost_equal(corr_mat, truncated_partial_corr, decimal=2)
+        self.assertEqual(vars, [0, 1, 2, 3])
+
+        vars, corr_mat = my_pairwise_correlations([0, 1, 2, 3, 4, 5], non_overlapping_df, method="pearson", partial=False, regularization=0)
+        value_mask = np.logical_xor((np.arange(6) > 3).reshape(-1, 1), (np.arange(6) > 3).reshape(1, -1)) # both row and column indices either above 3 or below 3
+        exp_corr_mat = np.where(value_mask, np.nan, random_cor_mat)
+        assert_almost_equal(corr_mat, exp_corr_mat, decimal=2)
+        self.assertEqual(vars, [0, 1, 2, 3, 4, 5])
+
+        non_overlapping_df = sample_df.copy()
+        non_overlapping_df.loc[0:60000,[2, 4]] = np.nan
+        non_overlapping_df.loc[60000:,[1]] = np.nan
+
+        vars, corr_mat = my_pairwise_correlations([0, 1, 2, 3, 4, 5], non_overlapping_df, method="pearson", partial=True, regularization=0)
+        truncated_partial_corr = corr_mat_to_partial_corr_mat(random_cor_mat[[[0],[2],[3],[4],[5]],[[0, 2, 3, 4, 5]]])
+        assert_almost_equal(corr_mat, truncated_partial_corr, decimal=2)
+        self.assertEqual(vars, [0, 2, 3, 4, 5])
+
+        fade_out_df = sample_df.copy()
+        fade_out_df.loc[:40000,[2, 4]] = np.nan
+        fade_out_df.loc[:80000,[3, 5]] = np.nan 
+
+        vars, corr_mat = my_pairwise_correlations([0, 1, 2, 3, 4, 5], fade_out_df, method="pearson", partial=True, regularization=0, sample_threshold=0.5)
+        truncated_partial_corr = corr_mat_to_partial_corr_mat(random_cor_mat[[[0], [1], [2], [4]], [[0, 1, 2, 4]]])
+        self.assertEqual(vars, [0, 1, 2, 4])
+        assert_almost_equal(truncated_partial_corr, corr_mat, decimal=2)
+        
+
+        vars, corr_mat = my_pairwise_correlations([0, 1, 2, 3, 4, 5], sample_df, method="spearman", partial=True, regularization=0, sample_threshold=0)
+        _, corr_mat_exp = alt_pairwise_correlations([0, 1, 2, 3, 4, 5], sample_df, method="spearman", partial=True)
+        assert_almost_equal(corr_mat, corr_mat_exp, decimal=2)
+        self.assertEqual(vars, [0, 1, 2, 3, 4, 5])
 
         sample_df_ord = pd.DataFrame()
 
@@ -45,13 +96,11 @@ class TestModuleFunctions(unittest.TestCase):
             cutoffs = np.concatenate(([-np.inf], cutoffs, [np.inf]))
             sample_df_ord[var] = pd.cut(sample_df[var], bins=cutoffs, labels=np.arange(num_ordinal_values)).cat.codes
         
-        vars, corr_mat = my_pairwise_correlations([0, 1, 2, 3], sample_df, method="pearson", partial=True, regularization=0)
-
-        assert_almost_equal(corr_mat, )
-        
-
-
-
+        """
+        TODO check this
+        vars, corr_mat = my_pairwise_correlations([0, 1, 2, 3, 4, 5], sample_df_ord, method="polychoric", partial=True, regularization=0, sample_threshold=0)
+        assert_almost_equal(partial_corr_mat, corr_mat, decimal=2)
+        """
 
     def test_filter_nans(self):
         input_mat = np.arange(36).reshape(6, 6).astype(float)
@@ -145,11 +194,29 @@ class TestModuleFunctions(unittest.TestCase):
 
         reged_partial_corr = cov_mat_to_regularized_partial_corr(corr_mat, alpha=0.05)
 
-        print(first_partial_corr)
-        print(reged_partial_corr)
         self.assertGreater((np.abs(first_partial_corr) - np.abs(reged_partial_corr)).sum(), 0)
+    
+    def test_overlap_matrix(self):
+        data = pd.DataFrame({
+            "a": [1, 2, 3, 4, 5, np.nan, np.nan, np.nan],
+            "b": [np.nan, np.nan, np.nan, 1, 2, 3, 4, 5],
+            "c": [1, np.nan, 2, np.nan, 3, np.nan, 4, 5],
+            "d": [1, 2, 3, 4, 5, 6, 7, 8],
+            "e": [np.nan, 1, 2, 3, 4, 5, 6, np.nan],
+            "f": [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan],
+            "g": [1, 2, 3, 4, np.nan, np.nan, 5, 6]
+        })
 
+        overlap = get_overlap_matrix(data)
+        expected_overlap = np.array([[5, 2, 3, 5, 4, 0, 4],
+                                     [2, 5, 3, 5, 4, 0, 3],
+                                     [3, 3, 5, 5, 3, 0, 4],
+                                     [5, 5, 5, 8, 6, 0, 6],
+                                     [4, 4, 3, 6, 6, 0, 4],
+                                     [0, 0, 0, 0, 0, 0, 0],
+                                     [4, 3, 4, 6, 4, 0, 6]])
         
-                                                    
+        self.assertTrue((overlap == expected_overlap).all())
+                                      
 if __name__ == '__main__':
     unittest.main()

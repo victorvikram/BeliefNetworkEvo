@@ -23,6 +23,7 @@ def my_pairwise_correlations(vars, data, method, partial=True, regularization=0,
     `method` one of "spearman", "pearson", or "polychoric"
     `partial` boolean value, whether to calculate partial correlations
     `regularization` the regularization parameter (0 is no regularization)
+    `sample_threshold` is the percent of rows of the df 
 
     calculates all pairwise correlations between the variables in `var` using samples in `data` and one of the
     three methods. If partial, returns partial correlations, if regularization is greater than 0, uses lasso
@@ -30,19 +31,14 @@ def my_pairwise_correlations(vars, data, method, partial=True, regularization=0,
 
     If any pairwise correlations are NaN, variables are removed until the full matrix contains no NaN values
 
-    tests to do:
-    - test with known correlations, pearson
-    - test with known correlations, spearman
-    - test with known correlations, polychoric
-    - compare with alt_pairwise correlations
+    **tested**
     """
     relevant_df = data.loc[:, vars]
 
     num_samples = relevant_df.shape[0]
     num_vars = relevant_df.shape[1]
 
-    non_nan_mat = ~np.isnan(np.array(relevant_df))
-    sample_count = np.logical_and(non_nan_mat[:, :, np.newaxis], non_nan_mat[:, np.newaxis, :]).sum(axis=0)
+    sample_count = get_overlap_matrix(relevant_df)
     sample_pct = sample_count / num_samples
     # print(sample_pct)
     # print(sample_count)
@@ -52,13 +48,11 @@ def my_pairwise_correlations(vars, data, method, partial=True, regularization=0,
         corr_mat = np.array(corr_mat_pd)
     elif method == "polychoric":  
         corr_mat = pairwise_polychoric_correlations(vars, data)
-        
+    
     if partial:
         corr_mat = np.where(sample_pct < sample_threshold, np.nan, corr_mat) # set variables below the threshold to nan
         corr_mat, i_removed = filter_nans(corr_mat)
         vars = [var for i, var in enumerate(vars) if i not in i_removed]
-
-        # print(corr_mat)
 
         if regularization == 0 and method != "polychoric":
             corr_mat = corr_mat_to_partial_corr_mat(corr_mat)  
@@ -168,6 +162,12 @@ def precision_mat_to_partial_corr(precision_mat):
     np.fill_diagonal(partial_corr_mat, 1)
 
     return partial_corr_mat
+
+def get_overlap_matrix(df):
+    non_nan_mat = ~np.isnan(np.array(df))
+    sample_count = np.logical_and(non_nan_mat[:, :, np.newaxis], non_nan_mat[:, np.newaxis, :]).sum(axis=0)
+
+    return sample_count
 
 def filter_nans(mat):
     """
