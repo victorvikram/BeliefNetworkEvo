@@ -7,7 +7,7 @@ from mpl_toolkits.mplot3d import Axes3D
 # The dataset is a SAS7BDAT file, so we will use the pandas library to read in the data.
 # The basic idea here is to manually write the mappings for the variables in the dataset and then apply them to the dataset.
 
-def transform_dataframe(df):
+def transform_dataframe(df, combine_variants=True):
     # Read the data
     # The variables of interest are:
     column_codes = ["YEAR","PARTYID","VOTE68","PRES68","IF68WHO","VOTE72","PRES72","IF72WHO","VOTE76","PRES76","IF76WHO","VOTE80","PRES80","IF80WHO","VOTE84","PRES84",
@@ -20,6 +20,20 @@ def transform_dataframe(df):
     "WORKHARD","HELPOTH","GETAHEAD","FEPOL","ABDEFECT","ABNOMORE","ABHLTH","ABPOOR","ABRAPE","ABSINGLE","ABANY","SEXEDUC","DIVLAW","PREMARSX","TEENSEX","XMARSEX","HOMOSEX","PORNLAW",
     "SPANKING","LETDIE1","SUICIDE1","SUICIDE2","POLHITOK","POLABUSE","POLMURDR","POLESCAP","POLATTAK","NEWS","TVHOURS","FECHLD","FEPRESCH","FEFAM","RACDIF1","RACDIF2","RACDIF3",
     "RACDIF4","HELPPOOR","HELPNOT","HELPBLK","MARHOMO","BALLOT"]
+
+    variants = {
+        "NATSPACY": "NATSPAC",
+        "NATENVIY": "NATENVIY",
+        "NATHEALY": "NATHEAL",
+        "NATCITYY": "NATCITY",
+        "NATCRIMY": "NATCRIME",
+        "NATDRUGY": "NATDRUG",
+        "NATEDUCY": "NATEDUC",
+        "NATRACEY": "NATRACE",
+        "NATARMSY": "NATARMS",
+        "NATAIDY": "NATAID",
+        "NATFAREY": "NATFARE"
+    }
 
     # Setup the mappings
     # PARTYID: Generally speaking, do you usually think of yourself as a Republican, Democrat, Independent, or what?
@@ -139,7 +153,8 @@ def transform_dataframe(df):
 
 
     # RACOPEN
-    ### IDK!!
+    # negative ALLOWED to discriminate --- 0 neither law or can't choose --- positive NOT ALLOWED 
+    RACOPEN_map = {1: -1, 2: 1, 3: 0, -98: 0}
 
     # AFFRMACT: Are you for or against preferential hiring and promotion of blacks? 
     # SIGNED
@@ -544,6 +559,7 @@ def transform_dataframe(df):
     transformed_df['NATCHLD'] = df['NATCHLD'].map(NAT_map)
     transformed_df['NATSCI'] = df['NATSCI'].map(NAT_map)
     transformed_df['NATENRGY'] = df['NATENRGY'].map(NAT_map)
+
     transformed_df['NATSPACY'] = df['NATSPACY'].map(NAT_map)
     transformed_df['NATENVIY'] = df['NATENVIY'].map(NAT_map)
     transformed_df['NATHEALY'] = df['NATHEALY'].map(NAT_map)
@@ -607,6 +623,8 @@ def transform_dataframe(df):
     transformed_df['POSTLIFE'] = df['POSTLIFE'].map(POSTLIFE_map)
 
     transformed_df['PRAYER'] = df['PRAYER'].map(PRAYER_map)
+
+    transformed_df['RACOPEN'] = df['RACOPEN'].map(RACOPEN_map)
 
     transformed_df['AFFRMACT'] = df['AFFRMACT'].map(AFFRMACT_map)
 
@@ -688,10 +706,18 @@ def transform_dataframe(df):
     transformed_df['RACDIF4'] = df['RACDIF4'].map(RACDIF_map)
 
     transformed_df['HELPPOOR'] = df['HELPPOOR'].map(HELP_map)
+    transformed_df['HELPNOT'] = df['HELPNOT'].map(HELP_map)
+    transformed_df['HELPBLK'] = df['HELPBLK'].map(HELP_map)
 
     transformed_df['MARHOMO'] = df['MARHOMO'].map(MARHOMO_map)
     # endregion
-
+    
+    if combine_variants:
+        for variant, original in variants.items():
+            combined_column = transformed_df[original].combine_first(transformed_df[variant])
+            transformed_df[original] = combined_column
+    
+    transformed_df = transformed_df.drop(variants.keys(), axis=1)
 
     ### Uncomment this to print select columns to a text file.
     # with open('partyid.txt', 'w') as f:
