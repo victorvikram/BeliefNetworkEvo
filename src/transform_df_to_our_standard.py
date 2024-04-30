@@ -26,12 +26,35 @@ def make_variable_summary(df):
 
 
     return counts, pcts, partially_complete_ballot
+
+def make_vote_supernodes(df, varnames=["VOTE{year}", "PRES{year}_NONCONFORM", "PRES{year}_DEMREP"]):
+    
+    year_order = ["68", "72", "76", "80", "84", "88", "92", "96", "00", "04", "08", "12", "16", "20"]
+    new_df = df.copy()
+
+    for var in varnames:
+        cols = [var.format(year=year) for year in year_order]
+        cols_present = [col for col in cols if col in df.columns]
+        sub_df = df.loc[:, cols_present]
+
+        new_col = var.format(year="LAST")
+        sub_df[new_col] = np.nan
+        sub_df = sub_df.ffill(axis=1)
+
+        new_df[new_col] = sub_df[new_col]
+
+    return new_df
     
 # The purpose of this script is to read in the GSS dataset and perform some basic data cleaning and transformation.
 # The dataset is a SAS7BDAT file, so we will use the pandas library to read in the data.
 # The basic idea here is to manually write the mappings for the variables in the dataset and then apply them to the dataset.
 
 def transform_dataframe(df, combine_variants=True):
+
+    """
+
+    note: if value is not in map it goes to NaN
+    """
     # Read the data
     # The variables of interest are:
     column_codes = ["YEAR", "ID", "PARTYID","VOTE68","PRES68","IF68WHO","VOTE72","PRES72","IF72WHO","VOTE76","PRES76","IF76WHO","VOTE80","PRES80","IF80WHO","VOTE84","PRES84",
@@ -334,7 +357,11 @@ def transform_dataframe(df, combine_variants=True):
     transformed_df['ID'] = df['ID']
     transformed_df['BALLOT'] = df['BALLOT']
 
-
+    # This assigns a value 0 if the voter voted republican, 
+    DEMREP_map = {1: 0, 2: 1}
+    NONCONFORM_map = {1: 0, 2: 0, 3: 1} # in years where there is no significant third party, nonconforming is just other
+    NONCONFORM3P_map = {1: 0, 2: 0, 3: 1, 4: 1} # in years whre there is a significant third party, nonconforming is the third party or other
+    
     # region: APPLYING ALL THE MAPS
     transformed_df['PARTYID'] = df['PARTYID'].map(PARTYID_map)
     transformed_df['OTHER_PARTY'] = df['PARTYID'].map(other_map)
@@ -389,6 +416,8 @@ def transform_dataframe(df, combine_variants=True):
     transformed_df['PRES68_WALLACE'] = df['PRES68'].map(category_map_C)
     transformed_df['PRES68_OTHER'] = df['PRES68'].map(category_map_D)
     transformed_df['PRES68_REFUSED'] = df['PRES68'].map(category_map_E)
+    transformed_df['PRES68_DEMREP'] = df['PRES68'].map(DEMREP_map)
+    transformed_df['PRES68_NONCONFORM'] = df['PRES68'].map(NONCONFORM3P_map)
     # transformed_df['PRES68_DONT_KNOW)'] = df['PRES68'].map(DONT_KNOW_map)
 
     transformed_df['PRES72_MCGOVERN'] = df['PRES72'].map(category_map_A)
@@ -397,6 +426,8 @@ def transform_dataframe(df, combine_variants=True):
     transformed_df['PRES72_REFUSED'] = df['PRES72'].map(category_map_D)
     transformed_df['PRES72_WOULDNT_VOTE'] = df['PRES72'].map(category_map_E)
     transformed_df['PRES72_DONT_KNOW'] = df['PRES72'].map(DONT_KNOW_map)
+    transformed_df['PRES72_DEMREP'] = df['PRES72'].map(DEMREP_map)
+    transformed_df['PRES72_NONCONFORM'] = df['PRES72'].map(NONCONFORM_map)
 
     transformed_df['PRES76_CARTER'] = df['PRES76'].map(category_map_A)
     transformed_df['PRES76_FORD'] = df['PRES76'].map(category_map_B)
@@ -404,6 +435,8 @@ def transform_dataframe(df, combine_variants=True):
     transformed_df['PRES76_REFUSED'] = df['PRES76'].map(category_map_D)
     transformed_df['PRES76_NO_PRES_VOTE'] = df['PRES76'].map(category_map_E)
     transformed_df['PRES76_DONT_KNOW'] = df['PRES76'].map(DONT_KNOW_map)
+    transformed_df['PRES76_DEMREP'] = df['PRES76'].map(DEMREP_map)
+    transformed_df['PRES76_NONCONFORM'] = df['PRES76'].map(NONCONFORM_map)
 
     transformed_df['PRES80_CARTER'] = df['PRES80'].map(category_map_A)
     transformed_df['PRES80_REAGAN'] = df['PRES80'].map(category_map_B)
@@ -412,6 +445,8 @@ def transform_dataframe(df, combine_variants=True):
     transformed_df['PRES80_REFUSED'] = df['PRES80'].map(category_map_E)
     transformed_df['PRES80_DIDNT_VOTE'] = df['PRES80'].map(category_map_F)
     transformed_df['PRES80_DONT_KNOW'] = df['PRES80'].map(DONT_KNOW_map)
+    transformed_df['PRES80_DEMREP'] = df['PRES80'].map(DEMREP_map)
+    transformed_df['PRES80_NONCONFORM'] = df['PRES80'].map(NONCONFORM3P_map)
 
     transformed_df['PRES84_MONDALE'] = df['PRES84'].map(category_map_A)
     transformed_df['PRES84_REAGAN'] = df['PRES84'].map(category_map_B)
@@ -419,13 +454,17 @@ def transform_dataframe(df, combine_variants=True):
     transformed_df['PRES84_REFUSED'] = df['PRES84'].map(category_map_D)
     transformed_df['PRES84_NO_PRES_VOTE'] = df['PRES84'].map(category_map_E)
     transformed_df['PRES84_DONT_KNOW'] = df['PRES84'].map(DONT_KNOW_map)
+    transformed_df['PRES84_DEMREP'] = df['PRES84'].map(DEMREP_map)
+    transformed_df['PRES84_NONCONFORM'] = df['PRES84'].map(NONCONFORM_map)
 
-    transformed_df['PRES88_BUSH'] = df['PRES88'].map(category_map_A)
-    transformed_df['PRES88_DUKAKIS'] = df['PRES88'].map(category_map_B)
+    transformed_df['PRES88_DUKAKIS'] = df['PRES88'].map(category_map_A) # corrected
+    transformed_df['PRES88_BUSH'] = df['PRES88'].map(category_map_B)
     transformed_df['PRES88_OTHER'] = df['PRES88'].map(category_map_C)
     transformed_df['PRES88_REFUSED'] = df['PRES88'].map(category_map_D)
     transformed_df['PRES88_NO_PRES_VOTE'] = df['PRES88'].map(category_map_E)
     transformed_df['PRES88_DONT_KNOW'] = df['PRES88'].map(DONT_KNOW_map)
+    transformed_df['PRES88_DEMREP'] = df['PRES88'].map(DEMREP_map)
+    transformed_df['PRES88_NONCONFORM'] = df['PRES88'].map(NONCONFORM_map)
 
     transformed_df['PRES92_CLINTON'] = df['PRES92'].map(category_map_A)
     transformed_df['PRES92_BUSH'] = df['PRES92'].map(category_map_B)
@@ -433,6 +472,8 @@ def transform_dataframe(df, combine_variants=True):
     transformed_df['PRES92_OTHER'] = df['PRES92'].map(category_map_D)
     transformed_df['PRES92_NO_PRES_VOTE'] = df['PRES92'].map(category_map_E)
     transformed_df['PRES92_DONT_KNOW'] = df['PRES92'].map(DONT_KNOW_map)
+    transformed_df['PRES92_DEMREP'] = df['PRES92'].map(DEMREP_map)
+    transformed_df['PRES92_NONCONFORM'] = df['PRES92'].map(NONCONFORM3P_map)
 
     transformed_df['PRES96_CLINTON'] = df['PRES96'].map(category_map_A)
     transformed_df['PRES96_DOLE'] = df['PRES96'].map(category_map_B)
@@ -440,6 +481,8 @@ def transform_dataframe(df, combine_variants=True):
     transformed_df['PRES96_OTHER'] = df['PRES96'].map(category_map_D)
     transformed_df['PRES96_DIDNT_VOTE'] = df['PRES96'].map(category_map_E)
     transformed_df['PRES96_DONT_KNOW'] = df['PRES96'].map(DONT_KNOW_map)
+    transformed_df['PRES96_DEMREP'] = df['PRES96'].map(DEMREP_map)
+    transformed_df['PRES96_NONCONFORM'] = df['PRES96'].map(NONCONFORM3P_map)
 
     transformed_df['PRES00_GORE'] = df['PRES00'].map(category_map_A)
     transformed_df['PRES00_BUSH'] = df['PRES00'].map(category_map_B)
@@ -447,36 +490,48 @@ def transform_dataframe(df, combine_variants=True):
     transformed_df['PRES00_OTHER'] = df['PRES00'].map(category_map_D)
     transformed_df['PRES00_DIDNT_VOTE'] = df['PRES00'].map(category_map_E)
     transformed_df['PRES00_DONT_KNOW'] = df['PRES00'].map(DONT_KNOW_map)
+    transformed_df['PRES00_DEMREP'] = df['PRES00'].map(DEMREP_map)
+    transformed_df['PRES00_NONCONFORM'] = df['PRES00'].map(NONCONFORM3P_map)
 
     transformed_df['PRES04_KERRY'] = df['PRES04'].map(category_map_A)
     transformed_df['PRES04_BUSH'] = df['PRES04'].map(category_map_B)
     transformed_df['PRES04_NADER'] = df['PRES04'].map(category_map_C)
     transformed_df['PRES04_NO_PRES_VOTE'] = df['PRES04'].map(category_map_D)
     transformed_df['PRES04_DONT_KNOW'] = df['PRES04'].map(DONT_KNOW_map)
+    transformed_df['PRES04_DEMREP'] = df['PRES04'].map(DEMREP_map)
+    transformed_df['PRES04_NONCONFORM'] = df['PRES04'].map(NONCONFORM_map)
 
     transformed_df['PRES08_OBAMA'] = df['PRES08'].map(category_map_A)
     transformed_df['PRES08_MCCAIN'] = df['PRES08'].map(category_map_B)
     transformed_df['PRES08_OTHER'] = df['PRES08'].map(category_map_C)
     transformed_df['PRES08_DIDNT_VOTE'] = df['PRES08'].map(category_map_D)
     transformed_df['PRES08_DONT_KNOW'] = df['PRES08'].map(DONT_KNOW_map)
+    transformed_df['PRES08_DEMREP'] = df['PRES08'].map(DEMREP_map)
+    transformed_df['PRES08_NONCONFORM'] = df['PRES08'].map(NONCONFORM_map)
 
     transformed_df['PRES12_OBAMA'] = df['PRES12'].map(category_map_A)
     transformed_df['PRES12_ROMNEY'] = df['PRES12'].map(category_map_B)
     transformed_df['PRES12_OTHER'] = df['PRES12'].map(category_map_C)
     transformed_df['PRES12_DIDNT_VOTE'] = df['PRES12'].map(category_map_D)
     transformed_df['PRES12_DONT_KNOW'] = df['PRES12'].map(DONT_KNOW_map)
+    transformed_df['PRES12_DEMREP'] = df['PRES12'].map(DEMREP_map)
+    transformed_df['PRES12_NONCONFORM'] = df['PRES12'].map(NONCONFORM_map)
 
     transformed_df['PRES16_CLINTON'] = df['PRES16'].map(category_map_A)
     transformed_df['PRES16_TRUMP'] = df['PRES16'].map(category_map_B)
     transformed_df['PRES16_OTHER'] = df['PRES16'].map(category_map_C)
     transformed_df['PRES16_DIDNT_VOTE'] = df['PRES16'].map(category_map_D)
     transformed_df['PRES16_DONT_KNOW'] = df['PRES16'].map(DONT_KNOW_map)
+    transformed_df['PRES16_DEMREP'] = df['PRES16'].map(DEMREP_map)
+    transformed_df['PRES16_NONCONFORM'] = df['PRES16'].map(NONCONFORM_map)
 
     transformed_df['PRES20_BIDEN'] = df['PRES20'].map(category_map_A)
     transformed_df['PRES20_TRUMP'] = df['PRES20'].map(category_map_B)
     transformed_df['PRES20_OTHER'] = df['PRES20'].map(category_map_C)
     transformed_df['PRES20_DIDNT_VOTE'] = df['PRES20'].map(category_map_D)
     transformed_df['PRES20_DONT_KNOW'] = df['PRES20'].map(DONT_KNOW_map)
+    transformed_df['PRES20_DEMREP'] = df['PRES20'].map(DEMREP_map)
+    transformed_df['PRES20_NONCONFORM'] = df['PRES20'].map(NONCONFORM_map)
 
     transformed_df['IF68WHO_HUMPHREY'] = df['IF68WHO'].map(category_map_A)
     transformed_df['IF68WHO_NIXON'] = df['IF68WHO'].map(category_map_B)
@@ -736,6 +791,8 @@ def transform_dataframe(df, combine_variants=True):
 
     transformed_df['MARHOMO'] = df['MARHOMO'].map(MARHOMO_map)
     # endregion
+
+    transformed_df = make_vote_supernodes(transformed_df, varnames=["VOTE{year}", "PRES{year}_NONCONFORM", "PRES{year}_DEMREP"])
     
     if combine_variants:
         for variant, original in variants.items():
