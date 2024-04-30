@@ -1,0 +1,4 @@
+- in 2002 and 2004, many questions in the replicating core were only asked of half of the respondents on each sample
+- alternate questions with the y suffix never overlap with the normal version of the question which can cause one of the two to be dropped even if they are essentially asking similar things
+- ballots start in 1988, before that it was a single survey
+- 2006 has an extra ballot so variables make up a smaller proportion of the total
