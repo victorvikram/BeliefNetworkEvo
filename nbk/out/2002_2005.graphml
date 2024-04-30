@@ -96,8 +96,10 @@
 <node id="RACDIF3"/>
 <node id="RACDIF4"/>
 <node id="HELPPOOR"/>
+<node id="PRESLAST_NONCONFORM"/>
+<node id="PRESLAST_DEMREP"/>
 <edge source="PARTYID" target="POLVIEWS">
-  <data key="d0">0.21706679607910762</data>
+  <data key="d0">0.10939205186162333</data>
 </edge>
 <edge source="PARTYID" target="NATSPAC">
   <data key="d0">-0.0</data>
@@ -121,16 +123,16 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="PARTYID" target="NATRACE">
-  <data key="d0">0.03504509912204857</data>
+  <data key="d0">0.02169976058040277</data>
 </edge>
 <edge source="PARTYID" target="NATARMS">
-  <data key="d0">-0.002988136534631476</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="PARTYID" target="NATAID">
   <data key="d0">0.0</data>
 </edge>
 <edge source="PARTYID" target="NATFARE">
-  <data key="d0">0.01775088920422996</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="PARTYID" target="NATROAD">
   <data key="d0">-0.0</data>
@@ -151,7 +153,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="PARTYID" target="EQWLTH">
-  <data key="d0">-0.0892371472391898</data>
+  <data key="d0">-0.07169450510129541</data>
 </edge>
 <edge source="PARTYID" target="SPKATH">
   <data key="d0">0.0</data>
@@ -199,7 +201,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="PARTYID" target="CAPPUN">
-  <data key="d0">0.0298351975209613</data>
+  <data key="d0">0.0033932629802684074</data>
 </edge>
 <edge source="PARTYID" target="GUNLAW">
   <data key="d0">-0.0</data>
@@ -223,7 +225,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="PARTYID" target="AFFRMACT">
-  <data key="d0">-0.030115100584081917</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="PARTYID" target="WRKWAYUP">
   <data key="d0">0.0</data>
@@ -250,13 +252,13 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="PARTYID" target="CONFED">
-  <data key="d0">0.11631377856506138</data>
+  <data key="d0">0.05113610309852255</data>
 </edge>
 <edge source="PARTYID" target="CONLABOR">
   <data key="d0">-0.0</data>
 </edge>
 <edge source="PARTYID" target="CONPRESS">
-  <data key="d0">-0.0032818689291141036</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="PARTYID" target="CONMEDIC">
   <data key="d0">0.0</data>
@@ -379,13 +381,19 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="PARTYID" target="HELPPOOR">
-  <data key="d0">-0.08508029732192544</data>
+  <data key="d0">-0.05110208989363154</data>
+</edge>
+<edge source="PARTYID" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="PARTYID" target="PRESLAST_DEMREP">
+  <data key="d0">0.4724465837584683</data>
 </edge>
 <edge source="POLVIEWS" target="NATSPAC">
   <data key="d0">0.0</data>
 </edge>
 <edge source="POLVIEWS" target="NATENVIR">
-  <data key="d0">0.05781454142514642</data>
+  <data key="d0">0.050985031741624304</data>
 </edge>
 <edge source="POLVIEWS" target="NATHEAL">
   <data key="d0">0.0</data>
@@ -394,7 +402,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="POLVIEWS" target="NATCRIME">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="POLVIEWS" target="NATDRUG">
   <data key="d0">0.0</data>
@@ -406,7 +414,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="POLVIEWS" target="NATARMS">
-  <data key="d0">-0.03139330309871002</data>
+  <data key="d0">-0.020999371631912105</data>
 </edge>
 <edge source="POLVIEWS" target="NATAID">
   <data key="d0">0.0</data>
@@ -433,7 +441,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="POLVIEWS" target="EQWLTH">
-  <data key="d0">-0.011242668279239282</data>
+  <data key="d0">-0.00897430960414339</data>
 </edge>
 <edge source="POLVIEWS" target="SPKATH">
   <data key="d0">-0.0</data>
@@ -508,7 +516,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="POLVIEWS" target="WRKWAYUP">
-  <data key="d0">0.010294894748189808</data>
+  <data key="d0">0.003961684212062787</data>
 </edge>
 <edge source="POLVIEWS" target="HELPFUL">
   <data key="d0">0.0</data>
@@ -532,7 +540,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="POLVIEWS" target="CONFED">
-  <data key="d0">0.0034064107537285565</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="POLVIEWS" target="CONLABOR">
   <data key="d0">-0.0</data>
@@ -574,7 +582,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="POLVIEWS" target="ABPOOR">
-  <data key="d0">-0.03854737592801668</data>
+  <data key="d0">-0.033316828878328375</data>
 </edge>
 <edge source="POLVIEWS" target="ABRAPE">
   <data key="d0">-0.0</data>
@@ -586,22 +594,22 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="POLVIEWS" target="SEXEDUC">
-  <data key="d0">-0.011507371053815389</data>
+  <data key="d0">-0.011218679695097862</data>
 </edge>
 <edge source="POLVIEWS" target="DIVLAW">
   <data key="d0">-0.0</data>
 </edge>
 <edge source="POLVIEWS" target="PREMARSX">
-  <data key="d0">0.03322619199420344</data>
+  <data key="d0">0.032695270671124065</data>
 </edge>
 <edge source="POLVIEWS" target="TEENSEX">
-  <data key="d0">0.012323517028669548</data>
+  <data key="d0">0.012173104372789267</data>
 </edge>
 <edge source="POLVIEWS" target="XMARSEX">
   <data key="d0">0.0</data>
 </edge>
 <edge source="POLVIEWS" target="HOMOSEX">
-  <data key="d0">0.0685671556145957</data>
+  <data key="d0">0.06425662454548248</data>
 </edge>
 <edge source="POLVIEWS" target="PORNLAW">
   <data key="d0">0.0</data>
@@ -646,7 +654,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="POLVIEWS" target="FEFAM">
-  <data key="d0">0.008226869312235565</data>
+  <data key="d0">0.00811325493501939</data>
 </edge>
 <edge source="POLVIEWS" target="RACDIF1">
   <data key="d0">-0.0</data>
@@ -661,7 +669,13 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="POLVIEWS" target="HELPPOOR">
-  <data key="d0">-0.01431237191178536</data>
+  <data key="d0">-0.005831132592389078</data>
+</edge>
+<edge source="POLVIEWS" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="POLVIEWS" target="PRESLAST_DEMREP">
+  <data key="d0">0.15453548316583685</data>
 </edge>
 <edge source="NATSPAC" target="NATENVIR">
   <data key="d0">0.0</data>
@@ -709,7 +723,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATSPAC" target="NATSCI">
-  <data key="d0">0.0004043514041823894</data>
+  <data key="d0">0.00040432067861606835</data>
 </edge>
 <edge source="NATSPAC" target="EQWLTH">
   <data key="d0">0.0</data>
@@ -805,16 +819,16 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATSPAC" target="CONCLERG">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATSPAC" target="CONEDUC">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATSPAC" target="CONFED">
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATSPAC" target="CONLABOR">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATSPAC" target="CONPRESS">
   <data key="d0">-0.0</data>
@@ -829,7 +843,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATSPAC" target="CONSCI">
-  <data key="d0">-0.005184880152601187</data>
+  <data key="d0">-0.013162212409436668</data>
 </edge>
 <edge source="NATSPAC" target="CONLEGIS">
   <data key="d0">-0.0</data>
@@ -838,10 +852,10 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATSPAC" target="GETAHEAD">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATSPAC" target="FEPOL">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATSPAC" target="ABDEFECT">
   <data key="d0">-0.0</data>
@@ -942,8 +956,14 @@
 <edge source="NATSPAC" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="NATSPAC" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="NATSPAC" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="NATENVIR" target="NATHEAL">
-  <data key="d0">0.05495654716455591</data>
+  <data key="d0">0.04519358423062948</data>
 </edge>
 <edge source="NATENVIR" target="NATCITY">
   <data key="d0">0.0</data>
@@ -955,7 +975,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATENVIR" target="NATEDUC">
-  <data key="d0">0.011844481714553493</data>
+  <data key="d0">0.04809610518800393</data>
 </edge>
 <edge source="NATENVIR" target="NATRACE">
   <data key="d0">0.0</data>
@@ -979,7 +999,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATENVIR" target="NATPARK">
-  <data key="d0">0.004411771324198892</data>
+  <data key="d0">0.017072812199755646</data>
 </edge>
 <edge source="NATENVIR" target="NATCHLD">
   <data key="d0">0.0</data>
@@ -988,7 +1008,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATENVIR" target="EQWLTH">
-  <data key="d0">-0.01404864657116951</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATENVIR" target="SPKATH">
   <data key="d0">-0.0</data>
@@ -1000,7 +1020,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATENVIR" target="SPKRAC">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATENVIR" target="COLRAC">
   <data key="d0">-0.0</data>
@@ -1102,7 +1122,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATENVIR" target="CONJUDGE">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATENVIR" target="CONSCI">
   <data key="d0">-0.0</data>
@@ -1186,10 +1206,10 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATENVIR" target="POLATTAK">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATENVIR" target="NEWS">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATENVIR" target="TVHOURS">
   <data key="d0">0.0</data>
@@ -1218,6 +1238,12 @@
 <edge source="NATENVIR" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="NATENVIR" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="NATENVIR" target="PRESLAST_DEMREP">
+  <data key="d0">0.05147581869109926</data>
+</edge>
 <edge source="NATHEAL" target="NATCITY">
   <data key="d0">0.0</data>
 </edge>
@@ -1228,13 +1254,13 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATHEAL" target="NATEDUC">
-  <data key="d0">0.0760764204213653</data>
+  <data key="d0">0.08520882860696377</data>
 </edge>
 <edge source="NATHEAL" target="NATRACE">
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATHEAL" target="NATARMS">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATHEAL" target="NATAID">
   <data key="d0">-0.0</data>
@@ -1246,7 +1272,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATHEAL" target="NATSOC">
-  <data key="d0">0.09977914211196759</data>
+  <data key="d0">0.08080891173139944</data>
 </edge>
 <edge source="NATHEAL" target="NATMASS">
   <data key="d0">0.0</data>
@@ -1255,7 +1281,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATHEAL" target="NATCHLD">
-  <data key="d0">0.02840637475177359</data>
+  <data key="d0">0.04164521432103146</data>
 </edge>
 <edge source="NATHEAL" target="NATSCI">
   <data key="d0">0.0</data>
@@ -1264,13 +1290,13 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATHEAL" target="SPKATH">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATHEAL" target="COLATH">
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATHEAL" target="LIBATH">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATHEAL" target="SPKRAC">
   <data key="d0">0.0</data>
@@ -1318,7 +1344,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATHEAL" target="GRASS">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATHEAL" target="ATTEND">
   <data key="d0">0.0</data>
@@ -1366,7 +1392,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATHEAL" target="CONPRESS">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATHEAL" target="CONMEDIC">
   <data key="d0">0.0</data>
@@ -1393,7 +1419,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATHEAL" target="ABDEFECT">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATHEAL" target="ABNOMORE">
   <data key="d0">-0.0</data>
@@ -1423,7 +1449,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATHEAL" target="TEENSEX">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATHEAL" target="XMARSEX">
   <data key="d0">0.0</data>
@@ -1435,13 +1461,13 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATHEAL" target="SPANKING">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATHEAL" target="LETDIE1">
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATHEAL" target="SUICIDE1">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATHEAL" target="SUICIDE2">
   <data key="d0">-0.0</data>
@@ -1480,7 +1506,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATHEAL" target="RACDIF2">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATHEAL" target="RACDIF3">
   <data key="d0">-0.0</data>
@@ -1491,17 +1517,23 @@
 <edge source="NATHEAL" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="NATHEAL" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="NATHEAL" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="NATCITY" target="NATCRIME">
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATCITY" target="NATDRUG">
-  <data key="d0">0.034358410889677914</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATCITY" target="NATEDUC">
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATCITY" target="NATRACE">
-  <data key="d0">0.056091037156689894</data>
+  <data key="d0">0.06730112187489824</data>
 </edge>
 <edge source="NATCITY" target="NATARMS">
   <data key="d0">-0.0</data>
@@ -1510,7 +1542,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATCITY" target="NATFARE">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCITY" target="NATROAD">
   <data key="d0">0.0</data>
@@ -1534,7 +1566,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCITY" target="SPKATH">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATCITY" target="COLATH">
   <data key="d0">-0.0</data>
@@ -1546,13 +1578,13 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATCITY" target="COLRAC">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCITY" target="LIBRAC">
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCITY" target="SPKCOM">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATCITY" target="COLCOM">
   <data key="d0">0.0</data>
@@ -1609,10 +1641,10 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATCITY" target="HELPFUL">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCITY" target="FAIR">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCITY" target="TRUST">
   <data key="d0">0.0</data>
@@ -1624,7 +1656,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATCITY" target="CONCLERG">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCITY" target="CONEDUC">
   <data key="d0">-0.0</data>
@@ -1648,10 +1680,10 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATCITY" target="CONSCI">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCITY" target="CONLEGIS">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCITY" target="CONARMY">
   <data key="d0">0.0</data>
@@ -1663,7 +1695,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATCITY" target="ABDEFECT">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCITY" target="ABNOMORE">
   <data key="d0">-0.0</data>
@@ -1723,7 +1755,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATCITY" target="POLMURDR">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATCITY" target="POLESCAP">
   <data key="d0">0.0</data>
@@ -1732,7 +1764,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATCITY" target="NEWS">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCITY" target="TVHOURS">
   <data key="d0">0.0</data>
@@ -1761,8 +1793,14 @@
 <edge source="NATCITY" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="NATCITY" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="NATCITY" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="NATCRIME" target="NATDRUG">
-  <data key="d0">0.18256356153777217</data>
+  <data key="d0">0.04972358824838031</data>
 </edge>
 <edge source="NATCRIME" target="NATEDUC">
   <data key="d0">0.0</data>
@@ -1786,7 +1824,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATCRIME" target="NATMASS">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATCRIME" target="NATPARK">
   <data key="d0">0.0</data>
@@ -1864,19 +1902,19 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCRIME" target="POSTLIFE">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCRIME" target="PRAYER">
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATCRIME" target="AFFRMACT">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATCRIME" target="WRKWAYUP">
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCRIME" target="HELPFUL">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCRIME" target="FAIR">
   <data key="d0">0.0</data>
@@ -1897,10 +1935,10 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCRIME" target="CONFED">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCRIME" target="CONLABOR">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATCRIME" target="CONPRESS">
   <data key="d0">-0.0</data>
@@ -1912,13 +1950,13 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCRIME" target="CONJUDGE">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCRIME" target="CONSCI">
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATCRIME" target="CONLEGIS">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCRIME" target="CONARMY">
   <data key="d0">-0.0</data>
@@ -1951,7 +1989,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATCRIME" target="SEXEDUC">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCRIME" target="DIVLAW">
   <data key="d0">-0.0</data>
@@ -1987,7 +2025,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATCRIME" target="POLABUSE">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCRIME" target="POLMURDR">
   <data key="d0">-0.0</data>
@@ -1999,7 +2037,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATCRIME" target="NEWS">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCRIME" target="TVHOURS">
   <data key="d0">-0.0</data>
@@ -2020,7 +2058,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCRIME" target="RACDIF3">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATCRIME" target="RACDIF4">
   <data key="d0">-0.0</data>
@@ -2028,14 +2066,20 @@
 <edge source="NATCRIME" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="NATCRIME" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="NATCRIME" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="NATDRUG" target="NATEDUC">
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATDRUG" target="NATRACE">
-  <data key="d0">0.03493541621312435</data>
+  <data key="d0">0.0517151944176889</data>
 </edge>
 <edge source="NATDRUG" target="NATARMS">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATDRUG" target="NATAID">
   <data key="d0">0.0</data>
@@ -2047,7 +2091,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATDRUG" target="NATSOC">
-  <data key="d0">0.0017899116529179516</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATDRUG" target="NATMASS">
   <data key="d0">0.0</data>
@@ -2056,7 +2100,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATDRUG" target="NATCHLD">
-  <data key="d0">0.0023622275402159234</data>
+  <data key="d0">0.02681260252432831</data>
 </edge>
 <edge source="NATDRUG" target="NATSCI">
   <data key="d0">0.0</data>
@@ -2179,13 +2223,13 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATDRUG" target="CONSCI">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATDRUG" target="CONLEGIS">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATDRUG" target="CONARMY">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATDRUG" target="GETAHEAD">
   <data key="d0">0.0</data>
@@ -2194,7 +2238,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATDRUG" target="ABDEFECT">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATDRUG" target="ABNOMORE">
   <data key="d0">-0.0</data>
@@ -2203,13 +2247,13 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATDRUG" target="ABPOOR">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATDRUG" target="ABRAPE">
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATDRUG" target="ABSINGLE">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATDRUG" target="ABANY">
   <data key="d0">-0.0</data>
@@ -2230,13 +2274,13 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATDRUG" target="HOMOSEX">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATDRUG" target="PORNLAW">
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATDRUG" target="SPANKING">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATDRUG" target="LETDIE1">
   <data key="d0">0.0</data>
@@ -2251,13 +2295,13 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATDRUG" target="POLABUSE">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATDRUG" target="POLMURDR">
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATDRUG" target="POLESCAP">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATDRUG" target="POLATTAK">
   <data key="d0">0.0</data>
@@ -2269,7 +2313,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATDRUG" target="FECHLD">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATDRUG" target="FEPRESCH">
   <data key="d0">-0.0</data>
@@ -2287,13 +2331,19 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATDRUG" target="RACDIF4">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATDRUG" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
-<edge source="NATEDUC" target="NATRACE">
+<edge source="NATDRUG" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="NATDRUG" target="PRESLAST_DEMREP">
   <data key="d0">0.0</data>
+</edge>
+<edge source="NATEDUC" target="NATRACE">
+  <data key="d0">0.004176951641454272</data>
 </edge>
 <edge source="NATEDUC" target="NATARMS">
   <data key="d0">-0.0</data>
@@ -2308,7 +2358,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATEDUC" target="NATSOC">
-  <data key="d0">0.03302633090131907</data>
+  <data key="d0">0.012277221638130114</data>
 </edge>
 <edge source="NATEDUC" target="NATMASS">
   <data key="d0">0.0</data>
@@ -2317,7 +2367,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATEDUC" target="NATCHLD">
-  <data key="d0">0.034316573726611455</data>
+  <data key="d0">0.06413433344624359</data>
 </edge>
 <edge source="NATEDUC" target="NATSCI">
   <data key="d0">0.0</data>
@@ -2407,7 +2457,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATEDUC" target="TRUST">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATEDUC" target="CONFINAN">
   <data key="d0">0.0</data>
@@ -2428,13 +2478,13 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATEDUC" target="CONPRESS">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATEDUC" target="CONMEDIC">
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATEDUC" target="CONTV">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATEDUC" target="CONJUDGE">
   <data key="d0">-0.0</data>
@@ -2476,7 +2526,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATEDUC" target="SEXEDUC">
-  <data key="d0">-0.0</data>
+  <data key="d0">-0.03195221219435836</data>
 </edge>
 <edge source="NATEDUC" target="DIVLAW">
   <data key="d0">-0.0</data>
@@ -2485,7 +2535,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATEDUC" target="TEENSEX">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATEDUC" target="XMARSEX">
   <data key="d0">0.0</data>
@@ -2497,7 +2547,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATEDUC" target="SPANKING">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATEDUC" target="LETDIE1">
   <data key="d0">-0.0</data>
@@ -2553,6 +2603,12 @@
 <edge source="NATEDUC" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="NATEDUC" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="NATEDUC" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="NATRACE" target="NATARMS">
   <data key="d0">-0.0</data>
 </edge>
@@ -2560,10 +2616,10 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATRACE" target="NATFARE">
-  <data key="d0">0.07749752083399943</data>
+  <data key="d0">0.031075554708907677</data>
 </edge>
 <edge source="NATRACE" target="NATROAD">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATRACE" target="NATSOC">
   <data key="d0">0.0</data>
@@ -2575,13 +2631,13 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATRACE" target="NATCHLD">
-  <data key="d0">0.034458022348062736</data>
+  <data key="d0">0.041327719498203</data>
 </edge>
 <edge source="NATRACE" target="NATSCI">
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATRACE" target="EQWLTH">
-  <data key="d0">-0.05479502335261184</data>
+  <data key="d0">-0.04438564666062757</data>
 </edge>
 <edge source="NATRACE" target="SPKATH">
   <data key="d0">-0.0</data>
@@ -2614,7 +2670,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATRACE" target="COLMIL">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATRACE" target="LIBMIL">
   <data key="d0">-0.0</data>
@@ -2638,7 +2694,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATRACE" target="GRASS">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATRACE" target="ATTEND">
   <data key="d0">-0.0</data>
@@ -2653,10 +2709,10 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATRACE" target="AFFRMACT">
-  <data key="d0">-0.11358690603719229</data>
+  <data key="d0">-0.09819824788134496</data>
 </edge>
 <edge source="NATRACE" target="WRKWAYUP">
-  <data key="d0">0.0954057609422448</data>
+  <data key="d0">0.1067130773783659</data>
 </edge>
 <edge source="NATRACE" target="HELPFUL">
   <data key="d0">0.0</data>
@@ -2674,7 +2730,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATRACE" target="CONCLERG">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATRACE" target="CONEDUC">
   <data key="d0">-0.0</data>
@@ -2695,7 +2751,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATRACE" target="CONJUDGE">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATRACE" target="CONSCI">
   <data key="d0">0.0</data>
@@ -2773,7 +2829,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATRACE" target="POLMURDR">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATRACE" target="POLESCAP">
   <data key="d0">0.0</data>
@@ -2782,7 +2838,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATRACE" target="NEWS">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATRACE" target="TVHOURS">
   <data key="d0">-0.0</data>
@@ -2797,19 +2853,25 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATRACE" target="RACDIF1">
-  <data key="d0">-0.14263537661512368</data>
+  <data key="d0">-0.14802806293423515</data>
 </edge>
 <edge source="NATRACE" target="RACDIF2">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATRACE" target="RACDIF3">
-  <data key="d0">-0.07321702006614147</data>
+  <data key="d0">-0.03909528879523519</data>
 </edge>
 <edge source="NATRACE" target="RACDIF4">
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATRACE" target="HELPPOOR">
+  <data key="d0">-0.010368786418228184</data>
+</edge>
+<edge source="NATRACE" target="PRESLAST_NONCONFORM">
   <data key="d0">-0.0</data>
+</edge>
+<edge source="NATRACE" target="PRESLAST_DEMREP">
+  <data key="d0">0.05708323100234603</data>
 </edge>
 <edge source="NATARMS" target="NATAID">
   <data key="d0">-0.0</data>
@@ -2905,13 +2967,13 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATARMS" target="PRAYER">
-  <data key="d0">0.0006901616872965603</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATARMS" target="AFFRMACT">
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATARMS" target="WRKWAYUP">
-  <data key="d0">-0.0</data>
+  <data key="d0">-0.010228892521503516</data>
 </edge>
 <edge source="NATARMS" target="HELPFUL">
   <data key="d0">-0.0</data>
@@ -2926,7 +2988,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATARMS" target="CONBUS">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATARMS" target="CONCLERG">
   <data key="d0">-0.0</data>
@@ -2935,7 +2997,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATARMS" target="CONFED">
-  <data key="d0">-0.0</data>
+  <data key="d0">-0.016218773184490536</data>
 </edge>
 <edge source="NATARMS" target="CONLABOR">
   <data key="d0">0.0</data>
@@ -2947,19 +3009,19 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATARMS" target="CONTV">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATARMS" target="CONJUDGE">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATARMS" target="CONSCI">
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATARMS" target="CONLEGIS">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATARMS" target="CONARMY">
-  <data key="d0">-0.028738314866425346</data>
+  <data key="d0">-0.04933921852344477</data>
 </edge>
 <edge source="NATARMS" target="GETAHEAD">
   <data key="d0">0.0</data>
@@ -3046,7 +3108,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATARMS" target="FEPRESCH">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATARMS" target="FEFAM">
   <data key="d0">-0.0</data>
@@ -3065,6 +3127,12 @@
 </edge>
 <edge source="NATARMS" target="HELPPOOR">
   <data key="d0">0.0</data>
+</edge>
+<edge source="NATARMS" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="NATARMS" target="PRESLAST_DEMREP">
+  <data key="d0">-0.05710637284482214</data>
 </edge>
 <edge source="NATAID" target="NATFARE">
   <data key="d0">0.0</data>
@@ -3109,16 +3177,16 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATAID" target="SPKCOM">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATAID" target="COLCOM">
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATAID" target="LIBCOM">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATAID" target="SPKMIL">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATAID" target="COLMIL">
   <data key="d0">-0.0</data>
@@ -3160,7 +3228,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATAID" target="AFFRMACT">
-  <data key="d0">-0.05236737347441434</data>
+  <data key="d0">-0.0005818286655047837</data>
 </edge>
 <edge source="NATAID" target="WRKWAYUP">
   <data key="d0">0.0</data>
@@ -3211,10 +3279,10 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATAID" target="CONARMY">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATAID" target="GETAHEAD">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATAID" target="FEPOL">
   <data key="d0">0.0</data>
@@ -3223,22 +3291,22 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATAID" target="ABNOMORE">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATAID" target="ABHLTH">
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATAID" target="ABPOOR">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATAID" target="ABRAPE">
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATAID" target="ABSINGLE">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATAID" target="ABANY">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATAID" target="SEXEDUC">
   <data key="d0">0.0</data>
@@ -3271,7 +3339,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATAID" target="SUICIDE2">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATAID" target="POLHITOK">
   <data key="d0">0.0</data>
@@ -3318,6 +3386,12 @@
 <edge source="NATAID" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="NATAID" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="NATAID" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="NATFARE" target="NATROAD">
   <data key="d0">0.0</data>
 </edge>
@@ -3331,13 +3405,13 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATFARE" target="NATCHLD">
-  <data key="d0">0.0073824096749792656</data>
+  <data key="d0">0.044086285116019384</data>
 </edge>
 <edge source="NATFARE" target="NATSCI">
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATFARE" target="EQWLTH">
-  <data key="d0">-0.005490121077231409</data>
+  <data key="d0">-0.03767798497555993</data>
 </edge>
 <edge source="NATFARE" target="SPKATH">
   <data key="d0">0.0</data>
@@ -3364,7 +3438,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATFARE" target="LIBCOM">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATFARE" target="SPKMIL">
   <data key="d0">0.0</data>
@@ -3406,13 +3480,13 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATFARE" target="PRAYER">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATFARE" target="AFFRMACT">
-  <data key="d0">-0.02664186775492487</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATFARE" target="WRKWAYUP">
-  <data key="d0">0.032171925347490464</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATFARE" target="HELPFUL">
   <data key="d0">0.0</data>
@@ -3421,7 +3495,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATFARE" target="TRUST">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATFARE" target="CONFINAN">
   <data key="d0">0.0</data>
@@ -3430,7 +3504,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATFARE" target="CONCLERG">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATFARE" target="CONEDUC">
   <data key="d0">-0.0</data>
@@ -3445,19 +3519,19 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATFARE" target="CONMEDIC">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATFARE" target="CONTV">
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATFARE" target="CONJUDGE">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATFARE" target="CONSCI">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATFARE" target="CONLEGIS">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATFARE" target="CONARMY">
   <data key="d0">0.0</data>
@@ -3481,7 +3555,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATFARE" target="ABRAPE">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="NATFARE" target="ABSINGLE">
   <data key="d0">-0.0</data>
@@ -3496,7 +3570,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="NATFARE" target="PREMARSX">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATFARE" target="TEENSEX">
   <data key="d0">0.0</data>
@@ -3520,7 +3594,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATFARE" target="SUICIDE2">
-  <data key="d0">-0.0</data>
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATFARE" target="POLHITOK">
   <data key="d0">0.0</data>
@@ -3553,7 +3627,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATFARE" target="RACDIF1">
-  <data key="d0">-0.05734152354571137</data>
+  <data key="d0">-0.0025423498474070527</data>
 </edge>
 <edge source="NATFARE" target="RACDIF2">
   <data key="d0">0.0</data>
@@ -3565,7 +3639,13 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATFARE" target="HELPPOOR">
-  <data key="d0">-0.06487285555319149</data>
+  <data key="d0">-0.048324729973488766</data>
+</edge>
+<edge source="NATFARE" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="NATFARE" target="PRESLAST_DEMREP">
+  <data key="d0">0.046552641201350074</data>
 </edge>
 <edge source="NATROAD" target="NATSOC">
   <data key="d0">0.0</data>
@@ -3813,6 +3893,12 @@
 <edge source="NATROAD" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="NATROAD" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="NATROAD" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="NATSOC" target="NATMASS">
   <data key="d0">-0.0</data>
 </edge>
@@ -3820,13 +3906,13 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATSOC" target="NATCHLD">
-  <data key="d0">0.019286096874005076</data>
+  <data key="d0">0.018876557190994632</data>
 </edge>
 <edge source="NATSOC" target="NATSCI">
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATSOC" target="EQWLTH">
-  <data key="d0">-0.007923961946347046</data>
+  <data key="d0">-0.008028687410197988</data>
 </edge>
 <edge source="NATSOC" target="SPKATH">
   <data key="d0">0.0</data>
@@ -4054,7 +4140,13 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATSOC" target="HELPPOOR">
-  <data key="d0">-0.00405706193048189</data>
+  <data key="d0">-0.003970178213639621</data>
+</edge>
+<edge source="NATSOC" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="NATSOC" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
 </edge>
 <edge source="NATMASS" target="NATPARK">
   <data key="d0">0.0</data>
@@ -4296,6 +4388,12 @@
 <edge source="NATMASS" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="NATMASS" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="NATMASS" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="NATPARK" target="NATCHLD">
   <data key="d0">0.0</data>
 </edge>
@@ -4533,11 +4631,17 @@
 <edge source="NATPARK" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="NATPARK" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="NATPARK" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="NATCHLD" target="NATSCI">
   <data key="d0">0.0</data>
 </edge>
 <edge source="NATCHLD" target="EQWLTH">
-  <data key="d0">-0.01523680713124903</data>
+  <data key="d0">-0.012105896199995277</data>
 </edge>
 <edge source="NATCHLD" target="SPKATH">
   <data key="d0">0.0</data>
@@ -4766,6 +4870,12 @@
 </edge>
 <edge source="NATCHLD" target="HELPPOOR">
   <data key="d0">-0.0</data>
+</edge>
+<edge source="NATCHLD" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="NATCHLD" target="PRESLAST_DEMREP">
+  <data key="d0">0.0036347175854504173</data>
 </edge>
 <edge source="NATSCI" target="EQWLTH">
   <data key="d0">-0.0</data>
@@ -4998,6 +5108,12 @@
 <edge source="NATSCI" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="NATSCI" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="NATSCI" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="EQWLTH" target="SPKATH">
   <data key="d0">-0.0</data>
 </edge>
@@ -5095,7 +5211,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="EQWLTH" target="CONFED">
-  <data key="d0">-0.014970025378514636</data>
+  <data key="d0">-0.011839725546712516</data>
 </edge>
 <edge source="EQWLTH" target="CONLABOR">
   <data key="d0">0.0</data>
@@ -5224,16 +5340,22 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="EQWLTH" target="HELPPOOR">
-  <data key="d0">0.2234694042674451</data>
+  <data key="d0">0.22071007156668038</data>
+</edge>
+<edge source="EQWLTH" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="EQWLTH" target="PRESLAST_DEMREP">
+  <data key="d0">-0.011755719799570456</data>
 </edge>
 <edge source="SPKATH" target="COLATH">
-  <data key="d0">0.14373571923783204</data>
+  <data key="d0">0.14373577440884439</data>
 </edge>
 <edge source="SPKATH" target="LIBATH">
-  <data key="d0">-0.13479782526044232</data>
+  <data key="d0">-0.1347978756974147</data>
 </edge>
 <edge source="SPKATH" target="SPKRAC">
-  <data key="d0">0.13599793682746272</data>
+  <data key="d0">0.1359979390828647</data>
 </edge>
 <edge source="SPKATH" target="COLRAC">
   <data key="d0">0.0</data>
@@ -5242,7 +5364,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="SPKATH" target="SPKCOM">
-  <data key="d0">0.1873894478498792</data>
+  <data key="d0">0.18738941815696306</data>
 </edge>
 <edge source="SPKATH" target="COLCOM">
   <data key="d0">-0.0</data>
@@ -5251,7 +5373,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="SPKATH" target="SPKMIL">
-  <data key="d0">0.06898034187263924</data>
+  <data key="d0">0.06898024689187687</data>
 </edge>
 <edge source="SPKATH" target="COLMIL">
   <data key="d0">0.0</data>
@@ -5260,7 +5382,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="SPKATH" target="SPKHOMO">
-  <data key="d0">0.15711700981198484</data>
+  <data key="d0">0.15711688256590786</data>
 </edge>
 <edge source="SPKATH" target="COLHOMO">
   <data key="d0">0.0</data>
@@ -5380,7 +5502,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="SPKATH" target="PREMARSX">
-  <data key="d0">-0.028324693211042213</data>
+  <data key="d0">-0.028323771603419166</data>
 </edge>
 <edge source="SPKATH" target="TEENSEX">
   <data key="d0">-0.0</data>
@@ -5451,23 +5573,29 @@
 <edge source="SPKATH" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="SPKATH" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="SPKATH" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="COLATH" target="LIBATH">
-  <data key="d0">-0.05710344267737718</data>
+  <data key="d0">-0.057103480933559145</data>
 </edge>
 <edge source="COLATH" target="SPKRAC">
   <data key="d0">0.0</data>
 </edge>
 <edge source="COLATH" target="COLRAC">
-  <data key="d0">0.2432831243987953</data>
+  <data key="d0">0.2432831170139365</data>
 </edge>
 <edge source="COLATH" target="LIBRAC">
   <data key="d0">-0.0</data>
 </edge>
 <edge source="COLATH" target="SPKCOM">
-  <data key="d0">0.0035674330759912975</data>
+  <data key="d0">0.0035674449805498977</data>
 </edge>
 <edge source="COLATH" target="COLCOM">
-  <data key="d0">-0.12959176314999996</data>
+  <data key="d0">-0.12959177549321657</data>
 </edge>
 <edge source="COLATH" target="LIBCOM">
   <data key="d0">-0.0</data>
@@ -5476,7 +5604,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="COLATH" target="COLMIL">
-  <data key="d0">0.16167287961473525</data>
+  <data key="d0">0.16167298457338583</data>
 </edge>
 <edge source="COLATH" target="LIBMIL">
   <data key="d0">-0.0</data>
@@ -5485,7 +5613,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="COLATH" target="COLHOMO">
-  <data key="d0">0.09534679293977108</data>
+  <data key="d0">0.09534686816751103</data>
 </edge>
 <edge source="COLATH" target="LIBHOMO">
   <data key="d0">-0.0</data>
@@ -5500,7 +5628,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="COLATH" target="GRASS">
-  <data key="d0">0.017943155392694397</data>
+  <data key="d0">0.017942980598403383</data>
 </edge>
 <edge source="COLATH" target="ATTEND">
   <data key="d0">-0.0</data>
@@ -5512,7 +5640,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="COLATH" target="PRAYER">
-  <data key="d0">0.020567800162869482</data>
+  <data key="d0">0.02056772653529317</data>
 </edge>
 <edge source="COLATH" target="AFFRMACT">
   <data key="d0">-0.0</data>
@@ -5611,10 +5739,10 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="COLATH" target="HOMOSEX">
-  <data key="d0">-0.008038083245578689</data>
+  <data key="d0">-0.008036000627619505</data>
 </edge>
 <edge source="COLATH" target="PORNLAW">
-  <data key="d0">-0.012356065430447314</data>
+  <data key="d0">-0.01235592488042866</data>
 </edge>
 <edge source="COLATH" target="SPANKING">
   <data key="d0">-0.0</data>
@@ -5673,6 +5801,12 @@
 <edge source="COLATH" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="COLATH" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="COLATH" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="LIBATH" target="SPKRAC">
   <data key="d0">-0.0</data>
 </edge>
@@ -5680,7 +5814,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="LIBATH" target="LIBRAC">
-  <data key="d0">0.2098359272196926</data>
+  <data key="d0">0.20983591480619362</data>
 </edge>
 <edge source="LIBATH" target="SPKCOM">
   <data key="d0">-0.0</data>
@@ -5689,7 +5823,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="LIBATH" target="LIBCOM">
-  <data key="d0">0.11677389099875271</data>
+  <data key="d0">0.11677388584512685</data>
 </edge>
 <edge source="LIBATH" target="SPKMIL">
   <data key="d0">-0.0</data>
@@ -5698,7 +5832,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="LIBATH" target="LIBMIL">
-  <data key="d0">0.07216009344396017</data>
+  <data key="d0">0.0721600998432732</data>
 </edge>
 <edge source="LIBATH" target="SPKHOMO">
   <data key="d0">-0.0</data>
@@ -5707,7 +5841,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="LIBATH" target="LIBHOMO">
-  <data key="d0">0.12692639332988118</data>
+  <data key="d0">0.12692643237237367</data>
 </edge>
 <edge source="LIBATH" target="CAPPUN">
   <data key="d0">-0.0</data>
@@ -5731,7 +5865,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="LIBATH" target="PRAYER">
-  <data key="d0">-0.0015951418625014323</data>
+  <data key="d0">-0.0015950934399284827</data>
 </edge>
 <edge source="LIBATH" target="AFFRMACT">
   <data key="d0">0.0</data>
@@ -5761,7 +5895,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="LIBATH" target="CONFED">
-  <data key="d0">0.0</data>
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="LIBATH" target="CONLABOR">
   <data key="d0">-0.0</data>
@@ -5830,7 +5964,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="LIBATH" target="HOMOSEX">
-  <data key="d0">0.005737549876135233</data>
+  <data key="d0">0.005735970867448881</data>
 </edge>
 <edge source="LIBATH" target="PORNLAW">
   <data key="d0">0.0</data>
@@ -5842,7 +5976,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="LIBATH" target="SUICIDE1">
-  <data key="d0">-0.043758200053722385</data>
+  <data key="d0">-0.04375789832032348</data>
 </edge>
 <edge source="LIBATH" target="SUICIDE2">
   <data key="d0">-0.0</data>
@@ -5892,14 +6026,20 @@
 <edge source="LIBATH" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="LIBATH" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="LIBATH" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="SPKRAC" target="COLRAC">
-  <data key="d0">0.25347056444446864</data>
+  <data key="d0">0.25347054721837936</data>
 </edge>
 <edge source="SPKRAC" target="LIBRAC">
-  <data key="d0">-0.11162903102504934</data>
+  <data key="d0">-0.11162901479471818</data>
 </edge>
 <edge source="SPKRAC" target="SPKCOM">
-  <data key="d0">0.12029224848670719</data>
+  <data key="d0">0.12029223176856399</data>
 </edge>
 <edge source="SPKRAC" target="COLCOM">
   <data key="d0">-0.0</data>
@@ -5908,7 +6048,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="SPKRAC" target="SPKMIL">
-  <data key="d0">0.1186517287002614</data>
+  <data key="d0">0.11865167440126564</data>
 </edge>
 <edge source="SPKRAC" target="COLMIL">
   <data key="d0">0.0</data>
@@ -5917,7 +6057,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="SPKRAC" target="SPKHOMO">
-  <data key="d0">0.005852271523635925</data>
+  <data key="d0">0.005852162884798155</data>
 </edge>
 <edge source="SPKRAC" target="COLHOMO">
   <data key="d0">0.0</data>
@@ -6049,7 +6189,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="SPKRAC" target="PORNLAW">
-  <data key="d0">-0.020968561963119733</data>
+  <data key="d0">-0.02096828273690969</data>
 </edge>
 <edge source="SPKRAC" target="SPANKING">
   <data key="d0">-0.0</data>
@@ -6108,8 +6248,14 @@
 <edge source="SPKRAC" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="SPKRAC" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="SPKRAC" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="COLRAC" target="LIBRAC">
-  <data key="d0">-0.051206003039804916</data>
+  <data key="d0">-0.051206008077903764</data>
 </edge>
 <edge source="COLRAC" target="SPKCOM">
   <data key="d0">0.0</data>
@@ -6124,7 +6270,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="COLRAC" target="COLMIL">
-  <data key="d0">0.1857314337992121</data>
+  <data key="d0">0.18573146957740336</data>
 </edge>
 <edge source="COLRAC" target="LIBMIL">
   <data key="d0">-0.0</data>
@@ -6321,6 +6467,12 @@
 <edge source="COLRAC" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="COLRAC" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="COLRAC" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="LIBRAC" target="SPKCOM">
   <data key="d0">-0.0</data>
 </edge>
@@ -6328,7 +6480,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="LIBRAC" target="LIBCOM">
-  <data key="d0">0.17075115562069335</data>
+  <data key="d0">0.17075113683375112</data>
 </edge>
 <edge source="LIBRAC" target="SPKMIL">
   <data key="d0">-0.0</data>
@@ -6337,7 +6489,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="LIBRAC" target="LIBMIL">
-  <data key="d0">0.1518234352775108</data>
+  <data key="d0">0.1518234301704312</data>
 </edge>
 <edge source="LIBRAC" target="SPKHOMO">
   <data key="d0">-0.0</data>
@@ -6346,7 +6498,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="LIBRAC" target="LIBHOMO">
-  <data key="d0">0.02841276011095988</data>
+  <data key="d0">0.028412663478945988</data>
 </edge>
 <edge source="LIBRAC" target="CAPPUN">
   <data key="d0">-0.0</data>
@@ -6472,7 +6624,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="LIBRAC" target="PORNLAW">
-  <data key="d0">0.029858153993096898</data>
+  <data key="d0">0.029857978406692597</data>
 </edge>
 <edge source="LIBRAC" target="SPANKING">
   <data key="d0">0.0</data>
@@ -6531,14 +6683,20 @@
 <edge source="LIBRAC" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="LIBRAC" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="LIBRAC" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="SPKCOM" target="COLCOM">
-  <data key="d0">-0.17962550633262786</data>
+  <data key="d0">-0.17962549998202115</data>
 </edge>
 <edge source="SPKCOM" target="LIBCOM">
-  <data key="d0">-0.21526139330359667</data>
+  <data key="d0">-0.21526139896434723</data>
 </edge>
 <edge source="SPKCOM" target="SPKMIL">
-  <data key="d0">0.16292295441863372</data>
+  <data key="d0">0.1629229283764604</data>
 </edge>
 <edge source="SPKCOM" target="COLMIL">
   <data key="d0">0.0</data>
@@ -6547,7 +6705,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="SPKCOM" target="SPKHOMO">
-  <data key="d0">0.08352443805666845</data>
+  <data key="d0">0.08352438916592048</data>
 </edge>
 <edge source="SPKCOM" target="COLHOMO">
   <data key="d0">0.0</data>
@@ -6577,7 +6735,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="SPKCOM" target="PRAYER">
-  <data key="d0">0.04251357283054436</data>
+  <data key="d0">0.04251334451707276</data>
 </edge>
 <edge source="SPKCOM" target="AFFRMACT">
   <data key="d0">-0.0</data>
@@ -6688,7 +6846,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="SPKCOM" target="SUICIDE1">
-  <data key="d0">0.020528324251078957</data>
+  <data key="d0">0.020527627066452978</data>
 </edge>
 <edge source="SPKCOM" target="SUICIDE2">
   <data key="d0">0.0</data>
@@ -6738,14 +6896,20 @@
 <edge source="SPKCOM" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="SPKCOM" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="SPKCOM" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="COLCOM" target="LIBCOM">
-  <data key="d0">0.190119049498261</data>
+  <data key="d0">0.19011905531384785</data>
 </edge>
 <edge source="COLCOM" target="SPKMIL">
   <data key="d0">-0.0</data>
 </edge>
 <edge source="COLCOM" target="COLMIL">
-  <data key="d0">-0.1423239690343394</data>
+  <data key="d0">-0.14232400068453613</data>
 </edge>
 <edge source="COLCOM" target="LIBMIL">
   <data key="d0">0.0</data>
@@ -6754,7 +6918,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="COLCOM" target="COLHOMO">
-  <data key="d0">-0.016521325849063642</data>
+  <data key="d0">-0.016521316024663973</data>
 </edge>
 <edge source="COLCOM" target="LIBHOMO">
   <data key="d0">0.0</data>
@@ -6781,7 +6945,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="COLCOM" target="PRAYER">
-  <data key="d0">-0.005002823032591002</data>
+  <data key="d0">-0.005002701755051321</data>
 </edge>
 <edge source="COLCOM" target="AFFRMACT">
   <data key="d0">-0.0</data>
@@ -6942,6 +7106,12 @@
 <edge source="COLCOM" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="COLCOM" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="COLCOM" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="LIBCOM" target="SPKMIL">
   <data key="d0">-0.0</data>
 </edge>
@@ -6949,7 +7119,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="LIBCOM" target="LIBMIL">
-  <data key="d0">0.20263735344604483</data>
+  <data key="d0">0.20263734829317467</data>
 </edge>
 <edge source="LIBCOM" target="SPKHOMO">
   <data key="d0">-0.0</data>
@@ -6958,7 +7128,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="LIBCOM" target="LIBHOMO">
-  <data key="d0">0.12276306191130547</data>
+  <data key="d0">0.12276301427533955</data>
 </edge>
 <edge source="LIBCOM" target="CAPPUN">
   <data key="d0">-0.0</data>
@@ -6982,7 +7152,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="LIBCOM" target="PRAYER">
-  <data key="d0">-0.009944789976597567</data>
+  <data key="d0">-0.009944756074670049</data>
 </edge>
 <edge source="LIBCOM" target="AFFRMACT">
   <data key="d0">0.0</data>
@@ -7099,7 +7269,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="LIBCOM" target="POLHITOK">
-  <data key="d0">-0.02540978874046649</data>
+  <data key="d0">-0.02541045872772405</data>
 </edge>
 <edge source="LIBCOM" target="POLABUSE">
   <data key="d0">0.0</data>
@@ -7143,14 +7313,20 @@
 <edge source="LIBCOM" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="LIBCOM" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="LIBCOM" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="SPKMIL" target="COLMIL">
-  <data key="d0">0.28524159094836865</data>
+  <data key="d0">0.2852416443740016</data>
 </edge>
 <edge source="SPKMIL" target="LIBMIL">
-  <data key="d0">-0.13220307683216054</data>
+  <data key="d0">-0.1322031327760709</data>
 </edge>
 <edge source="SPKMIL" target="SPKHOMO">
-  <data key="d0">0.07010081776075583</data>
+  <data key="d0">0.07010090199471386</data>
 </edge>
 <edge source="SPKMIL" target="COLHOMO">
   <data key="d0">0.0</data>
@@ -7279,7 +7455,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="SPKMIL" target="HOMOSEX">
-  <data key="d0">-0.0066735880480467856</data>
+  <data key="d0">-0.006671697037423401</data>
 </edge>
 <edge source="SPKMIL" target="PORNLAW">
   <data key="d0">-0.0</data>
@@ -7341,14 +7517,20 @@
 <edge source="SPKMIL" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="SPKMIL" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="SPKMIL" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="COLMIL" target="LIBMIL">
-  <data key="d0">-0.08320411504993559</data>
+  <data key="d0">-0.08320409182463565</data>
 </edge>
 <edge source="COLMIL" target="SPKHOMO">
   <data key="d0">0.0</data>
 </edge>
 <edge source="COLMIL" target="COLHOMO">
-  <data key="d0">0.04951407137491432</data>
+  <data key="d0">0.04951406796700355</data>
 </edge>
 <edge source="COLMIL" target="LIBHOMO">
   <data key="d0">-0.0</data>
@@ -7536,6 +7718,12 @@
 <edge source="COLMIL" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="COLMIL" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="COLMIL" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="LIBMIL" target="SPKHOMO">
   <data key="d0">-0.0</data>
 </edge>
@@ -7543,7 +7731,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="LIBMIL" target="LIBHOMO">
-  <data key="d0">0.19075787346610673</data>
+  <data key="d0">0.19075787187682575</data>
 </edge>
 <edge source="LIBMIL" target="CAPPUN">
   <data key="d0">0.0</data>
@@ -7567,7 +7755,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="LIBMIL" target="PRAYER">
-  <data key="d0">-0.00287397777416917</data>
+  <data key="d0">-0.0028739317086399953</data>
 </edge>
 <edge source="LIBMIL" target="AFFRMACT">
   <data key="d0">0.0</data>
@@ -7728,11 +7916,17 @@
 <edge source="LIBMIL" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="LIBMIL" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="LIBMIL" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="SPKHOMO" target="COLHOMO">
-  <data key="d0">0.37812099459357756</data>
+  <data key="d0">0.3781210628750348</data>
 </edge>
 <edge source="SPKHOMO" target="LIBHOMO">
-  <data key="d0">-0.09809158543707892</data>
+  <data key="d0">-0.09809158907328698</data>
 </edge>
 <edge source="SPKHOMO" target="CAPPUN">
   <data key="d0">-0.0</data>
@@ -7855,7 +8049,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="SPKHOMO" target="HOMOSEX">
-  <data key="d0">-0.02779950140535233</data>
+  <data key="d0">-0.02779646258478063</data>
 </edge>
 <edge source="SPKHOMO" target="PORNLAW">
   <data key="d0">-0.0</data>
@@ -7867,7 +8061,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="SPKHOMO" target="SUICIDE1">
-  <data key="d0">0.014589004285606832</data>
+  <data key="d0">0.014588804568780936</data>
 </edge>
 <edge source="SPKHOMO" target="SUICIDE2">
   <data key="d0">0.0</data>
@@ -7900,7 +8094,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="SPKHOMO" target="FEFAM">
-  <data key="d0">-0.020078265720694606</data>
+  <data key="d0">-0.020078189545106605</data>
 </edge>
 <edge source="SPKHOMO" target="RACDIF1">
   <data key="d0">-0.0</data>
@@ -7917,8 +8111,14 @@
 <edge source="SPKHOMO" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="SPKHOMO" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="SPKHOMO" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="COLHOMO" target="LIBHOMO">
-  <data key="d0">-0.19640823858900316</data>
+  <data key="d0">-0.19640823499160426</data>
 </edge>
 <edge source="COLHOMO" target="CAPPUN">
   <data key="d0">-0.0</data>
@@ -8041,7 +8241,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="COLHOMO" target="HOMOSEX">
-  <data key="d0">-0.02835009506699552</data>
+  <data key="d0">-0.028347598570582336</data>
 </edge>
 <edge source="COLHOMO" target="PORNLAW">
   <data key="d0">-0.0</data>
@@ -8086,7 +8286,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="COLHOMO" target="FEFAM">
-  <data key="d0">-0.03531673063286356</data>
+  <data key="d0">-0.03531669861691527</data>
 </edge>
 <edge source="COLHOMO" target="RACDIF1">
   <data key="d0">-0.0</data>
@@ -8101,6 +8301,12 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="COLHOMO" target="HELPPOOR">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="COLHOMO" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="COLHOMO" target="PRESLAST_DEMREP">
   <data key="d0">-0.0</data>
 </edge>
 <edge source="LIBHOMO" target="CAPPUN">
@@ -8224,7 +8430,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="LIBHOMO" target="HOMOSEX">
-  <data key="d0">0.09587779220891664</data>
+  <data key="d0">0.09586991357608063</data>
 </edge>
 <edge source="LIBHOMO" target="PORNLAW">
   <data key="d0">0.0</data>
@@ -8269,7 +8475,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="LIBHOMO" target="FEFAM">
-  <data key="d0">0.014559002110663657</data>
+  <data key="d0">0.014558962965075146</data>
 </edge>
 <edge source="LIBHOMO" target="RACDIF1">
   <data key="d0">0.0</data>
@@ -8285,6 +8491,12 @@
 </edge>
 <edge source="LIBHOMO" target="HELPPOOR">
   <data key="d0">-0.0</data>
+</edge>
+<edge source="LIBHOMO" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="LIBHOMO" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
 </edge>
 <edge source="CAPPUN" target="GUNLAW">
   <data key="d0">-0.0</data>
@@ -8311,7 +8523,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="CAPPUN" target="WRKWAYUP">
-  <data key="d0">0.03313808823375597</data>
+  <data key="d0">0.03164750718349252</data>
 </edge>
 <edge source="CAPPUN" target="HELPFUL">
   <data key="d0">-0.0</data>
@@ -8431,7 +8643,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="CAPPUN" target="POLESCAP">
-  <data key="d0">0.02029828592304816</data>
+  <data key="d0">0.02027569193734038</data>
 </edge>
 <edge source="CAPPUN" target="POLATTAK">
   <data key="d0">0.0</data>
@@ -8465,6 +8677,12 @@
 </edge>
 <edge source="CAPPUN" target="HELPPOOR">
   <data key="d0">-0.0</data>
+</edge>
+<edge source="CAPPUN" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="CAPPUN" target="PRESLAST_DEMREP">
+  <data key="d0">0.04235150387023985</data>
 </edge>
 <edge source="GUNLAW" target="COURTS">
   <data key="d0">0.0</data>
@@ -8643,6 +8861,12 @@
 <edge source="GUNLAW" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="GUNLAW" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="GUNLAW" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="COURTS" target="GRASS">
   <data key="d0">-0.0</data>
 </edge>
@@ -8817,8 +9041,14 @@
 <edge source="COURTS" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="COURTS" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="COURTS" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="GRASS" target="ATTEND">
-  <data key="d0">-0.053823823221356</data>
+  <data key="d0">-0.05382281957177332</data>
 </edge>
 <edge source="GRASS" target="RELITEN">
   <data key="d0">-0.0</data>
@@ -8899,13 +9129,13 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="GRASS" target="ABPOOR">
-  <data key="d0">0.010309813310850095</data>
+  <data key="d0">0.01031088244509279</data>
 </edge>
 <edge source="GRASS" target="ABRAPE">
   <data key="d0">0.0</data>
 </edge>
 <edge source="GRASS" target="ABSINGLE">
-  <data key="d0">0.006120129510457845</data>
+  <data key="d0">0.006118543049070658</data>
 </edge>
 <edge source="GRASS" target="ABANY">
   <data key="d0">0.0</data>
@@ -8917,28 +9147,28 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="GRASS" target="PREMARSX">
-  <data key="d0">-0.051710305614085746</data>
+  <data key="d0">-0.05171143686953251</data>
 </edge>
 <edge source="GRASS" target="TEENSEX">
-  <data key="d0">-0.01340533584598337</data>
+  <data key="d0">-0.013404981120823873</data>
 </edge>
 <edge source="GRASS" target="XMARSEX">
   <data key="d0">-0.0</data>
 </edge>
 <edge source="GRASS" target="HOMOSEX">
-  <data key="d0">-0.06478572419761704</data>
+  <data key="d0">-0.06478029016226616</data>
 </edge>
 <edge source="GRASS" target="PORNLAW">
-  <data key="d0">-0.02316576016702877</data>
+  <data key="d0">-0.02316559613882716</data>
 </edge>
 <edge source="GRASS" target="SPANKING">
   <data key="d0">-0.0</data>
 </edge>
 <edge source="GRASS" target="LETDIE1">
-  <data key="d0">0.002875548839076095</data>
+  <data key="d0">0.0028750703339516176</data>
 </edge>
 <edge source="GRASS" target="SUICIDE1">
-  <data key="d0">0.061654070200132666</data>
+  <data key="d0">0.061653989237085385</data>
 </edge>
 <edge source="GRASS" target="SUICIDE2">
   <data key="d0">0.0</data>
@@ -8988,11 +9218,17 @@
 <edge source="GRASS" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="GRASS" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="GRASS" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="ATTEND" target="RELITEN">
-  <data key="d0">0.3216707245206675</data>
+  <data key="d0">0.3216749611078448</data>
 </edge>
 <edge source="ATTEND" target="POSTLIFE">
-  <data key="d0">0.01789128646811683</data>
+  <data key="d0">0.01789136483175981</data>
 </edge>
 <edge source="ATTEND" target="PRAYER">
   <data key="d0">-0.0</data>
@@ -9019,7 +9255,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="ATTEND" target="CONCLERG">
-  <data key="d0">0.08924363492909354</data>
+  <data key="d0">0.08919898059394556</data>
 </edge>
 <edge source="ATTEND" target="CONEDUC">
   <data key="d0">0.0</data>
@@ -9058,25 +9294,25 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="ATTEND" target="ABDEFECT">
-  <data key="d0">-0.04399287243436887</data>
+  <data key="d0">-0.043994780932555176</data>
 </edge>
 <edge source="ATTEND" target="ABNOMORE">
-  <data key="d0">-0.010250863120888121</data>
+  <data key="d0">-0.010245294814807748</data>
 </edge>
 <edge source="ATTEND" target="ABHLTH">
   <data key="d0">-0.0</data>
 </edge>
 <edge source="ATTEND" target="ABPOOR">
-  <data key="d0">-0.0020766248527564414</data>
+  <data key="d0">-0.0020736179015413436</data>
 </edge>
 <edge source="ATTEND" target="ABRAPE">
-  <data key="d0">-0.04615815460062718</data>
+  <data key="d0">-0.04615868758599285</data>
 </edge>
 <edge source="ATTEND" target="ABSINGLE">
   <data key="d0">-0.0</data>
 </edge>
 <edge source="ATTEND" target="ABANY">
-  <data key="d0">-0.03153956670481951</data>
+  <data key="d0">-0.031542963717291185</data>
 </edge>
 <edge source="ATTEND" target="SEXEDUC">
   <data key="d0">-0.0</data>
@@ -9085,25 +9321,25 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="ATTEND" target="PREMARSX">
-  <data key="d0">0.15064600584332874</data>
+  <data key="d0">0.15064581383150108</data>
 </edge>
 <edge source="ATTEND" target="TEENSEX">
   <data key="d0">0.0</data>
 </edge>
 <edge source="ATTEND" target="XMARSEX">
-  <data key="d0">0.006728846970919195</data>
+  <data key="d0">0.006728680714657867</data>
 </edge>
 <edge source="ATTEND" target="HOMOSEX">
-  <data key="d0">0.014707056080435708</data>
+  <data key="d0">0.01469251239511377</data>
 </edge>
 <edge source="ATTEND" target="PORNLAW">
-  <data key="d0">0.024197199625657084</data>
+  <data key="d0">0.024196875002924594</data>
 </edge>
 <edge source="ATTEND" target="SPANKING">
   <data key="d0">0.0</data>
 </edge>
 <edge source="ATTEND" target="LETDIE1">
-  <data key="d0">-0.026084937263197838</data>
+  <data key="d0">-0.02608486961998767</data>
 </edge>
 <edge source="ATTEND" target="SUICIDE1">
   <data key="d0">-0.0</data>
@@ -9156,11 +9392,17 @@
 <edge source="ATTEND" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="ATTEND" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="ATTEND" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="RELITEN" target="POSTLIFE">
   <data key="d0">0.0</data>
 </edge>
 <edge source="RELITEN" target="PRAYER">
-  <data key="d0">-0.010578752640611868</data>
+  <data key="d0">-0.010578688405975518</data>
 </edge>
 <edge source="RELITEN" target="AFFRMACT">
   <data key="d0">0.0</data>
@@ -9184,7 +9426,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="RELITEN" target="CONCLERG">
-  <data key="d0">0.03523536961573995</data>
+  <data key="d0">0.03521656133111539</data>
 </edge>
 <edge source="RELITEN" target="CONEDUC">
   <data key="d0">0.0</data>
@@ -9250,16 +9492,16 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="RELITEN" target="PREMARSX">
-  <data key="d0">0.06719711679388152</data>
+  <data key="d0">0.06719616270064153</data>
 </edge>
 <edge source="RELITEN" target="TEENSEX">
   <data key="d0">0.0</data>
 </edge>
 <edge source="RELITEN" target="XMARSEX">
-  <data key="d0">0.019088533195368424</data>
+  <data key="d0">0.019088361393485492</data>
 </edge>
 <edge source="RELITEN" target="HOMOSEX">
-  <data key="d0">0.034137445695914294</data>
+  <data key="d0">0.034128643031874996</data>
 </edge>
 <edge source="RELITEN" target="PORNLAW">
   <data key="d0">0.0</data>
@@ -9271,7 +9513,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="RELITEN" target="SUICIDE1">
-  <data key="d0">-0.029898491162567885</data>
+  <data key="d0">-0.02989745924292133</data>
 </edge>
 <edge source="RELITEN" target="SUICIDE2">
   <data key="d0">-0.0</data>
@@ -9320,6 +9562,12 @@
 </edge>
 <edge source="RELITEN" target="HELPPOOR">
   <data key="d0">-0.0</data>
+</edge>
+<edge source="RELITEN" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="RELITEN" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
 </edge>
 <edge source="POSTLIFE" target="PRAYER">
   <data key="d0">-0.0</data>
@@ -9483,6 +9731,12 @@
 <edge source="POSTLIFE" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="POSTLIFE" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="POSTLIFE" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="PRAYER" target="AFFRMACT">
   <data key="d0">0.0</data>
 </edge>
@@ -9547,7 +9801,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="PRAYER" target="ABNOMORE">
-  <data key="d0">0.03340116334778084</data>
+  <data key="d0">0.033400592581659894</data>
 </edge>
 <edge source="PRAYER" target="ABHLTH">
   <data key="d0">0.0</data>
@@ -9559,7 +9813,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="PRAYER" target="ABSINGLE">
-  <data key="d0">0.02167475709348992</data>
+  <data key="d0">0.021674906875522936</data>
 </edge>
 <edge source="PRAYER" target="ABANY">
   <data key="d0">0.0</data>
@@ -9580,7 +9834,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="PRAYER" target="HOMOSEX">
-  <data key="d0">-0.09521425220107331</data>
+  <data key="d0">-0.09520871737789012</data>
 </edge>
 <edge source="PRAYER" target="PORNLAW">
   <data key="d0">-0.0</data>
@@ -9642,8 +9896,14 @@
 <edge source="PRAYER" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="PRAYER" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="PRAYER" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="AFFRMACT" target="WRKWAYUP">
-  <data key="d0">-0.1460768812564148</data>
+  <data key="d0">-0.1471882632488036</data>
 </edge>
 <edge source="AFFRMACT" target="HELPFUL">
   <data key="d0">-0.0</data>
@@ -9766,7 +10026,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="AFFRMACT" target="POLATTAK">
-  <data key="d0">-0.007868206496416435</data>
+  <data key="d0">-0.007872858744647982</data>
 </edge>
 <edge source="AFFRMACT" target="NEWS">
   <data key="d0">-0.0</data>
@@ -9784,7 +10044,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="AFFRMACT" target="RACDIF1">
-  <data key="d0">0.028465587745658737</data>
+  <data key="d0">0.03160924592878013</data>
 </edge>
 <edge source="AFFRMACT" target="RACDIF2">
   <data key="d0">0.0</data>
@@ -9796,7 +10056,13 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="AFFRMACT" target="HELPPOOR">
-  <data key="d0">0.0015608537956691845</data>
+  <data key="d0">0.0</data>
+</edge>
+<edge source="AFFRMACT" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="AFFRMACT" target="PRESLAST_DEMREP">
+  <data key="d0">-0.05011987125095055</data>
 </edge>
 <edge source="WRKWAYUP" target="HELPFUL">
   <data key="d0">-0.0</data>
@@ -9856,13 +10122,13 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="WRKWAYUP" target="ABNOMORE">
-  <data key="d0">-0.0018965327208586445</data>
+  <data key="d0">-0.0015793654714727167</data>
 </edge>
 <edge source="WRKWAYUP" target="ABHLTH">
   <data key="d0">0.0</data>
 </edge>
 <edge source="WRKWAYUP" target="ABPOOR">
-  <data key="d0">-0.007129787244261509</data>
+  <data key="d0">-0.006598837272503439</data>
 </edge>
 <edge source="WRKWAYUP" target="ABRAPE">
   <data key="d0">-0.0</data>
@@ -9937,25 +10203,31 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="WRKWAYUP" target="RACDIF1">
-  <data key="d0">-0.05867284232019461</data>
+  <data key="d0">-0.05849475275261685</data>
 </edge>
 <edge source="WRKWAYUP" target="RACDIF2">
   <data key="d0">0.0</data>
 </edge>
 <edge source="WRKWAYUP" target="RACDIF3">
-  <data key="d0">-0.07025647361830109</data>
+  <data key="d0">-0.07411163117702682</data>
 </edge>
 <edge source="WRKWAYUP" target="RACDIF4">
-  <data key="d0">0.13794200790889108</data>
+  <data key="d0">0.137856651699392</data>
 </edge>
 <edge source="WRKWAYUP" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="WRKWAYUP" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="WRKWAYUP" target="PRESLAST_DEMREP">
+  <data key="d0">0.007390678416544542</data>
+</edge>
 <edge source="HELPFUL" target="FAIR">
-  <data key="d0">0.23779145284295627</data>
+  <data key="d0">0.2377914528429563</data>
 </edge>
 <edge source="HELPFUL" target="TRUST">
-  <data key="d0">0.10962080285189797</data>
+  <data key="d0">0.10962080285189804</data>
 </edge>
 <edge source="HELPFUL" target="CONFINAN">
   <data key="d0">0.0</data>
@@ -10101,8 +10373,14 @@
 <edge source="HELPFUL" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="HELPFUL" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="HELPFUL" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="FAIR" target="TRUST">
-  <data key="d0">0.15054333139340703</data>
+  <data key="d0">0.1505433313934071</data>
 </edge>
 <edge source="FAIR" target="CONFINAN">
   <data key="d0">0.0</data>
@@ -10248,6 +10526,12 @@
 <edge source="FAIR" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="FAIR" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="FAIR" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="TRUST" target="CONFINAN">
   <data key="d0">0.0</data>
 </edge>
@@ -10392,8 +10676,14 @@
 <edge source="TRUST" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="TRUST" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="TRUST" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="CONFINAN" target="CONBUS">
-  <data key="d0">0.08780211420318025</data>
+  <data key="d0">0.08780207760513183</data>
 </edge>
 <edge source="CONFINAN" target="CONCLERG">
   <data key="d0">0.0</data>
@@ -10402,7 +10692,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="CONFINAN" target="CONFED">
-  <data key="d0">0.024346833090967454</data>
+  <data key="d0">0.024223149458859127</data>
 </edge>
 <edge source="CONFINAN" target="CONLABOR">
   <data key="d0">0.0</data>
@@ -10411,22 +10701,22 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="CONFINAN" target="CONMEDIC">
-  <data key="d0">0.03182247681736209</data>
+  <data key="d0">0.031822480691421205</data>
 </edge>
 <edge source="CONFINAN" target="CONTV">
   <data key="d0">0.0</data>
 </edge>
 <edge source="CONFINAN" target="CONJUDGE">
-  <data key="d0">0.05704573958195943</data>
+  <data key="d0">0.05704573938512117</data>
 </edge>
 <edge source="CONFINAN" target="CONSCI">
   <data key="d0">0.0</data>
 </edge>
 <edge source="CONFINAN" target="CONLEGIS">
-  <data key="d0">0.017942885802652908</data>
+  <data key="d0">0.01794254664333254</data>
 </edge>
 <edge source="CONFINAN" target="CONARMY">
-  <data key="d0">0.09387248315125438</data>
+  <data key="d0">0.09379413775457716</data>
 </edge>
 <edge source="CONFINAN" target="GETAHEAD">
   <data key="d0">-0.0</data>
@@ -10533,14 +10823,20 @@
 <edge source="CONFINAN" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="CONFINAN" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="CONFINAN" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="CONBUS" target="CONCLERG">
-  <data key="d0">0.03191878641346191</data>
+  <data key="d0">0.03191890393072617</data>
 </edge>
 <edge source="CONBUS" target="CONEDUC">
   <data key="d0">0.0</data>
 </edge>
 <edge source="CONBUS" target="CONFED">
-  <data key="d0">0.10893181838429333</data>
+  <data key="d0">0.1083784050716575</data>
 </edge>
 <edge source="CONBUS" target="CONLABOR">
   <data key="d0">0.0</data>
@@ -10549,19 +10845,19 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="CONBUS" target="CONMEDIC">
-  <data key="d0">0.017231179673706493</data>
+  <data key="d0">0.017231161260248855</data>
 </edge>
 <edge source="CONBUS" target="CONTV">
   <data key="d0">0.0</data>
 </edge>
 <edge source="CONBUS" target="CONJUDGE">
-  <data key="d0">0.06607020247683666</data>
+  <data key="d0">0.06607018991132803</data>
 </edge>
 <edge source="CONBUS" target="CONSCI">
   <data key="d0">0.0</data>
 </edge>
 <edge source="CONBUS" target="CONLEGIS">
-  <data key="d0">0.017421628707844104</data>
+  <data key="d0">0.017421312052529093</data>
 </edge>
 <edge source="CONBUS" target="CONARMY">
   <data key="d0">0.0</data>
@@ -10671,11 +10967,17 @@
 <edge source="CONBUS" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="CONBUS" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="CONBUS" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="CONCLERG" target="CONEDUC">
-  <data key="d0">0.03486078455443459</data>
+  <data key="d0">0.03486103398846157</data>
 </edge>
 <edge source="CONCLERG" target="CONFED">
-  <data key="d0">0.040402732588367664</data>
+  <data key="d0">0.040063144033323846</data>
 </edge>
 <edge source="CONCLERG" target="CONLABOR">
   <data key="d0">0.0</data>
@@ -10806,29 +11108,35 @@
 <edge source="CONCLERG" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="CONCLERG" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="CONCLERG" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="CONEDUC" target="CONFED">
   <data key="d0">0.0</data>
 </edge>
 <edge source="CONEDUC" target="CONLABOR">
-  <data key="d0">0.004118754930558031</data>
+  <data key="d0">0.004119865091835659</data>
 </edge>
 <edge source="CONEDUC" target="CONPRESS">
   <data key="d0">0.0</data>
 </edge>
 <edge source="CONEDUC" target="CONMEDIC">
-  <data key="d0">0.05784816025197413</data>
+  <data key="d0">0.05784814419117443</data>
 </edge>
 <edge source="CONEDUC" target="CONTV">
   <data key="d0">0.0</data>
 </edge>
 <edge source="CONEDUC" target="CONJUDGE">
-  <data key="d0">0.027561479544389936</data>
+  <data key="d0">0.027561557594190312</data>
 </edge>
 <edge source="CONEDUC" target="CONSCI">
   <data key="d0">0.0</data>
 </edge>
 <edge source="CONEDUC" target="CONLEGIS">
-  <data key="d0">0.039447761293379624</data>
+  <data key="d0">0.03944701711059027</data>
 </edge>
 <edge source="CONEDUC" target="CONARMY">
   <data key="d0">0.0</data>
@@ -10938,6 +11246,12 @@
 <edge source="CONEDUC" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="CONEDUC" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="CONEDUC" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="CONFED" target="CONLABOR">
   <data key="d0">0.0</data>
 </edge>
@@ -10951,16 +11265,16 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="CONFED" target="CONJUDGE">
-  <data key="d0">0.13917826117868992</data>
+  <data key="d0">0.1384711639573385</data>
 </edge>
 <edge source="CONFED" target="CONSCI">
   <data key="d0">0.0</data>
 </edge>
 <edge source="CONFED" target="CONLEGIS">
-  <data key="d0">0.22987174584321873</data>
+  <data key="d0">0.2287686509019317</data>
 </edge>
 <edge source="CONFED" target="CONARMY">
-  <data key="d0">0.15743798832461448</data>
+  <data key="d0">0.1546080353426965</data>
 </edge>
 <edge source="CONFED" target="GETAHEAD">
   <data key="d0">-0.0</data>
@@ -11067,8 +11381,14 @@
 <edge source="CONFED" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="CONFED" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="CONFED" target="PRESLAST_DEMREP">
+  <data key="d0">0.09670782295523082</data>
+</edge>
 <edge source="CONLABOR" target="CONPRESS">
-  <data key="d0">0.03151123348670986</data>
+  <data key="d0">0.03149743540329485</data>
 </edge>
 <edge source="CONLABOR" target="CONMEDIC">
   <data key="d0">0.0</data>
@@ -11083,7 +11403,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="CONLABOR" target="CONLEGIS">
-  <data key="d0">0.003079178503471738</data>
+  <data key="d0">0.0030790668330037707</data>
 </edge>
 <edge source="CONLABOR" target="CONARMY">
   <data key="d0">0.0</data>
@@ -11193,11 +11513,17 @@
 <edge source="CONLABOR" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="CONLABOR" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="CONLABOR" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="CONPRESS" target="CONMEDIC">
   <data key="d0">0.0</data>
 </edge>
 <edge source="CONPRESS" target="CONTV">
-  <data key="d0">0.20416453377312627</data>
+  <data key="d0">0.20407423012554557</data>
 </edge>
 <edge source="CONPRESS" target="CONJUDGE">
   <data key="d0">0.0</data>
@@ -11206,7 +11532,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="CONPRESS" target="CONLEGIS">
-  <data key="d0">0.015188398260338182</data>
+  <data key="d0">0.016317168340970287</data>
 </edge>
 <edge source="CONPRESS" target="CONARMY">
   <data key="d0">0.0</data>
@@ -11316,20 +11642,26 @@
 <edge source="CONPRESS" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="CONPRESS" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="CONPRESS" target="PRESLAST_DEMREP">
+  <data key="d0">-0.024702289055612028</data>
+</edge>
 <edge source="CONMEDIC" target="CONTV">
   <data key="d0">0.0</data>
 </edge>
 <edge source="CONMEDIC" target="CONJUDGE">
-  <data key="d0">0.015653282097421374</data>
+  <data key="d0">0.015653284898140076</data>
 </edge>
 <edge source="CONMEDIC" target="CONSCI">
-  <data key="d0">0.11620159694833476</data>
+  <data key="d0">0.11619309309009074</data>
 </edge>
 <edge source="CONMEDIC" target="CONLEGIS">
   <data key="d0">0.0</data>
 </edge>
 <edge source="CONMEDIC" target="CONARMY">
-  <data key="d0">0.06171873676656761</data>
+  <data key="d0">0.061667227532950473</data>
 </edge>
 <edge source="CONMEDIC" target="GETAHEAD">
   <data key="d0">-0.0</data>
@@ -11436,6 +11768,12 @@
 <edge source="CONMEDIC" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="CONMEDIC" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="CONMEDIC" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="CONTV" target="CONJUDGE">
   <data key="d0">0.0</data>
 </edge>
@@ -11527,7 +11865,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="CONTV" target="TVHOURS">
-  <data key="d0">0.023473968494585204</data>
+  <data key="d0">0.023473968496323813</data>
 </edge>
 <edge source="CONTV" target="FECHLD">
   <data key="d0">0.0</data>
@@ -11553,14 +11891,20 @@
 <edge source="CONTV" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="CONTV" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="CONTV" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="CONJUDGE" target="CONSCI">
-  <data key="d0">0.1407555523192927</data>
+  <data key="d0">0.1407452508763942</data>
 </edge>
 <edge source="CONJUDGE" target="CONLEGIS">
-  <data key="d0">0.13421333620062564</data>
+  <data key="d0">0.13421080595261645</data>
 </edge>
 <edge source="CONJUDGE" target="CONARMY">
-  <data key="d0">0.020456390668326805</data>
+  <data key="d0">0.0204392927660652</data>
 </edge>
 <edge source="CONJUDGE" target="GETAHEAD">
   <data key="d0">-0.0</data>
@@ -11667,8 +12011,14 @@
 <edge source="CONJUDGE" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="CONJUDGE" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="CONJUDGE" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="CONSCI" target="CONLEGIS">
-  <data key="d0">0.014124296461666366</data>
+  <data key="d0">0.014122997158372355</data>
 </edge>
 <edge source="CONSCI" target="CONARMY">
   <data key="d0">0.0</data>
@@ -11778,8 +12128,14 @@
 <edge source="CONSCI" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="CONSCI" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="CONSCI" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="CONLEGIS" target="CONARMY">
-  <data key="d0">0.009057346197460266</data>
+  <data key="d0">0.009053426700047875</data>
 </edge>
 <edge source="CONLEGIS" target="GETAHEAD">
   <data key="d0">-0.0</data>
@@ -11886,6 +12242,12 @@
 <edge source="CONLEGIS" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="CONLEGIS" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="CONLEGIS" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="CONARMY" target="GETAHEAD">
   <data key="d0">-0.0</data>
 </edge>
@@ -11991,6 +12353,12 @@
 <edge source="CONARMY" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="CONARMY" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="CONARMY" target="PRESLAST_DEMREP">
+  <data key="d0">0.0032659358387076556</data>
+</edge>
 <edge source="GETAHEAD" target="FEPOL">
   <data key="d0">-0.0</data>
 </edge>
@@ -12093,6 +12461,12 @@
 <edge source="GETAHEAD" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="GETAHEAD" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="GETAHEAD" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="FEPOL" target="ABDEFECT">
   <data key="d0">-0.0</data>
 </edge>
@@ -12175,7 +12549,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="FEPOL" target="FEFAM">
-  <data key="d0">0.10206390678404188</data>
+  <data key="d0">0.10206392164621242</data>
 </edge>
 <edge source="FEPOL" target="RACDIF1">
   <data key="d0">-0.0</data>
@@ -12192,32 +12566,38 @@
 <edge source="FEPOL" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="FEPOL" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="FEPOL" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="ABDEFECT" target="ABNOMORE">
-  <data key="d0">0.07291511953682236</data>
+  <data key="d0">0.07291689663012545</data>
 </edge>
 <edge source="ABDEFECT" target="ABHLTH">
-  <data key="d0">0.23414319582880017</data>
+  <data key="d0">0.23414363417077397</data>
 </edge>
 <edge source="ABDEFECT" target="ABPOOR">
-  <data key="d0">0.03677279129973036</data>
+  <data key="d0">0.03677543597509815</data>
 </edge>
 <edge source="ABDEFECT" target="ABRAPE">
-  <data key="d0">0.2481008799851486</data>
+  <data key="d0">0.24810194143806918</data>
 </edge>
 <edge source="ABDEFECT" target="ABSINGLE">
-  <data key="d0">0.02095151403894322</data>
+  <data key="d0">0.020952512343085733</data>
 </edge>
 <edge source="ABDEFECT" target="ABANY">
-  <data key="d0">0.02213705604110195</data>
+  <data key="d0">0.022144409883687908</data>
 </edge>
 <edge source="ABDEFECT" target="SEXEDUC">
-  <data key="d0">0.04801472913131565</data>
+  <data key="d0">0.04798690100205229</data>
 </edge>
 <edge source="ABDEFECT" target="DIVLAW">
   <data key="d0">0.0</data>
 </edge>
 <edge source="ABDEFECT" target="PREMARSX">
-  <data key="d0">-0.02378964378973939</data>
+  <data key="d0">-0.023792935996702444</data>
 </edge>
 <edge source="ABDEFECT" target="TEENSEX">
   <data key="d0">-0.0</data>
@@ -12235,10 +12615,10 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="ABDEFECT" target="LETDIE1">
-  <data key="d0">0.07651291114793747</data>
+  <data key="d0">0.07651265907507465</data>
 </edge>
 <edge source="ABDEFECT" target="SUICIDE1">
-  <data key="d0">0.04164045628430384</data>
+  <data key="d0">0.04164007273074653</data>
 </edge>
 <edge source="ABDEFECT" target="SUICIDE2">
   <data key="d0">0.0</data>
@@ -12288,20 +12668,26 @@
 <edge source="ABDEFECT" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="ABDEFECT" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="ABDEFECT" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="ABNOMORE" target="ABHLTH">
   <data key="d0">0.0</data>
 </edge>
 <edge source="ABNOMORE" target="ABPOOR">
-  <data key="d0">0.22865729340536967</data>
+  <data key="d0">0.22845721632008736</data>
 </edge>
 <edge source="ABNOMORE" target="ABRAPE">
-  <data key="d0">0.02136525416653062</data>
+  <data key="d0">0.0213659537888181</data>
 </edge>
 <edge source="ABNOMORE" target="ABSINGLE">
-  <data key="d0">0.2954318876687397</data>
+  <data key="d0">0.2954246395832877</data>
 </edge>
 <edge source="ABNOMORE" target="ABANY">
-  <data key="d0">0.2391323536196905</data>
+  <data key="d0">0.2391324717996818</data>
 </edge>
 <edge source="ABNOMORE" target="SEXEDUC">
   <data key="d0">0.0</data>
@@ -12310,7 +12696,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="ABNOMORE" target="PREMARSX">
-  <data key="d0">-0.02220325430884941</data>
+  <data key="d0">-0.022148083021262484</data>
 </edge>
 <edge source="ABNOMORE" target="TEENSEX">
   <data key="d0">-0.0</data>
@@ -12319,7 +12705,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="ABNOMORE" target="HOMOSEX">
-  <data key="d0">-0.015053448526388367</data>
+  <data key="d0">-0.014812797338188884</data>
 </edge>
 <edge source="ABNOMORE" target="PORNLAW">
   <data key="d0">-0.0</data>
@@ -12331,10 +12717,10 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="ABNOMORE" target="SUICIDE1">
-  <data key="d0">0.017300663070994142</data>
+  <data key="d0">0.01729931870156766</data>
 </edge>
 <edge source="ABNOMORE" target="SUICIDE2">
-  <data key="d0">0.018070556652431465</data>
+  <data key="d0">0.01807000859984097</data>
 </edge>
 <edge source="ABNOMORE" target="POLHITOK">
   <data key="d0">0.0</data>
@@ -12364,7 +12750,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="ABNOMORE" target="FEFAM">
-  <data key="d0">-0.004638979662826034</data>
+  <data key="d0">-0.004625956276920607</data>
 </edge>
 <edge source="ABNOMORE" target="RACDIF1">
   <data key="d0">0.0</data>
@@ -12381,11 +12767,17 @@
 <edge source="ABNOMORE" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="ABNOMORE" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="ABNOMORE" target="PRESLAST_DEMREP">
+  <data key="d0">-0.006204325716351948</data>
+</edge>
 <edge source="ABHLTH" target="ABPOOR">
   <data key="d0">0.0</data>
 </edge>
 <edge source="ABHLTH" target="ABRAPE">
-  <data key="d0">0.22022308124144188</data>
+  <data key="d0">0.22022295103530506</data>
 </edge>
 <edge source="ABHLTH" target="ABSINGLE">
   <data key="d0">0.0</data>
@@ -12400,7 +12792,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="ABHLTH" target="PREMARSX">
-  <data key="d0">-0.007318205924970843</data>
+  <data key="d0">-0.007318914890689148</data>
 </edge>
 <edge source="ABHLTH" target="TEENSEX">
   <data key="d0">-0.0</data>
@@ -12471,14 +12863,20 @@
 <edge source="ABHLTH" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="ABHLTH" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="ABHLTH" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="ABPOOR" target="ABRAPE">
-  <data key="d0">0.058993597441864845</data>
+  <data key="d0">0.058990301890518876</data>
 </edge>
 <edge source="ABPOOR" target="ABSINGLE">
-  <data key="d0">0.2878869214258447</data>
+  <data key="d0">0.2878677188523929</data>
 </edge>
 <edge source="ABPOOR" target="ABANY">
-  <data key="d0">0.21295122920388596</data>
+  <data key="d0">0.21293853015750494</data>
 </edge>
 <edge source="ABPOOR" target="SEXEDUC">
   <data key="d0">0.0</data>
@@ -12493,25 +12891,25 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="ABPOOR" target="XMARSEX">
-  <data key="d0">-0.00988871397692666</data>
+  <data key="d0">-0.0098919303056229</data>
 </edge>
 <edge source="ABPOOR" target="HOMOSEX">
-  <data key="d0">-0.010434077412702756</data>
+  <data key="d0">-0.01032795241974395</data>
 </edge>
 <edge source="ABPOOR" target="PORNLAW">
-  <data key="d0">-0.017913042590285925</data>
+  <data key="d0">-0.017919292935415065</data>
 </edge>
 <edge source="ABPOOR" target="SPANKING">
   <data key="d0">-0.0</data>
 </edge>
 <edge source="ABPOOR" target="LETDIE1">
-  <data key="d0">0.011004745873488875</data>
+  <data key="d0">0.011008304345168937</data>
 </edge>
 <edge source="ABPOOR" target="SUICIDE1">
   <data key="d0">0.0</data>
 </edge>
 <edge source="ABPOOR" target="SUICIDE2">
-  <data key="d0">0.01767431517281898</data>
+  <data key="d0">0.01767345695559145</data>
 </edge>
 <edge source="ABPOOR" target="POLHITOK">
   <data key="d0">0.0</data>
@@ -12558,14 +12956,20 @@
 <edge source="ABPOOR" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="ABPOOR" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="ABPOOR" target="PRESLAST_DEMREP">
+  <data key="d0">-0.012679924733827943</data>
+</edge>
 <edge source="ABRAPE" target="ABSINGLE">
-  <data key="d0">0.026336871975234544</data>
+  <data key="d0">0.026335484766220635</data>
 </edge>
 <edge source="ABRAPE" target="ABANY">
-  <data key="d0">0.05496957323444479</data>
+  <data key="d0">0.0549664656039226</data>
 </edge>
 <edge source="ABRAPE" target="SEXEDUC">
-  <data key="d0">0.0077257903779828375</data>
+  <data key="d0">0.007719997162051625</data>
 </edge>
 <edge source="ABRAPE" target="DIVLAW">
   <data key="d0">0.0</data>
@@ -12580,19 +12984,19 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="ABRAPE" target="HOMOSEX">
-  <data key="d0">-0.0035118827551546277</data>
+  <data key="d0">-0.003511266244843762</data>
 </edge>
 <edge source="ABRAPE" target="PORNLAW">
-  <data key="d0">-0.0035941133693737698</data>
+  <data key="d0">-0.0035937904761885746</data>
 </edge>
 <edge source="ABRAPE" target="SPANKING">
   <data key="d0">-0.0</data>
 </edge>
 <edge source="ABRAPE" target="LETDIE1">
-  <data key="d0">0.05576002880425541</data>
+  <data key="d0">0.05575974186857107</data>
 </edge>
 <edge source="ABRAPE" target="SUICIDE1">
-  <data key="d0">0.034410057675100136</data>
+  <data key="d0">0.03441048566888283</data>
 </edge>
 <edge source="ABRAPE" target="SUICIDE2">
   <data key="d0">0.0</data>
@@ -12642,8 +13046,14 @@
 <edge source="ABRAPE" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="ABRAPE" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="ABRAPE" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="ABSINGLE" target="ABANY">
-  <data key="d0">0.30328346452211064</data>
+  <data key="d0">0.3032806247906341</data>
 </edge>
 <edge source="ABSINGLE" target="SEXEDUC">
   <data key="d0">0.0</data>
@@ -12658,25 +13068,25 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="ABSINGLE" target="XMARSEX">
-  <data key="d0">-0.009086580732636079</data>
+  <data key="d0">-0.009084257119217131</data>
 </edge>
 <edge source="ABSINGLE" target="HOMOSEX">
-  <data key="d0">-0.03164813923560835</data>
+  <data key="d0">-0.031646056492646096</data>
 </edge>
 <edge source="ABSINGLE" target="PORNLAW">
-  <data key="d0">-0.003340953431849432</data>
+  <data key="d0">-0.0033401928892646854</data>
 </edge>
 <edge source="ABSINGLE" target="SPANKING">
   <data key="d0">-0.0</data>
 </edge>
 <edge source="ABSINGLE" target="LETDIE1">
-  <data key="d0">0.04031902396125165</data>
+  <data key="d0">0.040317141192832584</data>
 </edge>
 <edge source="ABSINGLE" target="SUICIDE1">
-  <data key="d0">0.03560455409211393</data>
+  <data key="d0">0.03560640786878645</data>
 </edge>
 <edge source="ABSINGLE" target="SUICIDE2">
-  <data key="d0">0.041885032217233116</data>
+  <data key="d0">0.04188509935929357</data>
 </edge>
 <edge source="ABSINGLE" target="POLHITOK">
   <data key="d0">0.0</data>
@@ -12723,6 +13133,12 @@
 <edge source="ABSINGLE" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="ABSINGLE" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="ABSINGLE" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="ABANY" target="SEXEDUC">
   <data key="d0">0.0</data>
 </edge>
@@ -12730,7 +13146,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="ABANY" target="PREMARSX">
-  <data key="d0">-0.019568331292467586</data>
+  <data key="d0">-0.01958219626048744</data>
 </edge>
 <edge source="ABANY" target="TEENSEX">
   <data key="d0">-0.0</data>
@@ -12739,10 +13155,10 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="ABANY" target="HOMOSEX">
-  <data key="d0">-0.027922296850096253</data>
+  <data key="d0">-0.02791460943026511</data>
 </edge>
 <edge source="ABANY" target="PORNLAW">
-  <data key="d0">-0.007496376114530855</data>
+  <data key="d0">-0.007492221032469316</data>
 </edge>
 <edge source="ABANY" target="SPANKING">
   <data key="d0">-0.0</data>
@@ -12751,10 +13167,10 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="ABANY" target="SUICIDE1">
-  <data key="d0">0.023710157098994922</data>
+  <data key="d0">0.023707889728833538</data>
 </edge>
 <edge source="ABANY" target="SUICIDE2">
-  <data key="d0">0.00939199186172726</data>
+  <data key="d0">0.009391507465820466</data>
 </edge>
 <edge source="ABANY" target="POLHITOK">
   <data key="d0">0.0</data>
@@ -12784,7 +13200,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="ABANY" target="FEFAM">
-  <data key="d0">-0.00334973769304159</data>
+  <data key="d0">-0.0033531063547778818</data>
 </edge>
 <edge source="ABANY" target="RACDIF1">
   <data key="d0">0.0</data>
@@ -12801,11 +13217,17 @@
 <edge source="ABANY" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="ABANY" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="ABANY" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="SEXEDUC" target="DIVLAW">
   <data key="d0">-0.0</data>
 </edge>
 <edge source="SEXEDUC" target="PREMARSX">
-  <data key="d0">-0.05948571034680723</data>
+  <data key="d0">-0.059456010287334486</data>
 </edge>
 <edge source="SEXEDUC" target="TEENSEX">
   <data key="d0">-0.0</data>
@@ -12823,7 +13245,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="SEXEDUC" target="LETDIE1">
-  <data key="d0">0.010347209101306178</data>
+  <data key="d0">0.01034065357641998</data>
 </edge>
 <edge source="SEXEDUC" target="SUICIDE1">
   <data key="d0">0.0</data>
@@ -12859,7 +13281,7 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="SEXEDUC" target="FEFAM">
-  <data key="d0">-0.025842098125225997</data>
+  <data key="d0">-0.025828838680825226</data>
 </edge>
 <edge source="SEXEDUC" target="RACDIF1">
   <data key="d0">0.0</data>
@@ -12875,6 +13297,12 @@
 </edge>
 <edge source="SEXEDUC" target="HELPPOOR">
   <data key="d0">0.0</data>
+</edge>
+<edge source="SEXEDUC" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="SEXEDUC" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
 </edge>
 <edge source="DIVLAW" target="PREMARSX">
   <data key="d0">-0.0</data>
@@ -12948,26 +13376,32 @@
 <edge source="DIVLAW" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="DIVLAW" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="DIVLAW" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="PREMARSX" target="TEENSEX">
-  <data key="d0">0.17364384621868736</data>
+  <data key="d0">0.17364496156371906</data>
 </edge>
 <edge source="PREMARSX" target="XMARSEX">
-  <data key="d0">0.05533207632754898</data>
+  <data key="d0">0.05533294456410152</data>
 </edge>
 <edge source="PREMARSX" target="HOMOSEX">
-  <data key="d0">0.19811243277809598</data>
+  <data key="d0">0.19811404957455428</data>
 </edge>
 <edge source="PREMARSX" target="PORNLAW">
-  <data key="d0">0.14974952116725312</data>
+  <data key="d0">0.14975129306159218</data>
 </edge>
 <edge source="PREMARSX" target="SPANKING">
   <data key="d0">0.0</data>
 </edge>
 <edge source="PREMARSX" target="LETDIE1">
-  <data key="d0">-0.0802277434896794</data>
+  <data key="d0">-0.08022937854691028</data>
 </edge>
 <edge source="PREMARSX" target="SUICIDE1">
-  <data key="d0">-0.03749853130291315</data>
+  <data key="d0">-0.03749993021722014</data>
 </edge>
 <edge source="PREMARSX" target="SUICIDE2">
   <data key="d0">-0.0</data>
@@ -13000,7 +13434,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="PREMARSX" target="FEFAM">
-  <data key="d0">0.04741891080531579</data>
+  <data key="d0">0.04742103254525907</data>
 </edge>
 <edge source="PREMARSX" target="RACDIF1">
   <data key="d0">-0.0</data>
@@ -13017,14 +13451,20 @@
 <edge source="PREMARSX" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="PREMARSX" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="PREMARSX" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="TEENSEX" target="XMARSEX">
-  <data key="d0">0.10610397214562854</data>
+  <data key="d0">0.10610380669394834</data>
 </edge>
 <edge source="TEENSEX" target="HOMOSEX">
-  <data key="d0">0.11336797112400528</data>
+  <data key="d0">0.1133591556965089</data>
 </edge>
 <edge source="TEENSEX" target="PORNLAW">
-  <data key="d0">0.041027049770355796</data>
+  <data key="d0">0.041026795508760296</data>
 </edge>
 <edge source="TEENSEX" target="SPANKING">
   <data key="d0">0.0</data>
@@ -13083,8 +13523,14 @@
 <edge source="TEENSEX" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="TEENSEX" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="TEENSEX" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="XMARSEX" target="HOMOSEX">
-  <data key="d0">0.03666080488817771</data>
+  <data key="d0">0.03665758613346008</data>
 </edge>
 <edge source="XMARSEX" target="PORNLAW">
   <data key="d0">0.0</data>
@@ -13146,8 +13592,14 @@
 <edge source="XMARSEX" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="XMARSEX" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="XMARSEX" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="HOMOSEX" target="PORNLAW">
-  <data key="d0">0.023375959638170903</data>
+  <data key="d0">0.02337362959132579</data>
 </edge>
 <edge source="HOMOSEX" target="SPANKING">
   <data key="d0">0.0</data>
@@ -13156,10 +13608,10 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="HOMOSEX" target="SUICIDE1">
-  <data key="d0">-0.09977945886517822</data>
+  <data key="d0">-0.09977128573542902</data>
 </edge>
 <edge source="HOMOSEX" target="SUICIDE2">
-  <data key="d0">-0.01193872780431507</data>
+  <data key="d0">-0.011937783941653925</data>
 </edge>
 <edge source="HOMOSEX" target="POLHITOK">
   <data key="d0">-0.0</data>
@@ -13189,7 +13641,7 @@
   <data key="d0">0.0</data>
 </edge>
 <edge source="HOMOSEX" target="FEFAM">
-  <data key="d0">0.12236915219017262</data>
+  <data key="d0">0.12236206732402108</data>
 </edge>
 <edge source="HOMOSEX" target="RACDIF1">
   <data key="d0">-0.0</data>
@@ -13201,16 +13653,22 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="HOMOSEX" target="RACDIF4">
-  <data key="d0">0.004182000456912</data>
+  <data key="d0">0.004092372651015407</data>
 </edge>
 <edge source="HOMOSEX" target="HELPPOOR">
   <data key="d0">-0.0</data>
+</edge>
+<edge source="HOMOSEX" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="HOMOSEX" target="PRESLAST_DEMREP">
+  <data key="d0">0.011424678057832328</data>
 </edge>
 <edge source="PORNLAW" target="SPANKING">
   <data key="d0">0.0</data>
 </edge>
 <edge source="PORNLAW" target="LETDIE1">
-  <data key="d0">-0.005418791788353359</data>
+  <data key="d0">-0.005418252294832499</data>
 </edge>
 <edge source="PORNLAW" target="SUICIDE1">
   <data key="d0">-0.0</data>
@@ -13263,6 +13721,12 @@
 <edge source="PORNLAW" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="PORNLAW" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="PORNLAW" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="SPANKING" target="LETDIE1">
   <data key="d0">-0.0</data>
 </edge>
@@ -13312,13 +13776,19 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="SPANKING" target="RACDIF4">
-  <data key="d0">0.003673144413433954</data>
+  <data key="d0">0.003673146114481506</data>
 </edge>
 <edge source="SPANKING" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="SPANKING" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="SPANKING" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="LETDIE1" target="SUICIDE1">
-  <data key="d0">0.3116450482332053</data>
+  <data key="d0">0.311644790756902</data>
 </edge>
 <edge source="LETDIE1" target="SUICIDE2">
   <data key="d0">0.0</data>
@@ -13368,11 +13838,17 @@
 <edge source="LETDIE1" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="LETDIE1" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="LETDIE1" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="SUICIDE1" target="SUICIDE2">
-  <data key="d0">0.03789448078587259</data>
+  <data key="d0">0.037894529022018765</data>
 </edge>
 <edge source="SUICIDE1" target="POLHITOK">
-  <data key="d0">0.002693158740315526</data>
+  <data key="d0">0.002696650467403685</data>
 </edge>
 <edge source="SUICIDE1" target="POLABUSE">
   <data key="d0">-0.0</data>
@@ -13414,6 +13890,12 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="SUICIDE1" target="HELPPOOR">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="SUICIDE1" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="SUICIDE1" target="PRESLAST_DEMREP">
   <data key="d0">-0.0</data>
 </edge>
 <edge source="SUICIDE2" target="POLHITOK">
@@ -13461,6 +13943,12 @@
 <edge source="SUICIDE2" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="SUICIDE2" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="SUICIDE2" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="POLHITOK" target="POLABUSE">
   <data key="d0">0.0</data>
 </edge>
@@ -13468,10 +13956,10 @@
   <data key="d0">-0.0</data>
 </edge>
 <edge source="POLHITOK" target="POLESCAP">
-  <data key="d0">0.19693012941430035</data>
+  <data key="d0">0.19693027053196244</data>
 </edge>
 <edge source="POLHITOK" target="POLATTAK">
-  <data key="d0">0.10183760390997419</data>
+  <data key="d0">0.10183768270993948</data>
 </edge>
 <edge source="POLHITOK" target="NEWS">
   <data key="d0">0.0</data>
@@ -13503,8 +13991,14 @@
 <edge source="POLHITOK" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="POLHITOK" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="POLHITOK" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="POLABUSE" target="POLMURDR">
-  <data key="d0">0.06396390507970665</data>
+  <data key="d0">0.0639639050797047</data>
 </edge>
 <edge source="POLABUSE" target="POLESCAP">
   <data key="d0">0.0</data>
@@ -13542,11 +14036,17 @@
 <edge source="POLABUSE" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="POLABUSE" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="POLABUSE" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="POLMURDR" target="POLESCAP">
   <data key="d0">-0.0</data>
 </edge>
 <edge source="POLMURDR" target="POLATTAK">
-  <data key="d0">-0.0387267280883249</data>
+  <data key="d0">-0.03872673164471306</data>
 </edge>
 <edge source="POLMURDR" target="NEWS">
   <data key="d0">0.0</data>
@@ -13578,8 +14078,14 @@
 <edge source="POLMURDR" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="POLMURDR" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="POLMURDR" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="POLESCAP" target="POLATTAK">
-  <data key="d0">0.21420496517130377</data>
+  <data key="d0">0.21420457960386455</data>
 </edge>
 <edge source="POLESCAP" target="NEWS">
   <data key="d0">0.0</data>
@@ -13611,6 +14117,12 @@
 <edge source="POLESCAP" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="POLESCAP" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="POLESCAP" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="POLATTAK" target="NEWS">
   <data key="d0">0.0</data>
 </edge>
@@ -13641,6 +14153,12 @@
 <edge source="POLATTAK" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="POLATTAK" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="POLATTAK" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="NEWS" target="TVHOURS">
   <data key="d0">-0.0</data>
 </edge>
@@ -13668,6 +14186,12 @@
 <edge source="NEWS" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="NEWS" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="NEWS" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="TVHOURS" target="FECHLD">
   <data key="d0">0.0</data>
 </edge>
@@ -13692,11 +14216,17 @@
 <edge source="TVHOURS" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="TVHOURS" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="TVHOURS" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="FECHLD" target="FEPRESCH">
-  <data key="d0">-0.22231738739890752</data>
+  <data key="d0">-0.2223173876991031</data>
 </edge>
 <edge source="FECHLD" target="FEFAM">
-  <data key="d0">-0.1158853709327482</data>
+  <data key="d0">-0.11588538812143796</data>
 </edge>
 <edge source="FECHLD" target="RACDIF1">
   <data key="d0">0.0</data>
@@ -13713,8 +14243,14 @@
 <edge source="FECHLD" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="FECHLD" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="FECHLD" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="FEPRESCH" target="FEFAM">
-  <data key="d0">0.19790956076563446</data>
+  <data key="d0">0.1979095895455377</data>
 </edge>
 <edge source="FEPRESCH" target="RACDIF1">
   <data key="d0">0.0</data>
@@ -13731,6 +14267,12 @@
 <edge source="FEPRESCH" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="FEPRESCH" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="FEPRESCH" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="FEFAM" target="RACDIF1">
   <data key="d0">-0.0</data>
 </edge>
@@ -13746,34 +14288,73 @@
 <edge source="FEFAM" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="FEFAM" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="FEFAM" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
 <edge source="RACDIF1" target="RACDIF2">
   <data key="d0">0.0</data>
 </edge>
 <edge source="RACDIF1" target="RACDIF3">
-  <data key="d0">0.11285367368950187</data>
+  <data key="d0">0.11846298459382795</data>
 </edge>
 <edge source="RACDIF1" target="RACDIF4">
-  <data key="d0">-0.013419668586618763</data>
+  <data key="d0">-0.013429473539400173</data>
 </edge>
 <edge source="RACDIF1" target="HELPPOOR">
   <data key="d0">0.0</data>
+</edge>
+<edge source="RACDIF1" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="RACDIF1" target="PRESLAST_DEMREP">
+  <data key="d0">-0.01237660321552211</data>
 </edge>
 <edge source="RACDIF2" target="RACDIF3">
   <data key="d0">0.0</data>
 </edge>
 <edge source="RACDIF2" target="RACDIF4">
-  <data key="d0">0.011696402906190779</data>
+  <data key="d0">0.01169640832265794</data>
 </edge>
 <edge source="RACDIF2" target="HELPPOOR">
   <data key="d0">-0.0</data>
 </edge>
+<edge source="RACDIF2" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="RACDIF2" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="RACDIF3" target="RACDIF4">
-  <data key="d0">-0.03199382198739708</data>
+  <data key="d0">-0.03205695196732788</data>
 </edge>
 <edge source="RACDIF3" target="HELPPOOR">
   <data key="d0">0.0</data>
 </edge>
+<edge source="RACDIF3" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="RACDIF3" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0</data>
+</edge>
 <edge source="RACDIF4" target="HELPPOOR">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="RACDIF4" target="PRESLAST_NONCONFORM">
+  <data key="d0">-0.0</data>
+</edge>
+<edge source="RACDIF4" target="PRESLAST_DEMREP">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="HELPPOOR" target="PRESLAST_NONCONFORM">
+  <data key="d0">0.0</data>
+</edge>
+<edge source="HELPPOOR" target="PRESLAST_DEMREP">
+  <data key="d0">-0.0469706161981697</data>
+</edge>
+<edge source="PRESLAST_NONCONFORM" target="PRESLAST_DEMREP">
   <data key="d0">-0.0</data>
 </edge>
 </graph></graphml>
