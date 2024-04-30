@@ -3,6 +3,8 @@ import pyreadstat as prs
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
+import numpy as np
+
 
 
 def make_variable_summary(df):
@@ -10,13 +12,20 @@ def make_variable_summary(df):
     this function goes year by year and for each ballot puts in the percentage of non nan answers to the question
     """
     counts = df.groupby(['YEAR', 'BALLOT'], dropna=False).count()
-    pcts = counts / counts["ID"]
+
+    notnull_df = df.notna()
+    notnull_df['YEAR'] = df['YEAR']
+    notnull_df['BALLOT'] = df['BALLOT']
+
+    pcts = notnull_df.groupby(['YEAR', 'BALLOT'], dropna=False).mean()
+
 
     partially_complete_ballot_mask = (0 < pcts) & (pcts < 0.8)
     pc_row, pc_col = np.where(partially_complete_ballot_mask)
-    partially_complete_ballot = [(partially_complete_ballot_mask.index[row_ind], partially_complete_ballot_mask.column[col_ind]) for (row_ind, col_ind) in zip(pc_row, pc_col)]
+    partially_complete_ballot = [(partially_complete_ballot_mask.index[row_ind], partially_complete_ballot_mask.columns[col_ind]) for (row_ind, col_ind) in zip(pc_row, pc_col)]
 
-    return counts
+
+    return counts, pcts, partially_complete_ballot
     
 # The purpose of this script is to read in the GSS dataset and perform some basic data cleaning and transformation.
 # The dataset is a SAS7BDAT file, so we will use the pandas library to read in the data.
@@ -38,7 +47,7 @@ def transform_dataframe(df, combine_variants=True):
 
     variants = {
         "NATSPACY": "NATSPAC",
-        "NATENVIY": "NATENVIY",
+        "NATENVIY": "NATENVIR",
         "NATHEALY": "NATHEAL",
         "NATCITYY": "NATCITY",
         "NATCRIMY": "NATCRIME",
