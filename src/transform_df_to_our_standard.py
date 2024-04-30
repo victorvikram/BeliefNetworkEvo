@@ -3,6 +3,21 @@ import pyreadstat as prs
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
+
+
+def make_variable_summary(df):
+    """
+    this function goes year by year and for each ballot puts in the percentage of non nan answers to the question
+    """
+    counts = df.groupby(['YEAR', 'BALLOT'], dropna=False).count()
+    pcts = counts / counts["ID"]
+
+    partially_complete_ballot_mask = (0 < pcts) & (pcts < 0.8)
+    pc_row, pc_col = np.where(partially_complete_ballot_mask)
+    partially_complete_ballot = [(partially_complete_ballot_mask.index[row_ind], partially_complete_ballot_mask.column[col_ind]) for (row_ind, col_ind) in zip(pc_row, pc_col)]
+
+    return counts
+    
 # The purpose of this script is to read in the GSS dataset and perform some basic data cleaning and transformation.
 # The dataset is a SAS7BDAT file, so we will use the pandas library to read in the data.
 # The basic idea here is to manually write the mappings for the variables in the dataset and then apply them to the dataset.
@@ -10,7 +25,7 @@ from mpl_toolkits.mplot3d import Axes3D
 def transform_dataframe(df, combine_variants=True):
     # Read the data
     # The variables of interest are:
-    column_codes = ["YEAR","PARTYID","VOTE68","PRES68","IF68WHO","VOTE72","PRES72","IF72WHO","VOTE76","PRES76","IF76WHO","VOTE80","PRES80","IF80WHO","VOTE84","PRES84",
+    column_codes = ["YEAR", "ID", "PARTYID","VOTE68","PRES68","IF68WHO","VOTE72","PRES72","IF72WHO","VOTE76","PRES76","IF76WHO","VOTE80","PRES80","IF80WHO","VOTE84","PRES84",
     "IF84WHO","VOTE88","PRES88","IF88WHO","VOTE92","PRES92","IF92WHO","VOTE96","PRES96","IF96WHO","VOTE00","PRES00","IF00WHO","VOTE04","PRES04","IF04WHO","VOTE08","PRES08",
     "IF08WHO","VOTE12","PRES12","IF12WHO","VOTE16","PRES16","IF16WHO","VOTE20", "PRES20", "IF20WHO","POLVIEWS","NATSPAC","NATENVIR","NATHEAL","NATCITY","NATCRIME","NATDRUG","NATEDUC","NATRACE","NATARMS",
     "NATAID","NATFARE","NATROAD","NATSOC","NATMASS","NATPARK","NATCHLD","NATSCI","NATENRGY","NATSPACY","NATENVIY","NATHEALY","NATCITYY","NATCRIMY","NATDRUGY","NATEDUCY",
@@ -307,6 +322,7 @@ def transform_dataframe(df, combine_variants=True):
     # Make a new dataframe and add df['PARTYID'].map(PARTYID_map) to it
     transformed_df = pd.DataFrame()
     transformed_df['YEAR'] = df['YEAR']
+    transformed_df['ID'] = df['ID']
     transformed_df['BALLOT'] = df['BALLOT']
 
 
