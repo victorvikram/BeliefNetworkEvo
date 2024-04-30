@@ -1,20 +1,20 @@
 # Source of data
 Here is the GSS data: https://gssdataexplorer.norc.org/gss_data
 
-# Variables that might be of interest (as of 29/04 these have been replaced by the transformed variable names --
-# this impacts the naming of variables that are split into discrete categories.)
-# Note that the election-related variables are put in their own list since for visual clarity.
+# Variables that might be of interest (as of 29/04 these have been replaced by the transformed variable names -- this impacts the naming of variables that are split into discrete categories.)
+## Note that the election-related variables are put in their own list since for visual clarity.
 
 ```
-variables = ["PARTYID","POLVIEWS","NATSPAC","NATENVIR","NATHEAL","NATCITY","NATCRIME","NATDRUG","NATEDUC","NATRACE","NATARMS",
-"NATAID","NATFARE","NATROAD","NATSOC","NATMASS","NATPARK","NATCHLD","NATSCI","NATENRGY","NATSPACY","NATENVIY","NATHEALY","NATCITYY","NATCRIMY","NATDRUGY","NATEDUCY",
-"NATRACEY","NATARMSY","NATAIDY","NATFAREY","EQWLTH","SPKATH","COLATH","LIBATH","SPKRAC","COLRAC","LIBRAC","SPKCOM","COLCOM","LIBCOM","SPKMIL","COLMIL","LIBMIL","SPKHOMO",
-"COLHOMO","LIBHOMO","SPKMSLM","COLMSLM","LIBMSLM","CAPPUN","GUNLAW","COURTS","GRASS","ATTEND","RELITEN","POSTLIFE","PRAYER","AFFRMACT","WRKWAYUP","HELPFUL",
-"FAIR","TRUST","CONFINAN","CONBUS","CONCLERG","CONEDUC","CONFED","CONLABOR","CONPRESS","CONMEDIC","CONTV","CONJUDGE","CONSCI","CONLEGIS","CONARMY","OBEY","POPULAR","THNKSELF",
-"WORKHARD","HELPOTH","GETAHEAD","FEPOL","ABDEFECT","ABNOMORE","ABHLTH","ABPOOR","ABRAPE","ABSINGLE","ABANY","SEXEDUC","DIVLAW","PREMARSX","TEENSEX","XMARSEX","HOMOSEX","PORNLAW",
-"SPANKING","LETDIE1","SUICIDE1","SUICIDE2","POLHITOK","POLABUSE","POLMURDR","POLESCAP","POLATTAK","NEWS","TVHOURS","FECHLD","FEPRESCH","FEFAM","RACDIF1","RACDIF2","RACDIF3",
-"RACDIF4","HELPPOOR","MARHOMO"]
+variables = ["PARTYID","POLVIEWS","NATSPAC","NATENVIR","NATHEAL","NATCITY","NATCRIME","NATDRUG","NATEDUC","NATRACE","NATARMS","NATAID","NATFARE","NATROAD","NATSOC","NATMASS","NATPARK","NATCHLD","NATSCI","NATENRGY","NATSPACY","NATENVIY","NATHEALY","NATCITYY","NATCRIMY","NATDRUGY","NATEDUCY","NATRACEY","NATARMSY","NATAIDY","NATFAREY","EQWLTH","SPKATH","COLATH","LIBATH","SPKRAC","COLRAC","LIBRAC","SPKCOM","COLCOM","LIBCOM","SPKMIL","COLMIL","LIBMIL","SPKHOMO","COLHOMO","LIBHOMO","SPKMSLM","COLMSLM","LIBMSLM","CAPPUN","GUNLAW","COURTS","GRASS","ATTEND","RELITEN","POSTLIFE","PRAYER","AFFRMACT","WRKWAYUP","HELPFUL","FAIR","TRUST","CONFINAN","CONBUS","CONCLERG","CONEDUC","CONFED","CONLABOR","CONPRESS","CONMEDIC","CONTV","CONJUDGE","CONSCI","CONLEGIS","CONARMY","OBEY","POPULAR","THNKSELF","WORKHARD","HELPOTH","GETAHEAD","FEPOL","ABDEFECT","ABNOMORE","ABHLTH","ABPOOR","ABRAPE","ABSINGLE","ABANY","SEXEDUC","DIVLAW","PREMARSX","TEENSEX","XMARSEX","HOMOSEX","PORNLAW","SPANKING","LETDIE1","SUICIDE1","SUICIDE2","POLHITOK","POLABUSE","POLMURDR","POLESCAP","POLATTAK","NEWS","TVHOURS","FECHLD","FEPRESCH","FEFAM","RACDIF1","RACDIF2","RACDIF3","RACDIF4","HELPPOOR","MARHOMO"]
+```
+The child variables are all part of one question and are correlated as a result of being a ranking. Once we figure out how to partial out a subset of the variables, we'll be good. 
 
+```
+child_variables = ["OBEY","POPULAR","THNKSELF", "WORKHARD","HELPOTH"]
+```
+
+Variables about who people voted for 
+```
 PRES_variables = [
     'VOTE68', 'VOTE72', 'VOTE76', 'VOTE80', 'VOTE84', 'VOTE88', 'VOTE92', 'VOTE96', 'VOTE00', 'VOTE04', 'VOTE08', 'VOTE12', 'VOTE16', 'VOTE20',
     'VOTE68_ELIGIBLE', 'VOTE72_ELIGIBLE', 'VOTE76_ELIGIBLE', 'VOTE80_ELIGIBLE', 'VOTE84_ELIGIBLE', 'VOTE88_ELIGIBLE', 'VOTE92_ELIGIBLE', 'VOTE96_ELIGIBLE', 'VOTE00_ELIGIBLE', 'VOTE04_ELIGIBLE', 'VOTE08_ELIGIBLE', 'VOTE12_ELIGIBLE', 'VOTE16_ELIGIBLE', 'VOTE20_ELIGIBLE',
@@ -47,7 +47,18 @@ PRES_variables = [
     'IF16WHO_CLINTON', 'IF16WHO_TRUMP', 'IF16WHO_OTHER', 'IF16WHO_CANT_REMEMBER', 'IF16WHO_DONT_KNOW',
     'IF20WHO_BIDEN', 'IF20WHO_TRUMP', 'IF20WHO_OTHER', 'IF20WHO_CANT_REMEMBER', 'IF20WHO_DONT_KNOW'
 ]
+```
 
+# Generating corr network
+What do hope from the corr networks? That
+1. they are not too sensitive to minor fluctuations in data
+2. edges denote genuine interactions between variables
+3. they are not too dense
+4. that there is persistent structure across the windows but some level of change in each
+
+questions:
+1. should we include political party and liberal/conservative?
+2. how do we deal with cases where variables are perfectly correlated (like the variables about raising children) so they don't have any partial correlations with the other ones. somehow for each variable I need to be able to say these are the ones I want to control for in the partial correlation, but of course then I cannot use the matrix inversion method which doesn't account for that stuff
 
 # Issues that have been important over the years
 from here: https://www.nytimes.com/interactive/2017/02/27/us/politics/most-important-problem-gallup-polling-question.html
