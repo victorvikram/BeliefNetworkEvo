@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
 # Define a function to create a belief network based on correlation analysis of a given DataFrame.
-def make_belief_network(dataframe, variables_of_interest=None, years_of_interest=None, method="spearman", is_partial=True, threshold=None, sample_threshold=0):
+def make_belief_network(dataframe, variables_of_interest=None, years_of_interest=None, method="spearman", is_partial=True, threshold=None, sample_threshold=0, regularisation=0):
 
     # Start with the full dataframe and filter it according to specified years if provided.
     df_subset = dataframe
@@ -20,7 +20,7 @@ def make_belief_network(dataframe, variables_of_interest=None, years_of_interest
     all_variables = list(df_subset.columns)
     
     # Calculate pairwise correlations (and associated information) between variables using the specified method.
-    variables_list, correlation_matrix = my_pairwise_correlations(all_variables, df_subset, method, partial=is_partial, sample_threshold=sample_threshold)
+    variables_list, correlation_matrix = my_pairwise_correlations(all_variables, df_subset, method, partial=is_partial, regularization=regularisation, sample_threshold=sample_threshold)
 
     # Initialize an undirected graph to represent the belief network.
     graph = nx.Graph()
