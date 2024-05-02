@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-def make_degree_strength_change_dfs(df, vars_of_interest, every_x_years):
+def make_degree_strength_change_dfs(df, vars_of_interest, every_x_years=2):
 
     """
     makes three dataframes, one with var strengths in a particular window, one with var degrees in a particular window, and the last
