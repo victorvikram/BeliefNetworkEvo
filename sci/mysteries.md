@@ -1,0 +1,1 @@
+- why does the opinion of others (FAIR, HELPFUL, TRUST) disappear every other year
