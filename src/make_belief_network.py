@@ -4,8 +4,39 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
+import numpy as np
+
+def make_conditional_belief_network(condition_col, dataframe, condition_method="negpos", 
+                                    variables_of_interest=None, years_of_interest=None, method="spearman", is_partial=True, 
+                                    threshold=None, sample_threshold=0, regularisation=0):
+    if condition_method == "negpos":
+        dataframe["FLAG"] = np.where(dataframe[condition_col] > 0, True, np.where(dataframe[condition_col] < 0, False, np.nan))
+
+    unique_vals = dataframe["FLAG"].unique()
+    vals_to_condition = unique_vals[~np.isnan(unique_vals)]
+    print(vals_to_condition)
+    
+    outputs = {}
+    for val in vals_to_condition:
+        sub_df = dataframe.loc[dataframe["FLAG"] == val, :]
+        print(sub_df[condition_col].unique())
+
+        graph, variables_list, correlation_matrix = make_belief_network(sub_df, variables_of_interest, years_of_interest, 
+                                                                        method, is_partial, threshold, sample_threshold, regularisation)
+
+        outputs[val] = {"graph": graph, "vars": variables_list, "corr_mat": correlation_matrix}
+
+    return outputs
+
+def convert_graph_to_absolute_value(graph):
+    for u, v, data in graph.edges(data=True):
+        data['weight'] = abs(data['weight'])
+    
+    return graph
+
 # Define a function to create a belief network based on correlation analysis of a given DataFrame.
-def make_belief_network(dataframe, variables_of_interest=None, years_of_interest=None, method="spearman", is_partial=True, threshold=None, sample_threshold=0, regularisation=0):
+def make_belief_network(dataframe, variables_of_interest=None, years_of_interest=None, method="spearman", 
+                        is_partial=True, threshold=None, sample_threshold=0, regularisation=0):
 
     # Start with the full dataframe and filter it according to specified years if provided.
     df_subset = dataframe
@@ -33,8 +64,9 @@ def make_belief_network(dataframe, variables_of_interest=None, years_of_interest
                 if abs(correlation_matrix[i, j]) > threshold:
                     graph.add_edge(variables_list[i], variables_list[j], weight=correlation_matrix[i, j])
             else:
-                # If no threshold is specified, add an edge for all pairs.
-                graph.add_edge(variables_list[i], variables_list[j], weight=correlation_matrix[i, j])
+                if abs(correlation_matrix[i, j]) > 0:
+                    # If no threshold is specified, add an edge for all pairs.
+                    graph.add_edge(variables_list[i], variables_list[j], weight=correlation_matrix[i, j])
 
     # Return the graph, correlation information, and the correlation matrix itself.
     return graph, variables_list, correlation_matrix

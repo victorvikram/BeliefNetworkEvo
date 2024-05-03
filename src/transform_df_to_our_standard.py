@@ -27,10 +27,11 @@ def make_variable_summary(df):
 
     return counts, pcts, partially_complete_ballot
 
-def make_vote_supernodes(df, varnames=["VOTE{year}", "PRES{year}_NONCONFORM", "PRES{year}_DEMREP"]):
+def make_vote_supernodes(df, meta_df, varnames=["VOTE{year}", "PRES{year}_NONCONFORM", "PRES{year}_DEMREP"]):
     
     year_order = ["68", "72", "76", "80", "84", "88", "92", "96", "00", "04", "08", "12", "16", "20"]
     new_df = df.copy()
+    new_meta_df = meta_df.copy()
 
     for var in varnames:
         cols = [var.format(year=year) for year in year_order]
@@ -43,8 +44,29 @@ def make_vote_supernodes(df, varnames=["VOTE{year}", "PRES{year}_NONCONFORM", "P
 
         new_df[new_col] = sub_df[new_col]
 
-    return new_df
+        min_val = np.nanmin(new_df[new_col])
+        max_val = np.nanmax(new_df[new_col])
+        new_meta_df.loc[new_col, :] = {"min": min_val, "max": max_val}
+
+
+    return new_df, new_meta_df
+
+def normalize_columns(df, meta_df, exclude=["YEAR", "BALLOT", "ID"]):
+    """
+    transforms the df so that the range of each column is 1. signed variables go from [-0.5, 0.5], others go from [0, 1]
+    """
+
+    cols_to_use = [col for col in df.columns if col not in exclude]
+
+    range_of_values = meta_df["max"] - meta_df["min"]
+    normalized_df = df.loc[:,cols_to_use].div(range_of_values[cols_to_use])
     
+    for col in exclude:
+        if col in df.columns:
+            normalized_df[col] = df[col]
+
+    return normalized_df
+
 # The purpose of this script is to read in the GSS dataset and perform some basic data cleaning and transformation.
 # The dataset is a SAS7BDAT file, so we will use the pandas library to read in the data.
 # The basic idea here is to manually write the mappings for the variables in the dataset and then apply them to the dataset.
@@ -357,442 +379,489 @@ def transform_dataframe(df, combine_variants=True):
     transformed_df['ID'] = df['ID']
     transformed_df['BALLOT'] = df['BALLOT']
 
+    # make a dataframe that for each variable gives the min, max, and step
+    metadata_df = pd.DataFrame({"min": [], "max": []})
+
     # This assigns a value 0 if the voter voted republican, 
     DEMREP_map = {1: 0, 2: 1}
     NONCONFORM_map = {1: 0, 2: 0, 3: 1} # in years where there is no significant third party, nonconforming is just other
     NONCONFORM3P_map = {1: 0, 2: 0, 3: 1, 4: 1} # in years whre there is a significant third party, nonconforming is the third party or other
+
+    transformations_to_do = [
+        # PARTYID
+        {"source": "PARTYID", "dest": "PARTYID", "map": PARTYID_map},
+        {"source": "PARTYID", "dest": "OTHER_PARTY", "map": other_map},
+
+        # VOTE__
+        {"source": "VOTE68", "dest": "VOTE68", "map": VOTE_map},
+        {"source": "VOTE72", "dest": "VOTE72", "map": VOTE_map},
+        {"source": "VOTE76", "dest": "VOTE76", "map": VOTE_map},
+        {"source": "VOTE80", "dest": "VOTE80", "map": VOTE_map},
+        {"source": "VOTE84", "dest": "VOTE84", "map": VOTE_map},
+        {"source": "VOTE88", "dest": "VOTE88", "map": VOTE_map},
+        {"source": "VOTE92", "dest": "VOTE92", "map": VOTE_map},
+        {"source": "VOTE96", "dest": "VOTE96", "map": VOTE_map},
+        {"source": "VOTE00", "dest": "VOTE00", "map": VOTE_map},
+        {"source": "VOTE04", "dest": "VOTE04", "map": VOTE_map},
+        {"source": "VOTE08", "dest": "VOTE08", "map": VOTE_map},
+        {"source": "VOTE12", "dest": "VOTE12", "map": VOTE_map},
+        {"source": "VOTE16", "dest": "VOTE16", "map": VOTE_map},
+        {"source": "VOTE20", "dest": "VOTE20", "map": VOTE_map},
+
+        {"source": "VOTE68", "dest": "VOTE68_ELIGIBLE", "map": ELIGIBLE_map},
+        {"source": "VOTE72", "dest": "VOTE72_ELIGIBLE", "map": ELIGIBLE_map},
+        {"source": "VOTE76", "dest": "VOTE76_ELIGIBLE", "map": ELIGIBLE_map},
+        {"source": "VOTE80", "dest": "VOTE80_ELIGIBLE", "map": ELIGIBLE_map},
+        {"source": "VOTE84", "dest": "VOTE84_ELIGIBLE", "map": ELIGIBLE_map},
+        {"source": "VOTE88", "dest": "VOTE88_ELIGIBLE", "map": ELIGIBLE_map},
+        {"source": "VOTE92", "dest": "VOTE92_ELIGIBLE", "map": ELIGIBLE_map},
+        {"source": "VOTE96", "dest": "VOTE96_ELIGIBLE", "map": ELIGIBLE_map},
+        {"source": "VOTE00", "dest": "VOTE00_ELIGIBLE", "map": ELIGIBLE_map},
+        {"source": "VOTE04", "dest": "VOTE04_ELIGIBLE", "map": ELIGIBLE_map},
+        {"source": "VOTE08", "dest": "VOTE08_ELIGIBLE", "map": ELIGIBLE_map},
+        {"source": "VOTE12", "dest": "VOTE12_ELIGIBLE", "map": ELIGIBLE_map},
+        {"source": "VOTE16", "dest": "VOTE16_ELIGIBLE", "map": ELIGIBLE_map},
+        {"source": "VOTE20", "dest": "VOTE20_ELIGIBLE", "map": ELIGIBLE_map},
+
+        {"source": "VOTE68", "dest": "VOTE68_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "VOTE72", "dest": "VOTE72_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "VOTE76", "dest": "VOTE76_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "VOTE80", "dest": "VOTE80_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "VOTE84", "dest": "VOTE84_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "VOTE88", "dest": "VOTE88_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "VOTE92", "dest": "VOTE92_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "VOTE96", "dest": "VOTE96_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "VOTE00", "dest": "VOTE00_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "VOTE04", "dest": "VOTE04_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "VOTE08", "dest": "VOTE08_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "VOTE12", "dest": "VOTE12_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "VOTE16", "dest": "VOTE16_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "VOTE20", "dest": "VOTE20_DONT_KNOW", "map": DONT_KNOW_map},
+
+        {"source": "PRES68", "dest": "PRES68_HUMPHREY", "map": category_map_A},
+        {"source": "PRES68", "dest": "PRES68_NIXON", "map": category_map_B},
+        {"source": "PRES68", "dest": "PRES68_WALLACE", "map": category_map_C},
+        {"source": "PRES68", "dest": "PRES68_OTHER", "map": category_map_D},
+        {"source": "PRES68", "dest": "PRES68_REFUSED", "map": category_map_E},
+        {"source": "PRES68", "dest": "PRES68_DEMREP", "map": DEMREP_map},
+        {"source": "PRES68", "dest": "PRES68_NONCONFORM", "map": NONCONFORM3P_map},
+
+        {"source": "PRES72", "dest": "PRES72_MCGOVERN", "map": category_map_A},
+        {"source": "PRES72", "dest": "PRES72_NIXON", "map": category_map_B},
+        {"source": "PRES72", "dest": "PRES72_OTHER", "map": category_map_C},
+        {"source": "PRES72", "dest": "PRES72_REFUSED", "map": category_map_D},
+        {"source": "PRES72", "dest": "PRES72_WOULDNT_VOTE", "map": category_map_E},
+        {"source": "PRES72", "dest": "PRES72_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "PRES72", "dest": "PRES72_DEMREP", "map": DEMREP_map},
+        {"source": "PRES72", "dest": "PRES72_NONCONFORM", "map": NONCONFORM_map},
+
+        # PRES76 transformations
+        {"source": "PRES76", "dest": "PRES76_CARTER", "map": category_map_A},
+        {"source": "PRES76", "dest": "PRES76_FORD", "map": category_map_B},
+        {"source": "PRES76", "dest": "PRES76_OTHER", "map": category_map_C},
+        {"source": "PRES76", "dest": "PRES76_REFUSED", "map": category_map_D},
+        {"source": "PRES76", "dest": "PRES76_NO_PRES_VOTE", "map": category_map_E},
+        {"source": "PRES76", "dest": "PRES76_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "PRES76", "dest": "PRES76_DEMREP", "map": DEMREP_map},
+        {"source": "PRES76", "dest": "PRES76_NONCONFORM", "map": NONCONFORM_map},
+
+        # PRES80 transformations
+        {"source": "PRES80", "dest": "PRES80_CARTER", "map": category_map_A},
+        {"source": "PRES80", "dest": "PRES80_REAGAN", "map": category_map_B},
+        {"source": "PRES80", "dest": "PRES80_ANDERSON", "map": category_map_C},
+        {"source": "PRES80", "dest": "PRES80_OTHER", "map": category_map_D},
+        {"source": "PRES80", "dest": "PRES80_REFUSED", "map": category_map_E},
+        {"source": "PRES80", "dest": "PRES80_DIDNT_VOTE", "map": category_map_F},
+        {"source": "PRES80", "dest": "PRES80_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "PRES80", "dest": "PRES80_DEMREP", "map": DEMREP_map},
+        {"source": "PRES80", "dest": "PRES80_NONCONFORM", "map": NONCONFORM3P_map},
+
+        # PRES84 transformations
+        {"source": "PRES84", "dest": "PRES84_MONDALE", "map": category_map_A},
+        {"source": "PRES84", "dest": "PRES84_REAGAN", "map": category_map_B},
+        {"source": "PRES84", "dest": "PRES84_OTHER", "map": category_map_C},
+        {"source": "PRES84", "dest": "PRES84_REFUSED", "map": category_map_D},
+        {"source": "PRES84", "dest": "PRES84_NO_PRES_VOTE", "map": category_map_E},
+        {"source": "PRES84", "dest": "PRES84_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "PRES84", "dest": "PRES84_DEMREP", "map": DEMREP_map},
+        {"source": "PRES84", "dest": "PRES84_NONCONFORM", "map": NONCONFORM_map},
+
+        # PRES88 transformations
+        {"source": "PRES88", "dest": "PRES88_DUKAKIS", "map": category_map_A},
+        {"source": "PRES88", "dest": "PRES88_BUSH", "map": category_map_B},
+        {"source": "PRES88", "dest": "PRES88_OTHER", "map": category_map_C},
+        {"source": "PRES88", "dest": "PRES88_REFUSED", "map": category_map_D},
+        {"source": "PRES88", "dest": "PRES88_NO_PRES_VOTE", "map": category_map_E},
+        {"source": "PRES88", "dest": "PRES88_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "PRES88", "dest": "PRES88_DEMREP", "map": DEMREP_map},
+        {"source": "PRES88", "dest": "PRES88_NONCONFORM", "map": NONCONFORM_map},
+
+        # PRES92 transformations
+        {"source": "PRES92", "dest": "PRES92_CLINTON", "map": category_map_A},
+        {"source": "PRES92", "dest": "PRES92_BUSH", "map": category_map_B},
+        {"source": "PRES92", "dest": "PRES92_PEROT", "map": category_map_C},
+        {"source": "PRES92", "dest": "PRES92_OTHER", "map": category_map_D},
+        {"source": "PRES92", "dest": "PRES92_NO_PRES_VOTE", "map": category_map_E},
+        {"source": "PRES92", "dest": "PRES92_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "PRES92", "dest": "PRES92_DEMREP", "map": DEMREP_map},
+        {"source": "PRES92", "dest": "PRES92_NONCONFORM", "map": NONCONFORM3P_map},
+        
+        # PRES96 transformations
+        {"source": "PRES96", "dest": "PRES96_CLINTON", "map": category_map_A},
+        {"source": "PRES96", "dest": "PRES96_DOLE", "map": category_map_B},
+        {"source": "PRES96", "dest": "PRES96_PEROT", "map": category_map_C},
+        {"source": "PRES96", "dest": "PRES96_OTHER", "map": category_map_D},
+        {"source": "PRES96", "dest": "PRES96_DIDNT_VOTE", "map": category_map_E},
+        {"source": "PRES96", "dest": "PRES96_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "PRES96", "dest": "PRES96_DEMREP", "map": DEMREP_map},
+        {"source": "PRES96", "dest": "PRES96_NONCONFORM", "map": NONCONFORM3P_map},
+        
+        # PRES00 transformations
+        {"source": "PRES00", "dest": "PRES00_GORE", "map": category_map_A},
+        {"source": "PRES00", "dest": "PRES00_BUSH", "map": category_map_B},
+        {"source": "PRES00", "dest": "PRES00_NADER", "map": category_map_C},
+        {"source": "PRES00", "dest": "PRES00_OTHER", "map": category_map_D},
+        {"source": "PRES00", "dest": "PRES00_DIDNT_VOTE", "map": category_map_E},
+        {"source": "PRES00", "dest": "PRES00_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "PRES00", "dest": "PRES00_DEMREP", "map": DEMREP_map},
+        {"source": "PRES00", "dest": "PRES00_NONCONFORM", "map": NONCONFORM3P_map},
+        
+        # PRES04 transformations
+        {"source": "PRES04", "dest": "PRES04_KERRY", "map": category_map_A},
+        {"source": "PRES04", "dest": "PRES04_BUSH", "map": category_map_B},
+        {"source": "PRES04", "dest": "PRES04_NADER", "map": category_map_C},
+        {"source": "PRES04", "dest": "PRES04_NO_PRES_VOTE", "map": category_map_D},
+        {"source": "PRES04", "dest": "PRES04_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "PRES04", "dest": "PRES04_DEMREP", "map": DEMREP_map},
+        {"source": "PRES04", "dest": "PRES04_NONCONFORM", "map": NONCONFORM_map},
+        
+        # PRES08 transformations
+        {"source": "PRES08", "dest": "PRES08_OBAMA", "map": category_map_A},
+        {"source": "PRES08", "dest": "PRES08_MCCAIN", "map": category_map_B},
+        {"source": "PRES08", "dest": "PRES08_OTHER", "map": category_map_C},
+        {"source": "PRES08", "dest": "PRES08_DIDNT_VOTE", "map": category_map_D},
+        {"source": "PRES08", "dest": "PRES08_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "PRES08", "dest": "PRES08_DEMREP", "map": DEMREP_map},
+        {"source": "PRES08", "dest": "PRES08_NONCONFORM", "map": NONCONFORM_map},
+
+        # PRES12 transformations
+        {"source": "PRES12", "dest": "PRES12_OBAMA", "map": category_map_A},
+        {"source": "PRES12", "dest": "PRES12_ROMNEY", "map": category_map_B},
+        {"source": "PRES12", "dest": "PRES12_OTHER", "map": category_map_C},
+        {"source": "PRES12", "dest": "PRES12_DIDNT_VOTE", "map": category_map_D},
+        {"source": "PRES12", "dest": "PRES12_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "PRES12", "dest": "PRES12_DEMREP", "map": DEMREP_map},
+        {"source": "PRES12", "dest": "PRES12_NONCONFORM", "map": NONCONFORM_map},
+        
+        # PRES16 transformations
+        {"source": "PRES16", "dest": "PRES16_CLINTON", "map": category_map_A},
+        {"source": "PRES16", "dest": "PRES16_TRUMP", "map": category_map_B},
+        {"source": "PRES16", "dest": "PRES16_OTHER", "map": category_map_C},
+        {"source": "PRES16", "dest": "PRES16_DIDNT_VOTE", "map": category_map_D},
+        {"source": "PRES16", "dest": "PRES16_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "PRES16", "dest": "PRES16_DEMREP", "map": DEMREP_map},
+        {"source": "PRES16", "dest": "PRES16_NONCONFORM", "map": NONCONFORM_map},
+        
+        # PRES20 transformations
+        {"source": "PRES20", "dest": "PRES20_BIDEN", "map": category_map_A},
+        {"source": "PRES20", "dest": "PRES20_TRUMP", "map": category_map_B},
+        {"source": "PRES20", "dest": "PRES20_OTHER", "map": category_map_C},
+        {"source": "PRES20", "dest": "PRES20_DIDNT_VOTE", "map": category_map_D},
+        {"source": "PRES20", "dest": "PRES20_DONT_KNOW", "map": DONT_KNOW_map},
+        {"source": "PRES20", "dest": "PRES20_DEMREP", "map": DEMREP_map},
+        {"source": "PRES20", "dest": "PRES20_NONCONFORM", "map": NONCONFORM_map},
+
+        # IF68WHO transformations
+        {"source": "IF68WHO", "dest": "IF68WHO_HUMPHREY", "map": category_map_A},
+        {"source": "IF68WHO", "dest": "IF68WHO_NIXON", "map": category_map_B},
+        {"source": "IF68WHO", "dest": "IF68WHO_WALLACE", "map": category_map_C},
+        {"source": "IF68WHO", "dest": "IF68WHO_OTHER", "map": category_map_D},
+        {"source": "IF68WHO", "dest": "IF68WHO_WLDNT_VT_RELIG", "map": category_map_E},
+        {"source": "IF68WHO", "dest": "IF68WHO_DONT_KNOW", "map": DONT_KNOW_map},
+        
+        # IF72WHO transformations
+        {"source": "IF72WHO", "dest": "IF72WHO_MCGOVERN", "map": category_map_A},
+        {"source": "IF72WHO", "dest": "IF72WHO_NIXON", "map": category_map_B},
+        {"source": "IF72WHO", "dest": "IF72WHO_OTHER", "map": category_map_C},
+        {"source": "IF72WHO", "dest": "IF72WHO_REFUSED", "map": category_map_D},
+        {"source": "IF72WHO", "dest": "IF72WHO_WOULDNT_VOTE", "map": category_map_E},
+        {"source": "IF72WHO", "dest": "IF72WHO_WLDNT_VT_RELIG", "map": category_map_F},
+        {"source": "IF72WHO", "dest": "IF72WHO_DONT_KNOW", "map": DONT_KNOW_map},
+        
+        # IF76WHO transformations
+        {"source": "IF76WHO", "dest": "IF76WHO_CARTER", "map": category_map_A},
+        {"source": "IF76WHO", "dest": "IF76WHO_FORD", "map": category_map_B},
+        {"source": "IF76WHO", "dest": "IF76WHO_OTHER", "map": category_map_C},
+        {"source": "IF76WHO", "dest": "IF76WHO_REFUSED", "map": category_map_D},
+        {"source": "IF76WHO", "dest": "IF76WHO_WOULDNT_VOTE", "map": category_map_E},
+        {"source": "IF76WHO", "dest": "IF76WHO_DONT_KNOW", "map": DONT_KNOW_map},
+        
+        # IF80WHO transformations
+        {"source": "IF80WHO", "dest": "IF80WHO_CARTER", "map": category_map_A},
+        {"source": "IF80WHO", "dest": "IF80WHO_REAGAN", "map": category_map_B},
+        {"source": "IF80WHO", "dest": "IF80WHO_ANDERSON", "map": category_map_C},
+        {"source": "IF80WHO", "dest": "IF80WHO_OTHER", "map": category_map_D},
+        {"source": "IF80WHO", "dest": "IF80WHO_WOULDNT_VOTE", "map": category_map_E},
+        {"source": "IF80WHO", "dest": "IF80WHO_REFUSED", "map": category_map_F},
+        {"source": "IF80WHO", "dest": "IF80WHO_DONT_KNOW", "map": DONT_KNOW_map},
+        
+        # IF84WHO transformations
+        {"source": "IF84WHO", "dest": "IF84WHO_MONDALE", "map": category_map_A},
+        {"source": "IF84WHO", "dest": "IF84WHO_REAGAN", "map": category_map_B},
+        {"source": "IF84WHO", "dest": "IF84WHO_OTHER", "map": category_map_C},
+        {"source": "IF84WHO", "dest": "IF84WHO_WOULDNT_VOTE", "map": category_map_D},
+        {"source": "IF84WHO", "dest": "IF84WHO_DONT_KNOW", "map": DONT_KNOW_map},
+        
+        # IF88WHO transformations
+        {"source": "IF88WHO", "dest": "IF88WHO_DUKAKIS", "map": category_map_A},
+        {"source": "IF88WHO", "dest": "IF88WHO_BUSH", "map": category_map_B},
+        {"source": "IF88WHO", "dest": "IF88WHO_OTHER", "map": category_map_C},
+        {"source": "IF88WHO", "dest": "IF88WHO_DONT_KNOW", "map": DONT_KNOW_map},
+
+        # IF92WHO transformations
+        {"source": "IF92WHO", "dest": "IF92WHO_CLINTON", "map": category_map_A},
+        {"source": "IF92WHO", "dest": "IF92WHO_BUSH", "map": category_map_B},
+        {"source": "IF92WHO", "dest": "IF92WHO_PEROT", "map": category_map_C},
+        {"source": "IF92WHO", "dest": "IF92WHO_OTHER", "map": category_map_D},
+        {"source": "IF92WHO", "dest": "IF92WHO_DONT_KNOW", "map": DONT_KNOW_map},
+        
+        # IF96WHO transformations
+        {"source": "IF96WHO", "dest": "IF96WHO_CLINTON", "map": category_map_A},
+        {"source": "IF96WHO", "dest": "IF96WHO_DOLE", "map": category_map_B},
+        {"source": "IF96WHO", "dest": "IF96WHO_PEROT", "map": category_map_C},
+        {"source": "IF96WHO", "dest": "IF96WHO_OTHER", "map": category_map_D},
+        {"source": "IF96WHO", "dest": "IF96WHO_DONT_KNOW", "map": DONT_KNOW_map},
+        
+        # IF00WHO transformations
+        {"source": "IF00WHO", "dest": "IF00WHO_GORE", "map": category_map_A},
+        {"source": "IF00WHO", "dest": "IF00WHO_BUSH", "map": category_map_B},
+        {"source": "IF00WHO", "dest": "IF00WHO_NADER", "map": category_map_C},
+        {"source": "IF00WHO", "dest": "IF00WHO_OTHER", "map": category_map_D},
+        {"source": "IF00WHO", "dest": "IF00WHO_DONT_KNOW", "map": DONT_KNOW_map},
+        
+        # IF04WHO transformations
+        {"source": "IF04WHO", "dest": "IF04WHO_KERRY", "map": category_map_A},
+        {"source": "IF04WHO", "dest": "IF04WHO_BUSH", "map": category_map_B},
+        {"source": "IF04WHO", "dest": "IF04WHO_NADER", "map": category_map_C},
+        {"source": "IF04WHO", "dest": "IF04WHO_DONT_KNOW", "map": DONT_KNOW_map},
+        
+        # IF08WHO transformations
+        {"source": "IF08WHO", "dest": "IF08WHO_OBAMA", "map": category_map_A},
+        {"source": "IF08WHO", "dest": "IF08WHO_MCCAIN", "map": category_map_B},
+        {"source": "IF08WHO", "dest": "IF08WHO_OTHER", "map": category_map_C},
+        {"source": "IF08WHO", "dest": "IF08WHO_DONT_KNOW", "map": DONT_KNOW_map},
+        
+        # IF12WHO transformations
+        {"source": "IF12WHO", "dest": "IF12WHO_OBAMA", "map": category_map_A},
+        {"source": "IF12WHO", "dest": "IF12WHO_ROMNEY", "map": category_map_B},
+        {"source": "IF12WHO", "dest": "IF12WHO_OTHER", "map": category_map_C},
+        {"source": "IF12WHO", "dest": "IF12WHO_DONT_KNOW", "map": DONT_KNOW_map},
+
+        # IF16WHO transformations
+        {"source": "IF16WHO", "dest": "IF16WHO_CLINTON", "map": category_map_A},
+        {"source": "IF16WHO", "dest": "IF16WHO_TRUMP", "map": category_map_B},
+        {"source": "IF16WHO", "dest": "IF16WHO_OTHER", "map": category_map_C},
+        {"source": "IF16WHO", "dest": "IF16WHO_CANT_REMEMBER", "map": category_map_D},
+        {"source": "IF16WHO", "dest": "IF16WHO_DONT_KNOW", "map": DONT_KNOW_map},
+        
+        # IF20WHO transformations
+        {"source": "IF20WHO", "dest": "IF20WHO_BIDEN", "map": category_map_A},
+        {"source": "IF20WHO", "dest": "IF20WHO_TRUMP", "map": category_map_B},
+        {"source": "IF20WHO", "dest": "IF20WHO_OTHER", "map": category_map_C},
+        {"source": "IF20WHO", "dest": "IF20WHO_CANT_REMEMBER", "map": category_map_D},
+        {"source": "IF20WHO", "dest": "IF20WHO_DONT_KNOW", "map": DONT_KNOW_map},
+        
+        # POLVIEWS transformation
+        {"source": "POLVIEWS", "dest": "POLVIEWS", "map": POLVIEWS_map},
+        
+        # NAT mappings
+        {"source": "NATSPAC", "dest": "NATSPAC", "map": NAT_map},
+        {"source": "NATENVIR", "dest": "NATENVIR", "map": NAT_map},
+        {"source": "NATHEAL", "dest": "NATHEAL", "map": NAT_map},
+        {"source": "NATCITY", "dest": "NATCITY", "map": NAT_map},
+        {"source": "NATCRIME", "dest": "NATCRIME", "map": NAT_map},
+        {"source": "NATDRUG", "dest": "NATDRUG", "map": NAT_map},
+        {"source": "NATEDUC", "dest": "NATEDUC", "map": NAT_map},
+        {"source": "NATRACE", "dest": "NATRACE", "map": NAT_map},
+        {"source": "NATARMS", "dest": "NATARMS", "map": NAT_map},
+        {"source": "NATAID", "dest": "NATAID", "map": NAT_map},
+        {"source": "NATFARE", "dest": "NATFARE", "map": NAT_map},
+        {"source": "NATROAD", "dest": "NATROAD", "map": NAT_map},
+        {"source": "NATSOC", "dest": "NATSOC", "map": NAT_map},
+        {"source": "NATMASS", "dest": "NATMASS", "map": NAT_map},
+        {"source": "NATPARK", "dest": "NATPARK", "map": NAT_map},
+        {"source": "NATCHLD", "dest": "NATCHLD", "map": NAT_map},
+        {"source": "NATSCI", "dest": "NATSCI", "map": NAT_map},
+        {"source": "NATENRGY", "dest": "NATENRGY", "map": NAT_map},
     
-    # region: APPLYING ALL THE MAPS
-    transformed_df['PARTYID'] = df['PARTYID'].map(PARTYID_map)
-    transformed_df['OTHER_PARTY'] = df['PARTYID'].map(other_map)
-
-    transformed_df['VOTE68'] = df['VOTE68'].map(VOTE_map)
-    transformed_df['VOTE72'] = df['VOTE72'].map(VOTE_map)
-    transformed_df['VOTE76'] = df['VOTE76'].map(VOTE_map)
-    transformed_df['VOTE80'] = df['VOTE80'].map(VOTE_map)
-    transformed_df['VOTE84'] = df['VOTE84'].map(VOTE_map)
-    transformed_df['VOTE88'] = df['VOTE88'].map(VOTE_map)
-    transformed_df['VOTE92'] = df['VOTE92'].map(VOTE_map)
-    transformed_df['VOTE96'] = df['VOTE96'].map(VOTE_map)
-    transformed_df['VOTE00'] = df['VOTE00'].map(VOTE_map)
-    transformed_df['VOTE04'] = df['VOTE04'].map(VOTE_map)
-    transformed_df['VOTE08'] = df['VOTE08'].map(VOTE_map)
-    transformed_df['VOTE12'] = df['VOTE12'].map(VOTE_map)
-    transformed_df['VOTE16'] = df['VOTE16'].map(VOTE_map)
-    transformed_df['VOTE20'] = df['VOTE20'].map(VOTE_map)
-
-    transformed_df['VOTE68_ELIGIBLE'] = df['VOTE68'].map(ELIGIBLE_map)
-    transformed_df['VOTE72_ELIGIBLE'] = df['VOTE72'].map(ELIGIBLE_map)
-    transformed_df['VOTE76_ELIGIBLE'] = df['VOTE76'].map(ELIGIBLE_map)
-    transformed_df['VOTE80_ELIGIBLE'] = df['VOTE80'].map(ELIGIBLE_map)
-    transformed_df['VOTE84_ELIGIBLE'] = df['VOTE84'].map(ELIGIBLE_map)
-    transformed_df['VOTE88_ELIGIBLE'] = df['VOTE88'].map(ELIGIBLE_map)
-    transformed_df['VOTE92_ELIGIBLE'] = df['VOTE92'].map(ELIGIBLE_map)
-    transformed_df['VOTE96_ELIGIBLE'] = df['VOTE96'].map(ELIGIBLE_map)
-    transformed_df['VOTE00_ELIGIBLE'] = df['VOTE00'].map(ELIGIBLE_map)
-    transformed_df['VOTE04_ELIGIBLE'] = df['VOTE04'].map(ELIGIBLE_map)
-    transformed_df['VOTE08_ELIGIBLE'] = df['VOTE08'].map(ELIGIBLE_map)
-    transformed_df['VOTE12_ELIGIBLE'] = df['VOTE12'].map(ELIGIBLE_map)
-    transformed_df['VOTE16_ELIGIBLE'] = df['VOTE16'].map(ELIGIBLE_map)
-    transformed_df['VOTE20_ELIGIBLE'] = df['VOTE20'].map(ELIGIBLE_map)
-
-    transformed_df['VOTE68_DONT_KNOW'] = df['VOTE68'].map(DONT_KNOW_map)
-    transformed_df['VOTE72_DONT_KNOW'] = df['VOTE72'].map(DONT_KNOW_map)
-    transformed_df['VOTE76_DONT_KNOW'] = df['VOTE76'].map(DONT_KNOW_map)
-    transformed_df['VOTE80_DONT_KNOW'] = df['VOTE80'].map(DONT_KNOW_map)
-    transformed_df['VOTE84_DONT_KNOW'] = df['VOTE84'].map(DONT_KNOW_map)
-    transformed_df['VOTE88_DONT_KNOW'] = df['VOTE88'].map(DONT_KNOW_map)
-    transformed_df['VOTE92_DONT_KNOW'] = df['VOTE92'].map(DONT_KNOW_map)
-    transformed_df['VOTE96_DONT_KNOW'] = df['VOTE96'].map(DONT_KNOW_map)
-    transformed_df['VOTE00_DONT_KNOW'] = df['VOTE00'].map(DONT_KNOW_map)
-    transformed_df['VOTE04_DONT_KNOW'] = df['VOTE04'].map(DONT_KNOW_map)
-    transformed_df['VOTE08_DONT_KNOW'] = df['VOTE08'].map(DONT_KNOW_map)
-    transformed_df['VOTE12_DONT_KNOW'] = df['VOTE12'].map(DONT_KNOW_map)
-    transformed_df['VOTE16_DONT_KNOW'] = df['VOTE16'].map(DONT_KNOW_map)
-    transformed_df['VOTE20_DONT_KNOW'] = df['VOTE20'].map(DONT_KNOW_map)
-
-    transformed_df['PRES68_HUMPHREY'] = df['PRES68'].map(category_map_A)
-    transformed_df['PRES68_NIXON'] = df['PRES68'].map(category_map_B)
-    transformed_df['PRES68_WALLACE'] = df['PRES68'].map(category_map_C)
-    transformed_df['PRES68_OTHER'] = df['PRES68'].map(category_map_D)
-    transformed_df['PRES68_REFUSED'] = df['PRES68'].map(category_map_E)
-    transformed_df['PRES68_DEMREP'] = df['PRES68'].map(DEMREP_map)
-    transformed_df['PRES68_NONCONFORM'] = df['PRES68'].map(NONCONFORM3P_map)
-    # transformed_df['PRES68_DONT_KNOW)'] = df['PRES68'].map(DONT_KNOW_map)
-
-    transformed_df['PRES72_MCGOVERN'] = df['PRES72'].map(category_map_A)
-    transformed_df['PRES72_NIXON'] = df['PRES72'].map(category_map_B)
-    transformed_df['PRES72_OTHER'] = df['PRES72'].map(category_map_C)
-    transformed_df['PRES72_REFUSED'] = df['PRES72'].map(category_map_D)
-    transformed_df['PRES72_WOULDNT_VOTE'] = df['PRES72'].map(category_map_E)
-    transformed_df['PRES72_DONT_KNOW'] = df['PRES72'].map(DONT_KNOW_map)
-    transformed_df['PRES72_DEMREP'] = df['PRES72'].map(DEMREP_map)
-    transformed_df['PRES72_NONCONFORM'] = df['PRES72'].map(NONCONFORM_map)
-
-    transformed_df['PRES76_CARTER'] = df['PRES76'].map(category_map_A)
-    transformed_df['PRES76_FORD'] = df['PRES76'].map(category_map_B)
-    transformed_df['PRES76_OTHER'] = df['PRES76'].map(category_map_C)
-    transformed_df['PRES76_REFUSED'] = df['PRES76'].map(category_map_D)
-    transformed_df['PRES76_NO_PRES_VOTE'] = df['PRES76'].map(category_map_E)
-    transformed_df['PRES76_DONT_KNOW'] = df['PRES76'].map(DONT_KNOW_map)
-    transformed_df['PRES76_DEMREP'] = df['PRES76'].map(DEMREP_map)
-    transformed_df['PRES76_NONCONFORM'] = df['PRES76'].map(NONCONFORM_map)
-
-    transformed_df['PRES80_CARTER'] = df['PRES80'].map(category_map_A)
-    transformed_df['PRES80_REAGAN'] = df['PRES80'].map(category_map_B)
-    transformed_df['PRES80_ANDERSON'] = df['PRES80'].map(category_map_C)
-    transformed_df['PRES80_OTHER'] = df['PRES80'].map(category_map_D)
-    transformed_df['PRES80_REFUSED'] = df['PRES80'].map(category_map_E)
-    transformed_df['PRES80_DIDNT_VOTE'] = df['PRES80'].map(category_map_F)
-    transformed_df['PRES80_DONT_KNOW'] = df['PRES80'].map(DONT_KNOW_map)
-    transformed_df['PRES80_DEMREP'] = df['PRES80'].map(DEMREP_map)
-    transformed_df['PRES80_NONCONFORM'] = df['PRES80'].map(NONCONFORM3P_map)
-
-    transformed_df['PRES84_MONDALE'] = df['PRES84'].map(category_map_A)
-    transformed_df['PRES84_REAGAN'] = df['PRES84'].map(category_map_B)
-    transformed_df['PRES84_OTHER'] = df['PRES84'].map(category_map_C)
-    transformed_df['PRES84_REFUSED'] = df['PRES84'].map(category_map_D)
-    transformed_df['PRES84_NO_PRES_VOTE'] = df['PRES84'].map(category_map_E)
-    transformed_df['PRES84_DONT_KNOW'] = df['PRES84'].map(DONT_KNOW_map)
-    transformed_df['PRES84_DEMREP'] = df['PRES84'].map(DEMREP_map)
-    transformed_df['PRES84_NONCONFORM'] = df['PRES84'].map(NONCONFORM_map)
-
-    transformed_df['PRES88_DUKAKIS'] = df['PRES88'].map(category_map_A) # corrected
-    transformed_df['PRES88_BUSH'] = df['PRES88'].map(category_map_B)
-    transformed_df['PRES88_OTHER'] = df['PRES88'].map(category_map_C)
-    transformed_df['PRES88_REFUSED'] = df['PRES88'].map(category_map_D)
-    transformed_df['PRES88_NO_PRES_VOTE'] = df['PRES88'].map(category_map_E)
-    transformed_df['PRES88_DONT_KNOW'] = df['PRES88'].map(DONT_KNOW_map)
-    transformed_df['PRES88_DEMREP'] = df['PRES88'].map(DEMREP_map)
-    transformed_df['PRES88_NONCONFORM'] = df['PRES88'].map(NONCONFORM_map)
-
-    transformed_df['PRES92_CLINTON'] = df['PRES92'].map(category_map_A)
-    transformed_df['PRES92_BUSH'] = df['PRES92'].map(category_map_B)
-    transformed_df['PRES92_PEROT'] = df['PRES92'].map(category_map_C)
-    transformed_df['PRES92_OTHER'] = df['PRES92'].map(category_map_D)
-    transformed_df['PRES92_NO_PRES_VOTE'] = df['PRES92'].map(category_map_E)
-    transformed_df['PRES92_DONT_KNOW'] = df['PRES92'].map(DONT_KNOW_map)
-    transformed_df['PRES92_DEMREP'] = df['PRES92'].map(DEMREP_map)
-    transformed_df['PRES92_NONCONFORM'] = df['PRES92'].map(NONCONFORM3P_map)
-
-    transformed_df['PRES96_CLINTON'] = df['PRES96'].map(category_map_A)
-    transformed_df['PRES96_DOLE'] = df['PRES96'].map(category_map_B)
-    transformed_df['PRES96_PEROT'] = df['PRES96'].map(category_map_C)
-    transformed_df['PRES96_OTHER'] = df['PRES96'].map(category_map_D)
-    transformed_df['PRES96_DIDNT_VOTE'] = df['PRES96'].map(category_map_E)
-    transformed_df['PRES96_DONT_KNOW'] = df['PRES96'].map(DONT_KNOW_map)
-    transformed_df['PRES96_DEMREP'] = df['PRES96'].map(DEMREP_map)
-    transformed_df['PRES96_NONCONFORM'] = df['PRES96'].map(NONCONFORM3P_map)
-
-    transformed_df['PRES00_GORE'] = df['PRES00'].map(category_map_A)
-    transformed_df['PRES00_BUSH'] = df['PRES00'].map(category_map_B)
-    transformed_df['PRES00_NADER'] = df['PRES00'].map(category_map_C)
-    transformed_df['PRES00_OTHER'] = df['PRES00'].map(category_map_D)
-    transformed_df['PRES00_DIDNT_VOTE'] = df['PRES00'].map(category_map_E)
-    transformed_df['PRES00_DONT_KNOW'] = df['PRES00'].map(DONT_KNOW_map)
-    transformed_df['PRES00_DEMREP'] = df['PRES00'].map(DEMREP_map)
-    transformed_df['PRES00_NONCONFORM'] = df['PRES00'].map(NONCONFORM3P_map)
-
-    transformed_df['PRES04_KERRY'] = df['PRES04'].map(category_map_A)
-    transformed_df['PRES04_BUSH'] = df['PRES04'].map(category_map_B)
-    transformed_df['PRES04_NADER'] = df['PRES04'].map(category_map_C)
-    transformed_df['PRES04_NO_PRES_VOTE'] = df['PRES04'].map(category_map_D)
-    transformed_df['PRES04_DONT_KNOW'] = df['PRES04'].map(DONT_KNOW_map)
-    transformed_df['PRES04_DEMREP'] = df['PRES04'].map(DEMREP_map)
-    transformed_df['PRES04_NONCONFORM'] = df['PRES04'].map(NONCONFORM_map)
-
-    transformed_df['PRES08_OBAMA'] = df['PRES08'].map(category_map_A)
-    transformed_df['PRES08_MCCAIN'] = df['PRES08'].map(category_map_B)
-    transformed_df['PRES08_OTHER'] = df['PRES08'].map(category_map_C)
-    transformed_df['PRES08_DIDNT_VOTE'] = df['PRES08'].map(category_map_D)
-    transformed_df['PRES08_DONT_KNOW'] = df['PRES08'].map(DONT_KNOW_map)
-    transformed_df['PRES08_DEMREP'] = df['PRES08'].map(DEMREP_map)
-    transformed_df['PRES08_NONCONFORM'] = df['PRES08'].map(NONCONFORM_map)
-
-    transformed_df['PRES12_OBAMA'] = df['PRES12'].map(category_map_A)
-    transformed_df['PRES12_ROMNEY'] = df['PRES12'].map(category_map_B)
-    transformed_df['PRES12_OTHER'] = df['PRES12'].map(category_map_C)
-    transformed_df['PRES12_DIDNT_VOTE'] = df['PRES12'].map(category_map_D)
-    transformed_df['PRES12_DONT_KNOW'] = df['PRES12'].map(DONT_KNOW_map)
-    transformed_df['PRES12_DEMREP'] = df['PRES12'].map(DEMREP_map)
-    transformed_df['PRES12_NONCONFORM'] = df['PRES12'].map(NONCONFORM_map)
-
-    transformed_df['PRES16_CLINTON'] = df['PRES16'].map(category_map_A)
-    transformed_df['PRES16_TRUMP'] = df['PRES16'].map(category_map_B)
-    transformed_df['PRES16_OTHER'] = df['PRES16'].map(category_map_C)
-    transformed_df['PRES16_DIDNT_VOTE'] = df['PRES16'].map(category_map_D)
-    transformed_df['PRES16_DONT_KNOW'] = df['PRES16'].map(DONT_KNOW_map)
-    transformed_df['PRES16_DEMREP'] = df['PRES16'].map(DEMREP_map)
-    transformed_df['PRES16_NONCONFORM'] = df['PRES16'].map(NONCONFORM_map)
-
-    transformed_df['PRES20_BIDEN'] = df['PRES20'].map(category_map_A)
-    transformed_df['PRES20_TRUMP'] = df['PRES20'].map(category_map_B)
-    transformed_df['PRES20_OTHER'] = df['PRES20'].map(category_map_C)
-    transformed_df['PRES20_DIDNT_VOTE'] = df['PRES20'].map(category_map_D)
-    transformed_df['PRES20_DONT_KNOW'] = df['PRES20'].map(DONT_KNOW_map)
-    transformed_df['PRES20_DEMREP'] = df['PRES20'].map(DEMREP_map)
-    transformed_df['PRES20_NONCONFORM'] = df['PRES20'].map(NONCONFORM_map)
-
-    transformed_df['IF68WHO_HUMPHREY'] = df['IF68WHO'].map(category_map_A)
-    transformed_df['IF68WHO_NIXON'] = df['IF68WHO'].map(category_map_B)
-    transformed_df['IF68WHO_WALLACE'] = df['IF68WHO'].map(category_map_C)
-    transformed_df['IF68WHO_OTHER'] = df['IF68WHO'].map(category_map_D)
-    transformed_df['IF68WHO_WLDNT_VT_RELIG'] = df['IF68WHO'].map(category_map_E)
-    transformed_df['IF68WHO_DONT_KNOW'] = df['IF68WHO'].map(DONT_KNOW_map)
-
-    transformed_df['IF72WHO_MCGOVERN'] = df['IF72WHO'].map(category_map_A)
-    transformed_df['IF72WHO_NIXON'] = df['IF72WHO'].map(category_map_B)
-    transformed_df['IF72WHO_OTHER'] = df['IF72WHO'].map(category_map_C)
-    transformed_df['IF72WHO_REFUSED'] = df['IF72WHO'].map(category_map_D)
-    transformed_df['IF72WHO_WOULDNT_VOTE'] = df['IF72WHO'].map(category_map_E)
-    transformed_df['IF72WHO_WLDNT_VT_RELIG'] = df['IF72WHO'].map(category_map_F)
-    transformed_df['IF72WHO_DONT_KNOW'] = df['IF72WHO'].map(DONT_KNOW_map)
-
-    transformed_df['IF76WHO_CARTER'] = df['IF76WHO'].map(category_map_A)
-    transformed_df['IF76WHO_FORD'] = df['IF76WHO'].map(category_map_B)
-    transformed_df['IF76WHO_OTHER'] = df['IF76WHO'].map(category_map_C)
-    transformed_df['IF76WHO_REFUSED'] = df['IF76WHO'].map(category_map_D)
-    transformed_df['IF76WHO_WOULDNT_VOTE'] = df['IF76WHO'].map(category_map_E)
-    transformed_df['IF76WHO_DONT_KNOW'] = df['IF76WHO'].map(DONT_KNOW_map)
-
-    transformed_df['IF80WHO_CARTER'] = df['IF80WHO'].map(category_map_A)
-    transformed_df['IF80WHO_REAGAN'] = df['IF80WHO'].map(category_map_B)
-    transformed_df['IF80WHO_ANDERSON'] = df['IF80WHO'].map(category_map_C)
-    transformed_df['IF80WHO_OTHER'] = df['IF80WHO'].map(category_map_D)
-    transformed_df['IF80WHO_WOULDNT_VOTE'] = df['IF80WHO'].map(category_map_E)
-    transformed_df['IF80WHO_REFUSED'] = df['IF80WHO'].map(category_map_F)
-    transformed_df['IF80WHO_DONT_KNOW'] = df['IF80WHO'].map(DONT_KNOW_map)
-
-    transformed_df['IF84WHO_MONDALE'] = df['IF84WHO'].map(category_map_A)
-    transformed_df['IF84WHO_REAGAN'] = df['IF84WHO'].map(category_map_B)
-    transformed_df['IF84WHO_OTHER'] = df['IF84WHO'].map(category_map_C)
-    transformed_df['IF84WHO_WOULDNT_VOTE'] = df['IF84WHO'].map(category_map_D)
-    transformed_df['IF84WHO_DONT_KNOW'] = df['IF84WHO'].map(DONT_KNOW_map)
-
-    transformed_df['IF88WHO_DUKAKIS'] = df['IF88WHO'].map(category_map_A)
-    transformed_df['IF88WHO_BUSH'] = df['IF88WHO'].map(category_map_B)
-    transformed_df['IF88WHO_OTHER'] = df['IF88WHO'].map(category_map_C)
-    transformed_df['IF88WHO_DONT_KNOW'] = df['IF88WHO'].map(DONT_KNOW_map)
-
-    transformed_df['IF92WHO_CLINTON'] = df['IF92WHO'].map(category_map_A)
-    transformed_df['IF92WHO_BUSH'] = df['IF92WHO'].map(category_map_B)
-    transformed_df['IF92WHO_PEROT'] = df['IF92WHO'].map(category_map_C)
-    transformed_df['IF92WHO_OTHER'] = df['IF92WHO'].map(category_map_D)
-    transformed_df['IF92WHO_DONT_KNOW'] = df['IF92WHO'].map(DONT_KNOW_map)
-
-    transformed_df['IF96WHO_CLINTON'] = df['IF96WHO'].map(category_map_A)
-    transformed_df['IF96WHO_DOLE'] = df['IF96WHO'].map(category_map_B)
-    transformed_df['IF96WHO_PEROT'] = df['IF96WHO'].map(category_map_C)
-    transformed_df['IF96WHO_OTHER'] = df['IF96WHO'].map(category_map_D)
-    transformed_df['IF96WHO_DONT_KNOW'] = df['IF96WHO'].map(DONT_KNOW_map)
-
-    transformed_df['IF00WHO_GORE'] = df['IF00WHO'].map(category_map_A)
-    transformed_df['IF00WHO_BUSH'] = df['IF00WHO'].map(category_map_B)
-    transformed_df['IF00WHO_NADER'] = df['IF00WHO'].map(category_map_C)
-    transformed_df['IF00WHO_OTHER'] = df['IF00WHO'].map(category_map_D)
-    transformed_df['IF00WHO_DONT_KNOW'] = df['IF00WHO'].map(DONT_KNOW_map)
-
-    transformed_df['IF04WHO_KERRY'] = df['IF04WHO'].map(category_map_A)
-    transformed_df['IF04WHO_BUSH'] = df['IF04WHO'].map(category_map_B)
-    transformed_df['IF04WHO_NADER'] = df['IF04WHO'].map(category_map_C)
-    transformed_df['IF04WHO_DONT_KNOW'] = df['IF04WHO'].map(DONT_KNOW_map)
-
-    transformed_df['IF08WHO_OBAMA'] = df['IF08WHO'].map(category_map_A)
-    transformed_df['IF08WHO_MCCAIN'] = df['IF08WHO'].map(category_map_B)
-    transformed_df['IF08WHO_OTHER'] = df['IF08WHO'].map(category_map_C)
-    transformed_df['IF08WHO_DONT_KNOW'] = df['IF08WHO'].map(DONT_KNOW_map)
-
-    transformed_df['IF12WHO_OBAMA'] = df['IF12WHO'].map(category_map_A)
-    transformed_df['IF12WHO_ROMNEY'] = df['IF12WHO'].map(category_map_B)
-    transformed_df['IF12WHO_OTHER'] = df['IF12WHO'].map(category_map_C)
-    transformed_df['IF12WHO_DONT_KNOW'] = df['IF12WHO'].map(DONT_KNOW_map)
-
-    transformed_df['IF16WHO_CLINTON'] = df['IF16WHO'].map(category_map_A)
-    transformed_df['IF16WHO_TRUMP'] = df['IF16WHO'].map(category_map_B)
-    transformed_df['IF16WHO_OTHER'] = df['IF16WHO'].map(category_map_C)
-    transformed_df['IF16WHO_CANT_REMEMBER'] = df['IF16WHO'].map(category_map_D)
-    transformed_df['IF16WHO_DONT_KNOW'] = df['IF16WHO'].map(DONT_KNOW_map)
-
-    transformed_df['IF20WHO_BIDEN'] = df['IF20WHO'].map(category_map_A)
-    transformed_df['IF20WHO_TRUMP'] = df['IF20WHO'].map(category_map_B)
-    transformed_df['IF20WHO_OTHER'] = df['IF20WHO'].map(category_map_C)
-    transformed_df['IF20WHO_CANT_REMEMBER'] = df['IF20WHO'].map(category_map_D)
-    transformed_df['IF20WHO_DONT_KNOW'] = df['IF20WHO'].map(DONT_KNOW_map)
-
-    transformed_df['POLVIEWS'] = df['POLVIEWS'].map(POLVIEWS_map)
-
-    transformed_df['NATSPAC'] = df['NATSPAC'].map(NAT_map)
-    transformed_df['NATENVIR'] = df['NATENVIR'].map(NAT_map)
-    transformed_df['NATHEAL'] = df['NATHEAL'].map(NAT_map)
-    transformed_df['NATCITY'] = df['NATCITY'].map(NAT_map)
-    transformed_df['NATCRIME'] = df['NATCRIME'].map(NAT_map)
-    transformed_df['NATDRUG'] = df['NATDRUG'].map(NAT_map)
-    transformed_df['NATEDUC'] = df['NATEDUC'].map(NAT_map)
-    transformed_df['NATRACE'] = df['NATRACE'].map(NAT_map)
-    transformed_df['NATARMS'] = df['NATARMS'].map(NAT_map)
-    transformed_df['NATAID'] = df['NATAID'].map(NAT_map)
-    transformed_df['NATFARE'] = df['NATFARE'].map(NAT_map)
-    transformed_df['NATROAD'] = df['NATROAD'].map(NAT_map)
-    transformed_df['NATSOC'] = df['NATSOC'].map(NAT_map)
-    transformed_df['NATMASS'] = df['NATMASS'].map(NAT_map)
-    transformed_df['NATPARK'] = df['NATPARK'].map(NAT_map)
-    transformed_df['NATCHLD'] = df['NATCHLD'].map(NAT_map)
-    transformed_df['NATSCI'] = df['NATSCI'].map(NAT_map)
-    transformed_df['NATENRGY'] = df['NATENRGY'].map(NAT_map)
-
-    transformed_df['NATSPACY'] = df['NATSPACY'].map(NAT_map)
-    transformed_df['NATENVIY'] = df['NATENVIY'].map(NAT_map)
-    transformed_df['NATHEALY'] = df['NATHEALY'].map(NAT_map)
-    transformed_df['NATCITYY'] = df['NATCITYY'].map(NAT_map)
-    transformed_df['NATCRIMY'] = df['NATCRIMY'].map(NAT_map)
-    transformed_df['NATDRUGY'] = df['NATDRUGY'].map(NAT_map)
-    transformed_df['NATEDUCY'] = df['NATEDUCY'].map(NAT_map)
-    transformed_df['NATRACEY'] = df['NATRACEY'].map(NAT_map)
-    transformed_df['NATARMSY'] = df['NATARMSY'].map(NAT_map)
-    transformed_df['NATAIDY'] = df['NATAIDY'].map(NAT_map)
-    transformed_df['NATFAREY'] = df['NATFAREY'].map(NAT_map)
-
-    transformed_df['EQWLTH'] = df['EQWLTH'].map(EQWLTH_map)
-
-    transformed_df['SPKATH'] = df['SPKATH'].map(SPK_map)
-    transformed_df['SPKRAC'] = df['SPKRAC'].map(SPK_map)
-    transformed_df['SPKCOM'] = df['SPKCOM'].map(SPK_map)
-    transformed_df['SPKMIL'] = df['SPKMIL'].map(SPK_map)
-    transformed_df['SPKHOMO'] = df['SPKHOMO'].map(SPK_map)
-    transformed_df['SPKMSLM'] = df['SPKMSLM'].map(SPK_map)
-
-    transformed_df['COLATH'] = df['COLATH'].map(COLATH_map)
-    transformed_df['COLRAC'] = df['COLRAC'].map(COLATH_map)
-    transformed_df['COLCOM'] = df['COLCOM'].map(COLATH_map)
-    transformed_df['COLMIL'] = df['COLMIL'].map(COLATH_map)
-    transformed_df['COLHOMO'] = df['COLHOMO'].map(COLATH_map)
-    transformed_df['COLMSLM'] = df['COLMSLM'].map(COLATH_map)
-
-    transformed_df['LIBATH'] = df['LIBATH'].map(LIB_map)
-    transformed_df['LIBRAC'] = df['LIBRAC'].map(LIB_map)
-    transformed_df['LIBCOM'] = df['LIBCOM'].map(LIB_map)
-    transformed_df['LIBMIL'] = df['LIBMIL'].map(LIB_map)
-    transformed_df['LIBHOMO'] = df['LIBHOMO'].map(LIB_map)
-    transformed_df['LIBMSLM'] = df['LIBMSLM'].map(LIB_map)
-
-    transformed_df['CAPPUN'] = df['CAPPUN'].map(POL1_map)
-    transformed_df['GUNLAW'] = df['GUNLAW'].map(POL1_map)
-
-    transformed_df['COURTS'] = df['COURTS'].map(COURTS_map)
-
-    transformed_df['GRASS'] = df['GRASS'].map(GRASS_map)
-
-    transformed_df['RELIG_PROT'] = df['RELIG'].map(category_map_A)
-    transformed_df['RELIG_CATHOLIC'] = df['RELIG'].map(category_map_B)
-    transformed_df['RELIG_JEWISH'] = df['RELIG'].map(category_map_C)
-    transformed_df['RELIG_NONE'] = df['RELIG'].map(category_map_D)
-    transformed_df['RELIG_OTHER'] = df['RELIG'].map(category_map_E)
-    transformed_df['RELIG_BUDDHISM'] = df['RELIG'].map(category_map_F)
-    transformed_df['RELIG_HINDUISM'] = df['RELIG'].map(category_map_G)
-    transformed_df['RELIG_OTHER_EASTERN'] = df['RELIG'].map(category_map_H)  # Adjusted for clarity
-    transformed_df['RELIG_MUSLIM_ISLAM'] = df['RELIG'].map(category_map_I)
-    transformed_df['RELIG_ORTHODOX_CHRISTIAN'] = df['RELIG'].map(category_map_J)
-    transformed_df['RELIG_CHRISTIAN'] = df['RELIG'].map(category_map_K)
-    transformed_df['RELIG_NATIVE_AMERICAN'] = df['RELIG'].map(category_map_L)
-    transformed_df['RELIG_INTER_NONDENOMINATIONAL'] = df['RELIG'].map(category_map_M)
-
-    transformed_df['ATTEND'] = df['ATTEND'].map(ATTEND_map)
-
-    transformed_df['RELITEN'] = df['RELITEN'].map(RELITEN_map)
-
-    transformed_df['POSTLIFE'] = df['POSTLIFE'].map(POSTLIFE_map)
-
-    transformed_df['PRAYER'] = df['PRAYER'].map(PRAYER_map)
-
-    transformed_df['RACOPEN'] = df['RACOPEN'].map(RACOPEN_map)
-
-    transformed_df['AFFRMACT'] = df['AFFRMACT'].map(AFFRMACT_map)
-
-    transformed_df['WRKWAYUP'] = df['WRKWAYUP'].map(WRKWAYUP_map)
-
-    transformed_df['HELPFUL'] = df['HELPFUL'].map(HELPFUL_map)
-
-    transformed_df['FAIR'] = df['FAIR'].map(FAIR_map)
-
-    transformed_df['TRUST'] = df['TRUST'].map(TRUST_map)
-
-    transformed_df['CONFINAN'] = df['CONFINAN'].map(CON_map)
-    transformed_df['CONBUS'] = df['CONBUS'].map(CON_map)
-    transformed_df['CONCLERG'] = df['CONCLERG'].map(CON_map)
-    transformed_df['CONEDUC'] = df['CONEDUC'].map(CON_map)
-    transformed_df['CONFED'] = df['CONFED'].map(CON_map)
-    transformed_df['CONLABOR'] = df['CONLABOR'].map(CON_map)
-    transformed_df['CONPRESS'] = df['CONPRESS'].map(CON_map)
-    transformed_df['CONMEDIC'] = df['CONMEDIC'].map(CON_map)
-    transformed_df['CONTV'] = df['CONTV'].map(CON_map)
-    transformed_df['CONJUDGE'] = df['CONJUDGE'].map(CON_map)
-    transformed_df['CONSCI'] = df['CONSCI'].map(CON_map)
-    transformed_df['CONLEGIS'] = df['CONLEGIS'].map(CON_map)
-    transformed_df['CONARMY'] = df['CONARMY'].map(CON_map)
-
-    transformed_df['OBEY'] = df['OBEY'].map(KID_map)
-    transformed_df['POPULAR'] = df['POPULAR'].map(KID_map)
-    transformed_df['THNKSELF'] = df['THNKSELF'].map(KID_map)
-    transformed_df['WORKHARD'] = df['WORKHARD'].map(KID_map)
-    transformed_df['HELPOTH'] = df['HELPOTH'].map(KID_map)
-
-    transformed_df['GETAHEAD'] = df['GETAHEAD'].map(GETAHEAD_map)
-
-    transformed_df['FEPOL'] = df['FEPOL'].map(FEPOL_map)
-
-    transformed_df['ABDEFECT'] = df['ABDEFECT'].map(AB_map)
-    transformed_df['ABNOMORE'] = df['ABNOMORE'].map(AB_map)
-    transformed_df['ABHLTH'] = df['ABHLTH'].map(AB_map)
-    transformed_df['ABPOOR'] = df['ABPOOR'].map(AB_map)
-    transformed_df['ABRAPE'] = df['ABRAPE'].map(AB_map)
-    transformed_df['ABSINGLE'] = df['ABSINGLE'].map(AB_map)
-    transformed_df['ABANY'] = df['ABANY'].map(AB_map)
-
-
-    transformed_df['SEXEDUC'] = df['SEXEDUC'].map(SEXEDUC_map)
-
-    transformed_df['DIVLAW'] = df['DIVLAW'].map(DIVLAW_map)
-
-    transformed_df['PREMARSX'] = df['PREMARSX'].map(SEX_map)
-    transformed_df['TEENSEX'] = df['TEENSEX'].map(SEX_map)
-    transformed_df['XMARSEX'] = df['XMARSEX'].map(SEX_map)
-    transformed_df['HOMOSEX'] = df['HOMOSEX'].map(SEX_map)
-
-    transformed_df['PORNLAW'] = df['PORNLAW'].map(PORNLAW_map)
-
-    transformed_df['SPANKING'] = df['SPANKING'].map(SPANKING_map)
-
-    transformed_df['LETDIE1'] = df['LETDIE1'].map(DEATH_map)
-    transformed_df['SUICIDE1'] = df['SUICIDE1'].map(DEATH_map)
-    transformed_df['SUICIDE2'] = df['SUICIDE2'].map(DEATH_map)
-
-    transformed_df['POLHITOK'] = df['POLHITOK'].map(POLICE_map)
-    transformed_df['POLABUSE'] = df['POLABUSE'].map(POLICE_map)
-    transformed_df['POLMURDR'] = df['POLMURDR'].map(POLICE_map)
-    transformed_df['POLESCAP'] = df['POLESCAP'].map(POLICE_map)
-    transformed_df['POLATTAK'] = df['POLATTAK'].map(POLICE_map)
-
-    transformed_df['NEWS'] = df['NEWS'].map(NEWS_map)
-
-    transformed_df['TVHOURS'] = df['TVHOURS'].map(TVHOURS_map)
-
-    transformed_df['FECHLD'] = df['FECHLD'].map(FE_map)
-    transformed_df['FEPRESCH'] = df['FEPRESCH'].map(FE_map)
-    transformed_df['FEFAM'] = df['FEFAM'].map(FE_map)
-
-    transformed_df['RACDIF1'] = df['RACDIF1'].map(RACDIF_map)
-    transformed_df['RACDIF2'] = df['RACDIF2'].map(RACDIF_map)
-    transformed_df['RACDIF3'] = df['RACDIF3'].map(RACDIF_map)
-    transformed_df['RACDIF4'] = df['RACDIF4'].map(RACDIF_map)
-
-    transformed_df['HELPPOOR'] = df['HELPPOOR'].map(HELP_map)
-    transformed_df['HELPNOT'] = df['HELPNOT'].map(HELP_map)
-    transformed_df['HELPBLK'] = df['HELPBLK'].map(HELP_map)
-
-    transformed_df['MARHOMO'] = df['MARHOMO'].map(MARHOMO_map)
+        {"source": "NATSPACY", "dest": "NATSPACY", "map": NAT_map},
+        {"source": "NATENVIY", "dest": "NATENVIY", "map": NAT_map},
+        {"source": "NATHEALY", "dest": "NATHEALY", "map": NAT_map},
+        {"source": "NATCITYY", "dest": "NATCITYY", "map": NAT_map},
+        {"source": "NATCRIMY", "dest": "NATCRIMY", "map": NAT_map},
+        {"source": "NATDRUGY", "dest": "NATDRUGY", "map": NAT_map},
+        {"source": "NATEDUCY", "dest": "NATEDUCY", "map": NAT_map},
+        {"source": "NATRACEY", "dest": "NATRACEY", "map": NAT_map},
+        {"source": "NATARMSY", "dest": "NATARMSY", "map": NAT_map},
+        {"source": "NATAIDY", "dest": "NATAIDY", "map": NAT_map},
+        {"source": "NATFAREY", "dest": "NATFAREY", "map": NAT_map},
+        
+        {"source": "EQWLTH", "dest": "EQWLTH", "map": EQWLTH_map},
+        
+        {"source": "SPKATH", "dest": "SPKATH", "map": SPK_map},
+        {"source": "SPKRAC", "dest": "SPKRAC", "map": SPK_map},
+        {"source": "SPKCOM", "dest": "SPKCOM", "map": SPK_map},
+        {"source": "SPKMIL", "dest": "SPKMIL", "map": SPK_map},
+        {"source": "SPKHOMO", "dest": "SPKHOMO", "map": SPK_map},
+        {"source": "SPKMSLM", "dest": "SPKMSLM", "map": SPK_map},
+        
+        {"source": "COLATH", "dest": "COLATH", "map": COLATH_map},
+        {"source": "COLRAC", "dest": "COLRAC", "map": COLATH_map},
+        {"source": "COLCOM", "dest": "COLCOM", "map": COLATH_map},
+        {"source": "COLMIL", "dest": "COLMIL", "map": COLATH_map},
+        {"source": "COLHOMO", "dest": "COLHOMO", "map": COLATH_map},
+        {"source": "COLMSLM", "dest": "COLMSLM", "map": COLATH_map},
+        
+        {"source": "LIBATH", "dest": "LIBATH", "map": LIB_map},
+        {"source": "LIBRAC", "dest": "LIBRAC", "map": LIB_map},
+        {"source": "LIBCOM", "dest": "LIBCOM", "map": LIB_map},
+        {"source": "LIBMIL", "dest": "LIBMIL", "map": LIB_map},
+        {"source": "LIBHOMO", "dest": "LIBHOMO", "map": LIB_map},
+        {"source": "LIBMSLM", "dest": "LIBMSLM", "map": LIB_map},
+
+        {"source": "CAPPUN", "dest": "CAPPUN", "map": POL1_map},
+        {"source": "GUNLAW", "dest": "GUNLAW", "map": POL1_map},
+
+        {"source": "COURTS", "dest": "COURTS", "map": COURTS_map},
+
+        {"source": "GRASS", "dest": "GRASS", "map": GRASS_map},
+
+        {"source": "RELIG", "dest": "RELIG_PROT", "map": category_map_A},
+        {"source": "RELIG", "dest": "RELIG_CATHOLIC", "map": category_map_B},
+        {"source": "RELIG", "dest": "RELIG_JEWISH", "map": category_map_C},
+        {"source": "RELIG", "dest": "RELIG_NONE", "map": category_map_D},
+        {"source": "RELIG", "dest": "RELIG_OTHER", "map": category_map_E},
+        {"source": "RELIG", "dest": "RELIG_BUDDHISM", "map": category_map_F},
+        {"source": "RELIG", "dest": "RELIG_HINDUISM", "map": category_map_G},
+        {"source": "RELIG", "dest": "RELIG_OTHER_EASTERN", "map": category_map_H}, # adjusted for clarity
+        {"source": "RELIG", "dest": "RELIG_MUSLIM_ISLAM", "map": category_map_I},
+        {"source": "RELIG", "dest": "RELIG_ORTHODOX_CHRISTIAN", "map": category_map_J},
+        {"source": "RELIG", "dest": "RELIG_CHRISTIAN", "map": category_map_K},
+        {"source": "RELIG", "dest": "RELIG_NATIVE_AMERICAN", "map": category_map_L},
+        {"source": "RELIG", "dest": "RELIG_INTER_NONDENOMINATIONAL", "map": category_map_M},
+
+        {"source": "ATTEND", "dest": "ATTEND", "map": ATTEND_map},
+
+        {"source": "RELITEN", "dest": "RELITEN", "map": RELITEN_map},
+
+        {"source": "POSTLIFE", "dest": "POSTLIFE", "map": POSTLIFE_map},
+
+        {"source": "PRAYER", "dest": "PRAYER", "map": PRAYER_map},
+
+        {"source": "RACOPEN", "dest": "RACOPEN", "map": RACOPEN_map},
+
+        {"source": "AFFRMACT", "dest": "AFFRMACT", "map": AFFRMACT_map},
+
+        {"source": "WRKWAYUP", "dest": "WRKWAYUP", "map": WRKWAYUP_map},
+
+        {"source": "HELPFUL", "dest": "HELPFUL", "map": HELPFUL_map},
+
+        {"source": "FAIR", "dest": "FAIR", "map": FAIR_map},
+
+        {"source": "TRUST", "dest": "TRUST", "map": TRUST_map},
+
+        {"source": "CONFINAN", "dest": "CONFINAN", "map": CON_map},
+        {"source": "CONBUS", "dest": "CONBUS", "map": CON_map},
+        {"source": "CONCLERG", "dest": "CONCLERG", "map": CON_map},
+        {"source": "CONEDUC", "dest": "CONEDUC", "map": CON_map},
+        {"source": "CONFED", "dest": "CONFED", "map": CON_map},
+        {"source": "CONLABOR", "dest": "CONLABOR", "map": CON_map},
+        {"source": "CONPRESS", "dest": "CONPRESS", "map": CON_map},
+        {"source": "CONMEDIC", "dest": "CONMEDIC", "map": CON_map},
+        {"source": "CONTV", "dest": "CONTV", "map": CON_map},
+        {"source": "CONJUDGE", "dest": "CONJUDGE", "map": CON_map},
+        {"source": "CONSCI", "dest": "CONSCI", "map": CON_map},
+        {"source": "CONLEGIS", "dest": "CONLEGIS", "map": CON_map},
+        {"source": "CONARMY", "dest": "CONARMY", "map": CON_map},
+
+        {"source": "OBEY", "dest": "OBEY", "map": KID_map},
+        {"source": "POPULAR", "dest": "POPULAR", "map": KID_map},
+        {"source": "THNKSELF", "dest": "THNKSELF", "map": KID_map},
+        {"source": "WORKHARD", "dest": "WORKHARD", "map": KID_map},
+        {"source": "HELPOTH", "dest": "HELPOTH", "map": KID_map},
+
+        {"source": "GETAHEAD", "dest": "GETAHEAD", "map": GETAHEAD_map},
+
+        {"source": "FEPOL", "dest": "FEPOL", "map": FEPOL_map},
+
+        {"source": "ABDEFECT", "dest": "ABDEFECT", "map": AB_map},
+        {"source": "ABNOMORE", "dest": "ABNOMORE", "map": AB_map},
+        {"source": "ABHLTH", "dest": "ABHLTH", "map": AB_map},
+        {"source": "ABPOOR", "dest": "ABPOOR", "map": AB_map},
+        {"source": "ABRAPE", "dest": "ABRAPE", "map": AB_map},
+        {"source": "ABSINGLE", "dest": "ABSINGLE", "map": AB_map},
+        {"source": "ABANY", "dest": "ABANY", "map": AB_map},
+
+        {"source": "SEXEDUC", "dest": "SEXEDUC", "map": SEXEDUC_map},
+
+        {"source": "DIVLAW", "dest": "DIVLAW", "map": DIVLAW_map},
+
+        {"source": "PREMARSX", "dest": "PREMARSX", "map": SEX_map},
+        {"source": "TEENSEX", "dest": "TEENSEX", "map": SEX_map},
+        {"source": "XMARSEX", "dest": "XMARSEX", "map": SEX_map},
+        {"source": "HOMOSEX", "dest": "HOMOSEX", "map": SEX_map},
+
+        {"source": "PORNLAW", "dest": "PORNLAW", "map": PORNLAW_map},
+
+        {"source": "SPANKING", "dest": "SPANKING", "map": SPANKING_map},
+
+        {"source": "LETDIE1", "dest": "LETDIE1", "map": DEATH_map},
+        {"source": "SUICIDE1", "dest": "SUICIDE1", "map": DEATH_map},
+        {"source": "SUICIDE2", "dest": "SUICIDE2", "map": DEATH_map},
+
+        {"source": "POLHITOK", "dest": "POLHITOK", "map": POLICE_map},
+        {"source": "POLABUSE", "dest": "POLABUSE", "map": POLICE_map},
+        {"source": "POLMURDR", "dest": "POLMURDR", "map": POLICE_map},
+        {"source": "POLESCAP", "dest": "POLESCAP", "map": POLICE_map},
+        {"source": "POLATTAK", "dest": "POLATTAK", "map": POLICE_map},
+
+        {"source": "NEWS", "dest": "NEWS", "map": NEWS_map},
+
+        {"source": "TVHOURS", "dest": "TVHOURS", "map": TVHOURS_map},
+
+        {"source": "FECHLD", "dest": "FECHLD", "map": FE_map},
+        {"source": "FEPRESCH", "dest": "FEPRESCH", "map": FE_map},
+        {"source": "FEFAM", "dest": "FEFAM", "map": FE_map},
+
+        {"source": "RACDIF1", "dest": "RACDIF1", "map": RACDIF_map},
+        {"source": "RACDIF2", "dest": "RACDIF2", "map": RACDIF_map},
+        {"source": "RACDIF3", "dest": "RACDIF3", "map": RACDIF_map},
+        {"source": "RACDIF4", "dest": "RACDIF4", "map": RACDIF_map},
+
+        {"source": "HELPPOOR", "dest": "HELPPOOR", "map": HELP_map},
+        {"source": "HELPNOT", "dest": "HELPNOT", "map": HELP_map},
+        {"source": "HELPBLK", "dest": "HELPBLK", "map": HELP_map},
+
+        {"source": "MARHOMO", "dest": "MARHOMO", "map": MARHOMO_map}
+
+    ]
+
+    for transformation in transformations_to_do:
+        source_col = transformation["source"]
+        dest_col = transformation["dest"]
+        column_map = transformation["map"]
+
+        transformed_df[dest_col] = df[source_col].map(column_map)
+        metadata_df.loc[dest_col, :] = {"min": min(column_map.values()), "max": max(column_map.values())}
+
     # endregion
 
-    transformed_df = make_vote_supernodes(transformed_df, varnames=["VOTE{year}", "PRES{year}_NONCONFORM", "PRES{year}_DEMREP"])
+    print(metadata_df.loc["VOTE68",:])
+
+    transformed_df, metadata_df = make_vote_supernodes(transformed_df, metadata_df, varnames=["VOTE{year}", "PRES{year}_NONCONFORM", "PRES{year}_DEMREP"])
+
+    print("hello")
+    print(metadata_df.loc["PRESLAST_DEMREP",:])
     
     if combine_variants:
         for variant, original in variants.items():
@@ -806,4 +875,4 @@ def transform_dataframe(df, combine_variants=True):
     #     for index, row in df.iterrows():
     #         f.write(str(row['MARHOMO']) + ' ' + str(row['MARHOMO (mapped)']) + ' ' + str(row['PRES68 (dont know)']) + '\n')
 
-    return transformed_df
+    return transformed_df, metadata_df
