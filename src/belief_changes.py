@@ -1,10 +1,11 @@
 from corr_networks import my_pairwise_correlations
+from transform_df_to_our_standard import normalize_columns
 import matplotlib.pyplot as plt
 
 import numpy as np
 import pandas as pd
 
-def make_degree_strength_change_dfs(df, vars_of_interest, every_x_years=2):
+def make_degree_strength_change_dfs(df, meta_df, vars_of_interest, every_x_years=2, normalize_changes=True):
 
     """
     makes three dataframes, one with var strengths in a particular window, one with var degrees in a particular window, and the last
@@ -14,10 +15,12 @@ def make_degree_strength_change_dfs(df, vars_of_interest, every_x_years=2):
     """
     filtered_df = df.loc[df["YEAR"] < 2019, vars_of_interest]
     filtered_df["SLOT"] = filtered_df["YEAR"] // every_x_years
+
+    if normalize_changes:
+        filtered_df = normalize_columns(filtered_df, meta_df, exclude=["YEAR", "SLOT"])
+
     avg_var_vals = filtered_df.groupby(["SLOT"]).mean()
     avg_var_vals.reset_index()
-
-    print(filtered_df.max())
 
     change_df = avg_var_vals.iloc[:avg_var_vals.shape[0] - 1,:].reset_index() - avg_var_vals.iloc[1:,:].reset_index()
 
@@ -66,52 +69,6 @@ def make_degree_strength_change_dfs(df, vars_of_interest, every_x_years=2):
     change_df = change_df.drop("YEAR", axis=1)
 
     return strength_df.loc[:num_rows - 1,:], degree_df.loc[:num_rows - 1, :], change_df
-
-def make_degree_strength_change_heatmap_figure(strength_df, degree_df, change_df, degree_bin_size=2, strength_bin_size=0.12):
-    scatter_fig, scatter_ax = plt.subplots()  # Create a new figure for each column pair
-    scatter_ax.set_title(f"Scatterplot of strength vs degree")
-    scatter_ax.set_xlabel(f"strength")
-    scatter_ax.set_ylabel(f"degree")
-
-    strength_ax = strength_df.max().max()
-    degree_ax = degree_df.max().max()
-    print(strength_ax)
-    print(degree_ax)
-
-    value_count = np.zeros((np.floor(degree_ax / degree_bin_size).astype(int) + 1, np.floor(strength_ax / strength_bin_size).astype(int) + 1))
-    value_sum = np.zeros((np.floor(degree_ax / degree_bin_size).astype(int) + 1, np.floor(strength_ax / strength_bin_size).astype(int) + 1))
-
-    for col in strength_df.columns:
-        diffs = np.abs(np.array(change_df[col]))
-        incs = np.where(~np.isnan(diffs), 1, 0)
-        vals = np.where(~np.isnan(diffs), diffs, 0)
-
-        np.add.at(value_count, (np.floor(np.array(degree_df[col] / degree_bin_size)).astype(int), np.floor(np.array(strength_df[col]) / strength_bin_size).astype(int)), incs)
-        
-        np.add.at(value_sum, (np.floor(np.array(degree_df[col] / degree_bin_size)).astype(int), np.floor(np.array(strength_df[col]) / strength_bin_size).astype(int)), 
-                                vals)
-        
-        scatter_ax.scatter(strength_df[col], degree_df[col], s=change_df[col].abs() * 1000)
-        # plt.scatter(trimmed_degree_df[col], change_df[col].abs(), s=trimmed_strength_df[col] * 100)
-
-        means = value_sum / value_count
-
-        cutoff = np.percentile(means[~np.isnan(means)], 90)
-
-        chopped_means = np.where(means > cutoff, cutoff, means)
-
-        heatmap_fig, heatmap_ax = plt.subplots()
-        heatmap_ax.imshow(chopped_means, cmap="plasma")
-
-        # Add annotations (numeric values) on top of each heatmap cell
-        for i in range(chopped_means.shape[0]):
-            for j in range(chopped_means.shape[1]):
-
-                if ~np.isnan(chopped_means[i, j]):
-                    plt.text(j, i, f'{means[i, j]:.2f}', ha='center', va='center', color='black', fontsize=6)
-
-        
-        return scatter_ax, heatmap_ax
 
 
 def difference_first_last_non_nan(column):
