@@ -15,6 +15,17 @@ things to do to fix the problem
 
 """
 
+def generate_random_partial_corr_mat(dim, alpha=0):
+    random_matrix = 2 * np.random.rand(dim, dim) - 1
+    random_cov_mat = np.dot(random_matrix, random_matrix.T)
+
+    std_deviations = np.sqrt(np.diag(random_cov_mat))
+    random_corr_mat = random_cov_mat / np.outer(std_deviations, std_deviations)
+
+    random_partial_corr_mat = cov_mat_to_regularized_partial_corr(random_corr_mat, alpha=alpha)
+
+    return random_partial_corr_mat
+
 def my_pairwise_correlations(vars, data, method, partial=True, regularization=0, sample_threshold=0):
 
     """
