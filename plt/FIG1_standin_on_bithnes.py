@@ -42,7 +42,7 @@ for i in range(len(data)):
     for j in range(len(data[i])):
         # print(data[i][j])
         color_value = j / (len(data[0]) - 1)
-        color = plt.cm.PiYG(color_value)
+        color = plt.cm.PuOr(color_value)
         
         plt.eventplot([data[i][j]], color=color[0:3], lineoffsets=[i], linelengths=0.8, linewidths=75, orientation='horizontal')
 
@@ -73,8 +73,8 @@ plt.xticks(fontsize=84)
 # Create a color bar
 # sm = cm.ScalarMappable(cmap=plt.cm.PuOr, norm=plt.Normalize(vmin=1972, vmax=2019))
 # sm = cm.ScalarMappable(cmap=plt.cm.PuOr, norm=plt.Normalize(vmin=0, vmax=max_data))
-sm.set_array([])  # dummy mappable array needed for the colorbar
-plt.colorbar(sm, label='Year')
+# sm.set_array([])  # dummy mappable array needed for the colorbar
+# plt.colorbar(sm, label='Year')
 
 # Displaying the plot
 plt.grid(False)

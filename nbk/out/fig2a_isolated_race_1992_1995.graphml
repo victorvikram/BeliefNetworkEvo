@@ -1,0 +1,185 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><key id="d0" for="edge" attr.name="weight" attr.type="double"/>
+<graph edgedefault="undirected"><node id="NATARMS"/>
+<node id="PRESLAST_DEMREP"/>
+<node id="POLVIEWS"/>
+<node id="PARTYID"/>
+<node id="EQWLTH"/>
+<node id="HELPPOOR"/>
+<node id="NATENVIR"/>
+<node id="NATHEAL"/>
+<node id="NATRACE"/>
+<node id="RACDIF1"/>
+<node id="CAPPUN"/>
+<node id="WRKWAYUP"/>
+<node id="NATFARE"/>
+<node id="NATSOC"/>
+<node id="RACDIF2"/>
+<node id="RACDIF4"/>
+<node id="AFFRMACT"/>
+<node id="RACDIF3"/>
+<node id="NATCITY"/>
+<node id="NATDRUG"/>
+<node id="NATEDUC"/>
+<node id="NATCRIME"/>
+<node id="NATPARK"/>
+<edge source="NATARMS" target="PRESLAST_DEMREP">
+  <data key="d0">0.021733810989117884</data>
+</edge>
+<edge source="PRESLAST_DEMREP" target="POLVIEWS">
+  <data key="d0">0.17781184461878238</data>
+</edge>
+<edge source="PRESLAST_DEMREP" target="PARTYID">
+  <data key="d0">0.4750680419575223</data>
+</edge>
+<edge source="PRESLAST_DEMREP" target="NATENVIR">
+  <data key="d0">0.0064208991993322225</data>
+</edge>
+<edge source="PRESLAST_DEMREP" target="NATHEAL">
+  <data key="d0">0.025841360809504055</data>
+</edge>
+<edge source="PRESLAST_DEMREP" target="NATRACE">
+  <data key="d0">0.04991179934050789</data>
+</edge>
+<edge source="PRESLAST_DEMREP" target="EQWLTH">
+  <data key="d0">0.04015802140807532</data>
+</edge>
+<edge source="PRESLAST_DEMREP" target="RACDIF1">
+  <data key="d0">0.03937745161327057</data>
+</edge>
+<edge source="PRESLAST_DEMREP" target="HELPPOOR">
+  <data key="d0">0.04578899450177546</data>
+</edge>
+<edge source="POLVIEWS" target="PARTYID">
+  <data key="d0">0.0642741129322879</data>
+</edge>
+<edge source="PARTYID" target="EQWLTH">
+  <data key="d0">0.040439214889192866</data>
+</edge>
+<edge source="PARTYID" target="HELPPOOR">
+  <data key="d0">0.03130883877263025</data>
+</edge>
+<edge source="EQWLTH" target="NATHEAL">
+  <data key="d0">0.03764442094629909</data>
+</edge>
+<edge source="EQWLTH" target="NATFARE">
+  <data key="d0">0.012855485034254287</data>
+</edge>
+<edge source="EQWLTH" target="NATSOC">
+  <data key="d0">0.007768941966788961</data>
+</edge>
+<edge source="EQWLTH" target="RACDIF1">
+  <data key="d0">0.017384360206763243</data>
+</edge>
+<edge source="EQWLTH" target="HELPPOOR">
+  <data key="d0">0.19455983216048664</data>
+</edge>
+<edge source="HELPPOOR" target="NATHEAL">
+  <data key="d0">0.022369535629706654</data>
+</edge>
+<edge source="HELPPOOR" target="NATRACE">
+  <data key="d0">0.036801619807454874</data>
+</edge>
+<edge source="HELPPOOR" target="NATFARE">
+  <data key="d0">0.05825367617529867</data>
+</edge>
+<edge source="HELPPOOR" target="NATSOC">
+  <data key="d0">0.00018204501029885184</data>
+</edge>
+<edge source="HELPPOOR" target="RACDIF1">
+  <data key="d0">0.03137311981589161</data>
+</edge>
+<edge source="NATENVIR" target="NATRACE">
+  <data key="d0">0.0157250056621971</data>
+</edge>
+<edge source="NATENVIR" target="NATEDUC">
+  <data key="d0">0.052934344026507</data>
+</edge>
+<edge source="NATENVIR" target="NATHEAL">
+  <data key="d0">0.043332056328967694</data>
+</edge>
+<edge source="NATENVIR" target="NATPARK">
+  <data key="d0">0.020679702342585867</data>
+</edge>
+<edge source="NATHEAL" target="NATEDUC">
+  <data key="d0">0.037283975517806725</data>
+</edge>
+<edge source="NATHEAL" target="NATDRUG">
+  <data key="d0">0.010259990213727638</data>
+</edge>
+<edge source="NATHEAL" target="NATSOC">
+  <data key="d0">0.04708575651268039</data>
+</edge>
+<edge source="NATRACE" target="CAPPUN">
+  <data key="d0">0.015306834435799579</data>
+</edge>
+<edge source="NATRACE" target="NATFARE">
+  <data key="d0">0.002192757653231068</data>
+</edge>
+<edge source="NATRACE" target="RACDIF1">
+  <data key="d0">0.13554750297060236</data>
+</edge>
+<edge source="NATRACE" target="RACDIF3">
+  <data key="d0">0.10650832077578269</data>
+</edge>
+<edge source="NATRACE" target="RACDIF4">
+  <data key="d0">0.04855548922943902</data>
+</edge>
+<edge source="NATRACE" target="NATCITY">
+  <data key="d0">0.15661500981073415</data>
+</edge>
+<edge source="NATRACE" target="NATDRUG">
+  <data key="d0">0.07131164536950281</data>
+</edge>
+<edge source="NATRACE" target="NATEDUC">
+  <data key="d0">0.028234256001137385</data>
+</edge>
+<edge source="NATRACE" target="AFFRMACT">
+  <data key="d0">0.12249412804356458</data>
+</edge>
+<edge source="NATRACE" target="WRKWAYUP">
+  <data key="d0">0.13233520779124724</data>
+</edge>
+<edge source="RACDIF1" target="AFFRMACT">
+  <data key="d0">0.07984256975389138</data>
+</edge>
+<edge source="RACDIF1" target="WRKWAYUP">
+  <data key="d0">0.02895015150168922</data>
+</edge>
+<edge source="RACDIF1" target="RACDIF3">
+  <data key="d0">0.09042576403768321</data>
+</edge>
+<edge source="RACDIF1" target="RACDIF4">
+  <data key="d0">0.08407690755328384</data>
+</edge>
+<edge source="CAPPUN" target="WRKWAYUP">
+  <data key="d0">0.0030195121731880696</data>
+</edge>
+<edge source="WRKWAYUP" target="RACDIF3">
+  <data key="d0">0.05735684038296841</data>
+</edge>
+<edge source="WRKWAYUP" target="RACDIF4">
+  <data key="d0">0.1365287552009839</data>
+</edge>
+<edge source="WRKWAYUP" target="AFFRMACT">
+  <data key="d0">0.1278865868161325</data>
+</edge>
+<edge source="RACDIF2" target="RACDIF4">
+  <data key="d0">0.09518091995186326</data>
+</edge>
+<edge source="RACDIF4" target="RACDIF3">
+  <data key="d0">0.055080831799648074</data>
+</edge>
+<edge source="NATCITY" target="NATCRIME">
+  <data key="d0">0.028333111458397</data>
+</edge>
+<edge source="NATCITY" target="NATDRUG">
+  <data key="d0">0.05360484510650003</data>
+</edge>
+<edge source="NATDRUG" target="NATEDUC">
+  <data key="d0">0.01120268934695715</data>
+</edge>
+<edge source="NATDRUG" target="NATCRIME">
+  <data key="d0">0.1006073636524591</data>
+</edge>
+</graph></graphml>

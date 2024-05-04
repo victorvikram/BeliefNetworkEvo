@@ -9,6 +9,8 @@ import numpy as np
 def make_conditional_belief_network(condition_col, dataframe, condition_method="negpos", 
                                     variables_of_interest=None, years_of_interest=None, method="spearman", is_partial=True, 
                                     threshold=None, sample_threshold=0, regularisation=0):
+    
+
     if condition_method == "negpos":
         dataframe["FLAG"] = np.where(dataframe[condition_col] > 0, True, np.where(dataframe[condition_col] < 0, False, np.nan))
 
