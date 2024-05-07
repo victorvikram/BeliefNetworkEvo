@@ -9,3 +9,4 @@ Try different conditionings
 
 
 Diffusion map approach for understanding the manifold in the high dimensional belief space 
+- see https://www.kaggle.com/code/rahulrajpl/diffusion-map-for-manifold-learning
