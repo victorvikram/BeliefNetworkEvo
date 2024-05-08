@@ -10,3 +10,7 @@ Try different conditionings
 
 Diffusion map approach for understanding the manifold in the high dimensional belief space 
 - see https://www.kaggle.com/code/rahulrajpl/diffusion-map-for-manifold-learning
+
+More generally, review of dim-reduction techniques is here:
+- https://www.researchgate.net/publication/228657549_Dimensionality_Reduction_A_Comparative_Review
+  
