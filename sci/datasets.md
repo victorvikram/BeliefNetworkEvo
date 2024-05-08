@@ -9,6 +9,8 @@ Australia
 
 U.S.
 - GSS
+- American National Election Study (ANES) https://www.icpsr.umich.edu/web/ICPSR/series/3
+  - Data from 78' up til present. Can be used to validate GSS findings.
 - Alternative Gender Measures Survey https://search.gesis.org/research_data/datasearch-httpwww-da-ra-deoaip--oaioai-da-ra-de678871
 
 Germany
@@ -49,6 +51,9 @@ Taiwan
 Europe
 - European Social Survey https://www.europeansocialsurvey.org/
 - Eurobarometer https://europa.eu/eurobarometer/screen/home
+- European Values Survey https://europeanvaluesstudy.eu/
+  - There's a joint dataset that combines this with the world values survey https://europeanvaluesstudy.eu/methodology-data-documentation/survey-2017/joint-evs-wvs/
+  - 
 
 International
 - International Social Survey Program https://issp.org/
