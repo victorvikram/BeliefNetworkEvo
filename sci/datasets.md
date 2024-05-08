@@ -9,6 +9,11 @@ U.S.
 
 Germany
 - All ALLBUS datasets https://search.gesis.org/research_data/ZA5282
+- The German Longitudinal Election Study https://search.gesis.org/research_data/ZA6832
+  - this one looks rlly good. Lots of time steps (up to 3 per year)
+- German SOEP - Socio-Economic Panel https://www.eui.eu/Research/Library/ResearchGuides/Economics/Statistics/DataPortal/GSOEP
+- Political Identities and News Consumption in Election Times (PINCET) https://search.gesis.org/research_data/SDN-10.7802-2524
+
 
 Austria
 - All six Social Survey Austria datasets (ranging from 68' to 16') https://aussda.at/en/ssoe-social-survey-austria/
