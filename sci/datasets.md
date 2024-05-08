@@ -17,6 +17,8 @@ Germany
 - All ALLBUS datasets https://search.gesis.org/research_data/ZA5282
 - The German Longitudinal Election Study https://search.gesis.org/research_data/ZA6832
   - this one looks rlly good. Lots of time steps (up to 3 per year)
+- German Internet Panel https://search.gesis.org/research_data/ZA7878
+  - again, super good time resolution (every 3-4 months) and long timespan 
 - German SOEP - Socio-Economic Panel https://www.eui.eu/Research/Library/ResearchGuides/Economics/Statistics/DataPortal/GSOEP
 - Political Identities and News Consumption in Election Times (PINCET) https://search.gesis.org/research_data/SDN-10.7802-2524
 - Data on European Democracy (EUDO) (Several datasets): https://www.eui.eu/Research/Library/ResearchGuides/Economics/Statistics/DataPortal/EUDOdata
