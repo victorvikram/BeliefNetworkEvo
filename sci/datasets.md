@@ -1,3 +1,7 @@
+**Generally useful stuff**
+
+
+
 **A dump for other datasets that we could use:**
 Australia
 - All 57 (and counting) of the ANUPOLL datasets. https://dataverse.ada.edu.au/dataverse/anupoll
@@ -13,6 +17,7 @@ Germany
   - this one looks rlly good. Lots of time steps (up to 3 per year)
 - German SOEP - Socio-Economic Panel https://www.eui.eu/Research/Library/ResearchGuides/Economics/Statistics/DataPortal/GSOEP
 - Political Identities and News Consumption in Election Times (PINCET) https://search.gesis.org/research_data/SDN-10.7802-2524
+- Data on European Democracy (EUDO) (Several datasets): https://www.eui.eu/Research/Library/ResearchGuides/Economics/Statistics/DataPortal/EUDOdata
 
 
 Austria
@@ -43,6 +48,8 @@ Taiwan
 
 Europe
 - European Social Survey https://www.europeansocialsurvey.org/
+- Eurobarometer https://europa.eu/eurobarometer/screen/home
 
 International
 - International Social Survey Program https://issp.org/
+- World Values Survey https://www.worldvaluessurvey.org/WVSDocumentationWV7.jsp
