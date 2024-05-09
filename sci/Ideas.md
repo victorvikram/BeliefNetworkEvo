@@ -23,3 +23,6 @@ Themes for narratives that I'm starting to build are:
 3. Subjectivity of belief networks (i.e., do conservatives, liberals, whatever, agree on structure (also need to flesh out proper interpretation of this))
 4. Structural evolution of BNs / dynamics of belief-spaces (also, linking the notion of vector cluster and belief network cluster would be interesting to me) 
 5. Ideology-respecting paths (just think this could be a good meme paper honestly)
+
+Question:
+- If we were to cluster beliefs into political ideologies, does it *really* make sense to invoke a split between physical/circumstantial attributes and beliefs? For example, is (should) being black, rich, addicted to drugs, lonely, or popular, part of your ideology? I want to sort out our concepts before we dive into analysis on ideologies.  
