@@ -3,10 +3,15 @@ What do we want to say on the poste
 
 ## Motivation
 - political polarization and partisan gridlock go together: one causes the other
+
 - yet polarization is about beliefs, while gridlock is about action (or lack thereof)
+
 - in pure "majority rules", polarization doesn't matter: just go with the majority
+
 - but collectives, like individuals, deliberate on their decisions
+
 - in deliberation, polarization, and more generally, the structure of beliefs, matters
+
 - Imagine two pairs of people deliberating on an issue.
     - Pair 1: crime is an *education* issue vs. crime is an *policing* issue
     - Pair 2: policing is tyrannical vs. policing ensures public safety
