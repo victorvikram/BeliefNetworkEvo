@@ -51,6 +51,12 @@
 
 # Meeting notes
 
+## 23 Jul 2024 - 
+1. how to calculate entropy -- binning? huffman coding? 
+2. 
+3. 
+
+
 ## 16 May 2024 - post workshop meeting
 Goals for this meeting:
 1. Summarise our findings wrt our hypotheses in the poster -- what is missing?
