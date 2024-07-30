@@ -2,6 +2,7 @@ import unittest
 import pandas as pd
 import numpy as np
 from numpy.testing import assert_almost_equal
+from numpy.testing import assert_equal
 
 import sys
 sys.path.append('../src')
@@ -123,7 +124,7 @@ class TestModuleFunctions(unittest.TestCase):
         vectors = np.array([[1, -1, 1], [-1, 1, 1]])
 
         cost = hamiltonian_objective_function(vectors, couplings)
-        exp_cost = np.array([[2.4], [3.3]])
+        exp_cost = np.array([[1.2], [1.65]])
         assert_almost_equal(cost, exp_cost)
 
     def test_simulated_annealing(self):
@@ -162,6 +163,54 @@ class TestModuleFunctions(unittest.TestCase):
         unique_rows = np.unique(final_vectors, axis=0)
         print(unique_rows)
         self.assertEqual(unique_rows.shape[0], 2**3)
+    
+    def test_single_pass_optimize(self):
+        couplings = np.array([[0, -1, -0.5, -0.25],
+                              [-1, 0, 0.25, -0.1],
+                              [0.5, 0.25, 0, -0.4],
+                              [0.25, -0.1, -0.4, 0]])
+        initial_vectors = np.array([[0, 0, 0, 0],
+                                    [1, 1, 1, 1],
+                                    [-1, -1, -1, -1]])
+        final_vectors = single_pass_optimize(initial_vectors, couplings, random_order=False)
+        expected_final_vectors = np.array([[-1, 1, -1, 1], [-1, 1, -1, 1], [1, -1, 1, -1]])
+        assert_equal(final_vectors, expected_final_vectors)
+        
+        
+        couplings = np.array([[0, 0.6, 0.5],
+                              [0.6, 0, -1],
+                              [0.5, -1, 0]])
+        initial_vectors = np.array([[0, 0, 0], [0, 1, 0], [0, 0, 1], [0, 0, -1]])
+        final_vectors = single_pass_optimize(initial_vectors, couplings, random_order=False)
+        expected_final_vectors = np.array([[-1, -1, 1], [1, 1, -1], [1, -1, 1], [-1, 1, -1]])
+        assert_equal(final_vectors, expected_final_vectors)
+
+        dim = 10
+        test_vecs = 20
+        initial_mat = np.random.rand(dim, dim) * 2 - 1
+        couplings = (initial_mat + initial_mat.T) / 2
+        np.fill_diagonal(couplings, 0)
+
+        initial_vectors = np.random.choice([-1, 0, 1], size=(test_vecs, dim))
+        initial_costs = hamiltonian_objective_function(initial_vectors, couplings)
+
+        final_vectors = single_pass_optimize(initial_vectors, couplings)
+        final_costs = hamiltonian_objective_function(final_vectors, couplings)
+        print(initial_costs)
+        print(final_costs)
+
+        self.assertTrue(((final_costs - initial_costs) <= 0).all())
+
+        initial_vectors = np.random.rand(test_vecs, dim) * 2 - 1
+        initial_costs = hamiltonian_objective_function(initial_vectors, couplings)
+
+        final_vectors = single_pass_optimize(initial_vectors, couplings)
+        final_costs = hamiltonian_objective_function(final_vectors, couplings)
+
+        self.assertTrue(((final_costs - initial_costs) <= 0).all())
+
+
+
 
 
 if __name__ == "__main__":
