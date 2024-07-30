@@ -47,8 +47,12 @@ def sum_of_squares_objective_function(vectors):
     return (vectors**2).sum(axis=1, keepdims=True)
 
 def hamiltonian_objective_function(vectors, couplings):
+    """
+    note: this will only work if there are no entries on the diagonal
+    TODO: redo so that I only multiply the upper triangles together
+    """
     vector_outer = vectors[:,None,:] * vectors[:,:,None]
-    cost = - (vector_outer * couplings).sum(axis=(1, 2))
+    cost = - (vector_outer * couplings).sum(axis=(1, 2)) / 2
 
     cost = cost.reshape(-1, 1)
 
@@ -68,7 +72,31 @@ def accept_new_vector(old_cost_vector, new_cost_vector, temperature, seed=None):
     
     return acceptance_vector
 
+def single_pass_optimize(initial_vectors, couplings, random_order=True):
+    """
+    this goes through the vector one component at a time, and pushes that component to the extreme value that optimizes 
+    for an ising model, you always do better by going to the extreme value
+    """
+    num_components = initial_vectors.shape[1]
+    
+    if random_order:
+        component_queue = np.random.choice(range(num_components), size=(num_components,), replace=False)
+    else:
+        component_queue = np.arange(num_components)
+
+    current_vectors = initial_vectors.copy()
+
+    for component in component_queue:
+        component_multiplier = (current_vectors * couplings[component:component+1,:]).sum(axis=1)
+        new_component_value = np.where(component_multiplier > 0, 1, -1)
+        current_vectors[:,component] = new_component_value
+
+    return current_vectors
+
 def simulated_annealing(initial_vectors, initial_temperature, cooling_rate, max_iterations, objective_function, step_function):
+    """
+    **tested**
+    """
     current_vectors = initial_vectors.copy()
     current_cost = objective_function(current_vectors)
     temperature = initial_temperature
