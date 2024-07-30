@@ -52,9 +52,11 @@
 # Meeting notes
 
 ## 23 Jul 2024 - 
-1. how to calculate entropy -- binning? huffman coding? 
-2. 
-3. 
+1. how to calculate entropy -- binning? huffman coding? [Victor]
+2. make heatmap scatterplots of the residuals, tests of monotocity with mean [Tim]
+3. finish linear regression code and tell Victor where it is [Tim]
+4. ask eddie how to do energy landscape for linear relationship [Victor]. implement.
+5. look at scatterplots 
 
 
 ## 16 May 2024 - post workshop meeting
