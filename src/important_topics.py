@@ -32,5 +32,3 @@ def find_nonneg_sol(A, b):
     return x, s, success
 
 def bin_time_periods(time_period_df, num_bins=None):
-    
-        

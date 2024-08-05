@@ -16,12 +16,12 @@ def make_conditional_belief_network(condition_col, dataframe, condition_method="
 
     unique_vals = dataframe["FLAG"].unique()
     vals_to_condition = unique_vals[~np.isnan(unique_vals)]
-    print(vals_to_condition)
+    # print(vals_to_condition)
     
     outputs = {}
     for val in vals_to_condition:
         sub_df = dataframe.loc[dataframe["FLAG"] == val, :]
-        print(sub_df[condition_col].unique())
+        # print(sub_df[condition_col].unique())
 
         graph, variables_list, correlation_matrix = make_belief_network(sub_df, variables_of_interest, years_of_interest, 
                                                                         method, is_partial, threshold, sample_threshold, regularisation)
