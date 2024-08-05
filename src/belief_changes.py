@@ -1,5 +1,9 @@
+"""
+this file contains functions that deal with changes in beliefs over the years
+"""
+
 from corr_networks import my_pairwise_correlations
-from transform_df_to_our_standard import normalize_columns
+from archive.transform_df_to_our_standard import normalize_columns
 import matplotlib.pyplot as plt
 
 import numpy as np

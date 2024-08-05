@@ -1,3 +1,7 @@
+"""
+generates belief networks using partial correlations
+"""
+
 # Import necessary modules for correlation analysis, graph construction, and visualization.
 from corr_networks import my_pairwise_correlations, pairwise_polychoric_correlations, cov_mat_to_regularized_partial_corr
 import networkx as nx
@@ -10,9 +14,17 @@ def make_conditional_belief_network(condition_col, dataframe, condition_method="
                                     variables_of_interest=None, years_of_interest=None, method="spearman", is_partial=True, 
                                     threshold=None, sample_threshold=0, regularisation=0):
     
+    """
+    makes a conditional belief network, conditioning on the column `condition_col`, using the data from `dataframe`. 
+    if condition_method is "negpos", it makes two networks, one if `condition_col` is negative, and the other if 
+    `condition_col` is positive. if `condition_method` is "unique", it makes a separate network for each unique value
+    in `condition_col`. all other parameters function as they do in `make_belief_network()`
+    """
 
     if condition_method == "negpos":
         dataframe["FLAG"] = np.where(dataframe[condition_col] > 0, True, np.where(dataframe[condition_col] < 0, False, np.nan))
+    elif condition_method == "unique":
+        dataframe["FLAG"] = dataframe[condition_col]
 
     unique_vals = dataframe["FLAG"].unique()
     vals_to_condition = unique_vals[~np.isnan(unique_vals)]
@@ -39,7 +51,19 @@ def convert_graph_to_absolute_value(graph):
 # Define a function to create a belief network based on correlation analysis of a given DataFrame.
 def make_belief_network(dataframe, variables_of_interest=None, years_of_interest=None, method="spearman", 
                         is_partial=True, threshold=None, sample_threshold=0, regularisation=0):
-
+    
+    """
+    makes a partial correlation network
+    `dataframe` is the data we are using 
+    `variables_of_interest` will be the nodes in the correlation network (assuming there is enough data to include them)
+    `years_of_interest` we only use the rows from the years of interest
+    `method` specifies the correlation method, which defaults to "spearman" (which is pearson correlations on the ranks). 
+    `is_partial` means that the correlations calculated are partial correlations, which control for the linear effects of other variables,
+        using the matrix inversion method
+    `threshold` is how high the correlation must be to be included in the network
+    `sample_threshold` is the number of samples a variable needs to have that are non-nan for it to be included
+    `regularisation` is the regularisation parameter
+    """
     # Start with the full dataframe and filter it according to specified years if provided.
     df_subset = dataframe
     if years_of_interest:

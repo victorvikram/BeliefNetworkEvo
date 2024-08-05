@@ -1,3 +1,7 @@
+"""
+has optimization functions for exploring the energy valleys
+"""
+
 import numpy as np
 
 def symm_matrix_to_vec(matrix_stack):
@@ -29,6 +33,8 @@ def vec_to_symm_matrix(vector_stack):
 def flip_step_function(vector_arr, num_flips=1, seed=None):
     """
     **tested**
+    function that takes an array of vectors and changes `num_flips` of the bits by choosing randomly to reassign
+    each component to -1, 0, 1
     """
     new_vector_arr = vector_arr.copy()
     num_vectors = new_vector_arr.shape[0]
@@ -72,6 +78,17 @@ def accept_new_vector(old_cost_vector, new_cost_vector, temperature, seed=None):
     
     return acceptance_vector
 
+def multi_pass_optimize(initial_vectors, couplings, random_order=True, change_threshold=0, max_iterations=1000):
+    iterations = 0
+    num_changed = change_threshold + 1
+    current_vectors = initial_vectors.copy()
+
+    while num_changed > change_threshold and iterations < max_iterations:
+        current_vectors, num_changed = single_pass_optimize(current_vectors, couplings, random_order)
+        iterations += 1
+    
+    return current_vectors, num_changed
+
 def single_pass_optimize(initial_vectors, couplings, random_order=True):
     """
     this goes through the vector one component at a time, and pushes that component to the extreme value that optimizes 
@@ -91,9 +108,11 @@ def single_pass_optimize(initial_vectors, couplings, random_order=True):
         new_component_value = np.where(component_multiplier > 0, 1, -1)
         current_vectors[:,component] = new_component_value
 
-    return current_vectors
+    num_changed = (initial_vectors != current_vectors).any(axis=1).sum()
 
-def simulated_annealing(initial_vectors, initial_temperature, cooling_rate, max_iterations, objective_function, step_function):
+    return current_vectors, num_changed
+
+def simulated_annealing(initial_vectors, initial_temperature, cooling_rate, max_iterations, objective_function, step_function, print_stuff=False):
     """
     **tested**
     """
@@ -114,7 +133,38 @@ def simulated_annealing(initial_vectors, initial_temperature, cooling_rate, max_
         if temperature < 1e-10:
             break
 
-        if iteration % (max_iterations // 10) == 0:
+        if print_stuff and iteration % (max_iterations // 10) == 0:
             print(f"Iteration {iteration}, Current Cost: {current_cost}, Temperature: {temperature}")
 
     return current_vectors, current_cost
+
+def gradient_descent(initial_vectors, step_size, couplings, diff_threshold=0.01, max_iterations=10000):
+    current_vectors = initial_vectors.copy()
+
+    iterations = 0
+    still_changing = True
+     
+    while iterations < max_iterations and still_changing:
+        # print("vecs", current_vectors)
+        # print("cost", hamiltonian_objective_function(current_vectors, couplings))
+        gradient = - np.matmul(couplings[None,:, :], current_vectors[:,:,None]).reshape(*current_vectors.shape)
+        step = - gradient / np.abs(gradient).sum(axis=1, keepdims=True) * step_size
+        # print("step", step)
+        new_vectors = np.maximum(np.minimum(current_vectors + step, 1), -1)
+        # print("new vecs", new_vectors)
+        still_changing = (np.abs(current_vectors - new_vectors).sum(axis=1) > step_size * diff_threshold).any()
+        current_vectors = new_vectors
+        iterations += 1
+
+    return current_vectors
+
+if __name__ == "__main__":
+    couplings = np.array([[-0.54530848, -0.61689409,  0.48662589,  0.        ,  0.        ],
+                              [-0.61689409, -0.73337935, -0.21204274,  0.        ,  0.        ],
+                              [ 0.48662589, -0.21204274,  0.87779761,  0.        ,  0.        ],
+                              [ 0.        ,  0.        ,  0.        ,  0.06709374, -0.31310036],
+                              [ 0.        ,  0.        ,  0.        , -0.31310036,  0.38020617]])
+    
+    vectors = np.array([[-0.1, 0.2, 0.5, -0.3, 1]])
+
+    minima = gradient_descent(vectors, 0.1, couplings)

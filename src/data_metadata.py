@@ -1,3 +1,7 @@
+"""
+functions to help load the data
+"""
+
 import pandas as pd
 import pyreadstat as prs
 

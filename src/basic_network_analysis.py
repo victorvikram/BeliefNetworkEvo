@@ -1,5 +1,11 @@
+"""
+functions for finding basic quantities in a network, including for instance triad counting
+"""
 
 def count_triads(adj_mat):
+    """
+    counts the number of stable and unstable triads in the network
+    """
     dim = adj_mat.shape[0]
     negative_count = 0
     positive_count = 0

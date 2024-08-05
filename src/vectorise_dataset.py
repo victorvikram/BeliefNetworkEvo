@@ -34,6 +34,16 @@ def get_median_response(df, time_frame, variable):
     return median_response
 
 def make_vote_supernodes(df, meta_df, varnames=["VOTE{year}", "PRES{year}_NONCONFORM", "PRES{year}_DEMREP"]):
+
+    """
+    this function converts the specific-year voting questions:
+        - voteXX - whether you voted in the election of year 'XX
+        - presXX - who you voted for in the election of year 'XX
+    and collapses them into a smaller number of nodes
+        -votelast - whether you voted in the last election
+        -preslast_demrep - whether you voted dem or rep in the last election
+        -preslast_nonconform - whether you voted for a non-major party in the last election
+    """
     
     year_order = ["68", "72", "76", "80", "84", "88", "92", "96", "00", "04", "08", "12", "16", "20"]
     new_df = df.copy()
