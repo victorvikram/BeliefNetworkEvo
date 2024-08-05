@@ -1,7 +1,5 @@
 
-
-
-def intepret_belief_vector(belief_vector, variable_list):
+def interpret_belief_vector(belief_vector, variable_list):
   """
   This function takes in a belief vector and the corresponding variables and
     returns a string interpretation of the belief vector.
@@ -25,7 +23,7 @@ def intepret_belief_vector(belief_vector, variable_list):
   mappings = {
     "PARTYID": {"-": "Leans towards the Democratic party.", "+": "Leans towards the Republican party."},
     "POLVIEWS": {"-": "Is liberal.", "+": "Is conservative."},
-    "NATSPAC": {"-": "Believes the government is spending too much on the space exploration program.", "+": "Believes the government is spending too little on the space exploration program."},
+    "NATSPAC": {"-": "Believes the government is spending too little on the space exploration program.", "+": "Believes the government is spending too much on the space exploration program."},
     "NATENVIR": {"-": "Believes the government is spending too little on improving and protecting the environment.", "+": "Believes the government is spending too much on improving and protecting the environment."},
     "NATHEAL": {"-": "Believes the government is spending too little on improving and protecting the nation's health.", "+": "Believes the government is spending too much on improving and protecting the nation's health."},
     "NATCITY": {"-": "Believes the government is spending too little on solving the problems of big cities.", "+": "Believes the government is spending too much on solving the problems of big cities."},
@@ -36,7 +34,7 @@ def intepret_belief_vector(belief_vector, variable_list):
     "NATARMS": {"-": "Believes the government is spending too little on the military, armaments, and defense.", "+": "Believes the government is spending too much on the military, armaments, and defense."},
     "NATFARE": {"-": "Believes the government is spending too little on welfare.", "+": "Believes the government is spending too much on welfare."},
     "NATROAD": {"-": "Believes the government is spending too little on highways and bridges.", "+": "Believes the government is spending too much on highways and bridges."},
-    "NATSOC": {"-": "Believes the government is spending too little on social Security.", "+": "Believes the government is spending too much on social Security."},
+    "NATSOC": {"-": "Believes the government is spending too little on Social Security.", "+": "Believes the government is spending too much on Social Security."},
     "NATMASS": {"-": "Believes the government is spending too little on mass transportation.", "+": "Believes the government is spending too much on mass transportation."},
     "NATPARK": {"-": "Believes the government is spending too little on parks and recreation.", "+": "Believes the government is spending too much on parks and recreation."},
     "NATCHLD": {"-": "Believes the government is spending too little on assistance for childcare.", "+": "Believes the government is spending too much on assistance for childcare."},
@@ -52,12 +50,12 @@ def intepret_belief_vector(belief_vector, variable_list):
     "SPKCOM": {"-": "Believes a communist should not be allowed to make a speech their community.", "+": "Believes a communist should be allowed to make a speech their community."},
     "COLCOM": {"-": "Believes a communist should not be fired from his college teaching position.", "+": "Believes a communist should be fired from his college teaching position."},
     "LIBCOM": {"-": "Would not favour the removal of a book written by a communist from a public library.", "+": "Would favour the removal of a book written by a communist from a public library."},
-    "SPKMIL": {"-": "Believes a person who advocates the miltary running the country, without elections, should not be allowed to speak in their community.", "+": "Believes a person who advocates the miltary running the country, without elections, should be allowed to speak in their community."},
-    "COLMIL": {"-": "Believes a person who advocates the miltary running the country, without elections, should not be allowed to teach in a college or university.", "+": "Believes a person who advocates the miltary running the country, without elections, should be allowed to teach in a college or university."},
-    "LIBMIL": {"-": "Would not favour the removal of a book advocating the miltary running the country, without elections, from a public library.", "+": "Would favour the removal of a book advocating the miltary running the country, without elections, from a public library."},
+    "SPKMIL": {"-": "Believes a person who advocates the military running the country, without elections, should not be allowed to speak in their community.", "+": "Believes a person who advocates the military running the country, without elections, should be allowed to speak in their community."},
+    "COLMIL": {"-": "Believes a person who advocates the military running the country, without elections, should not be allowed to teach in a college or university.", "+": "Believes a person who advocates the military running the country, without elections, should be allowed to teach in a college or university."},
+    "LIBMIL": {"-": "Would not favour the removal of a book advocating the military running the country, without elections, from a public library.", "+": "Would favour the removal of a book advocating the military running the country, without elections, from a public library."},
     "SPKHOMO": {"-": "Believes a homosexual man should not be allowed to make a speech in their community.", "+": "Believes a homosexual man should be allowed to make a speech in their community."},
-    "COLHOM": {"-": "Believes a homosexual man should not be allowed to teach in a college or university.", "+" : "Believes a homosexual man should be allowed to teach in a college or university."},
-    "LIBHOM": {"-": "Would not favour the removal of a book in favour of homosexuality from a public library.", "+": "Would favour the removal of a book in favour of homosexuality from a public library."},
+    "COLHOMO": {"-": "Believes a homosexual man should not be allowed to teach in a college or university.", "+" : "Believes a homosexual man should be allowed to teach in a college or university."},
+    "LIBHOMO": {"-": "Would not favour the removal of a book in favour of homosexuality from a public library.", "+": "Would favour the removal of a book in favour of homosexuality from a public library."},
     "SPKMSLM": {"-": "Believes a Muslim clergyman who preaches hatred of the United States should not be allowed to make a speech in their community.", "+": "Believes a Muslim clergyman who preaches hatred of the United States should be allowed to make a speech in their community."},
     "COLMSLM": {"-": "Believes a Muslim clergyman who preaches hatred of the United States should not be allowed to teach in a college or university.", "+": "Believes a Muslim clergyman who preaches hatred of the United States should be allowed to teach in a college or university."},
     "LIBMSLM": {"-": "Would not favour the removal of a book preaching hatred of the United States from a public library.", "+": "Would favour the removal of a book preaching hatred of the United States from a public library."},
@@ -130,10 +128,10 @@ def intepret_belief_vector(belief_vector, variable_list):
     "FEPRESCH": {"-": "Believes that a preschool child is not likely to suffer if their mother works.", "+": "Believes that a preschool child is likely to suffer if their mother works."},
     "FEFAM": {"-": "Believes that it is not better for everyone if the man is the achiever outside the home and the woman takes care of the home and family.", "+": "Believes that it is better for everyone if the man is the achiever outside the home and the woman takes care of the home and family."},
 
-    "RACDIF1": {"-": "Does not believe the main cause for _ having worse jobs, income, and housing than _ people is discrimination.", "+": "Believes the main cause for _ having worse jobs, income, and housing than _ people is discrimination."},
-    "RACDIF2": {"-": "Does not believe the main cause for _ having worse jobs, income, and housing than _ people is that most _ have less in-born ability to learn.", "+": "Believes the main cause for _ having worse jobs, income, and housing than _ people is that most _ have less in-born ability to learn."},
-    "RACDIF3": {"-": "Does not believe the main cause for _ having worse jobs, income, and housing than _ people is that most _ don't have the chance for education that it takes to rise out of poverty.", "+": "Believes the main cause for _ having worse jobs, income, and housing than _ people is that most _ don't have the chance for education that it takes to rise out of poverty."},
-    "RACDIF4": {"-": "Does not believe the main cause for _ having worse jobs, income, and housing than _ people is that most _ don't have themotivation or will power to pull themselves out of poverty.", "+": "Believes the main cause for _ having worse jobs, income, and housing than _ people is that most _ don't have the motivation or will power to pull themselves out of poverty."},
+    "RACDIF1": {"-": "Does not believe the main cause for Blacks having worse jobs, income, and housing than white people is discrimination.", "+": "Believes the main cause for Blacks having worse jobs, income, and housing than white people is discrimination."},
+    "RACDIF2": {"-": "Does not believe the main cause for Blacks having worse jobs, income, and housing than white people is that most Blacks have less in-born ability to learn.", "+": "Believes the main cause for Blacks having worse jobs, income, and housing than white people is that most Blacks have less in-born ability to learn."},
+    "RACDIF3": {"-": "Does not believe the main cause for Blacks having worse jobs, income, and housing than white people is that most Blacks don't have the chance for education that it takes to rise out of poverty.", "+": "Believes the main cause for Blacks having worse jobs, income, and housing than white people is that most Blacks don't have the chance for education that it takes to rise out of poverty."},
+    "RACDIF4": {"-": "Does not believe the main cause for Blacks having worse jobs, income, and housing than white people is that most Blacks don't have themotivation or will power to pull themselves out of poverty.", "+": "Believes the main cause for Blacks having worse jobs, income, and housing than white people is that most Blacks don't have the motivation or will power to pull themselves out of poverty."},
 
     "HELPPOOR": {"-": "Does not believe that it is the responsibility of the government to improve the living stantard of all poor Americans.", "+": "Believes that it is the responsibility of the government to improve the living stantard of all poor Americans."},
     "MARHOMO": {"-": "Believes that it is not okay for homosexuals to marry.", "+": "Believes that it is okay for homosexuals to marry."},
@@ -154,25 +152,10 @@ def intepret_belief_vector(belief_vector, variable_list):
               interpretation = f"{variable} = {belief}. Neutral."
           interpretations.append(interpretation)
       else:
-          interpretations.append(f"{variable} = {belief}. No interpretation available.")
+          interpretations.append(f"{variable} = {belief}. Unknown variable. No intepretation available.")
   
   return "\n".join(interpretations)
 
-# Example usage
-belief_vector = [3, -2, 0]  # Example belief vector
-variables = ["EQWLTH", "PARTYID", "UNKNOWN_VAR"]  # Example variable list
-
-print(interpret_belief_vector(belief_vector, variables))
 
 
-
-
-
-
-
-# Example usage
-belief_vector = [3, -2, 0]  # Example belief vector
-variables = ["EQWLTH", "PARTYID", "UNKNOWN_VAR"]  # Example variable list
-
-print(interpret_belief_vector(belief_vector, variables))
 
