@@ -1,2 +1,5 @@
-dat/gss7222_r3.sas7bdat
+dat/
 nbk/data/
+
+__pycache__/
+*.py[cod]

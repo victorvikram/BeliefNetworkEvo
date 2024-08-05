@@ -1,9 +1,21 @@
+<<<<<<< HEAD
+"""
+functions to handle networkx graphs 
+"""
+=======
+>>>>>>> e6bf9692b558f3d75297def83afb3e35d94878a7
 
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
 
 def create_graph_from_adjacency_matrix(adj_matrix):
+<<<<<<< HEAD
+    """
+    makes a networkx graph from adjacency matrix
+    """
+=======
+>>>>>>> e6bf9692b558f3d75297def83afb3e35d94878a7
     G = nx.Graph()
     n = adj_matrix.shape[0]
     for i in range(n):
@@ -13,6 +25,8 @@ def create_graph_from_adjacency_matrix(adj_matrix):
                 G.add_edge(i, j, weight=adj_matrix[i, j])
     return G
 
+<<<<<<< HEAD
+=======
 def plot_graph(G, node_values, labels):
     # Position nodes using the spring layout
     pos = nx.spring_layout(G)
@@ -32,3 +46,4 @@ def plot_graph(G, node_values, labels):
     # sm = plt.cm.ScalarMappable(cmap=plt.cm.viridis, norm=plt.Normalize(vmin=min(node_values), vmax=max(node_values)))
     # sm.set_array([])
     # plt.colorbar(sm)
+>>>>>>> e6bf9692b558f3d75297def83afb3e35d94878a7
