@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """
 functions for doing random walks
 """
@@ -8,6 +9,11 @@ def non_markov_random_walk(adj_mat, start_node, num_steps, decay=1):
     """
     does a random walk that factors in transition probabilities from more than just the last node
     """
+=======
+import numpy as np
+
+def non_markov_random_walk(adj_mat, start_node, num_steps, decay=1):
+>>>>>>> e6bf9692b558f3d75297def83afb3e35d94878a7
     adj_mat = np.where(adj_mat > 0, adj_mat, 0)
     row_sums = adj_mat.sum(axis=1, keepdims=True)
     transition_matrix = adj_mat / row_sums

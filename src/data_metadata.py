@@ -1,7 +1,10 @@
+<<<<<<< HEAD
 """
 functions to help load the data
 """
 
+=======
+>>>>>>> e6bf9692b558f3d75297def83afb3e35d94878a7
 import pandas as pd
 import pyreadstat as prs
 
