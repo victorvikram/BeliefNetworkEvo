@@ -847,23 +847,36 @@ def transform_dataframe(df, combine_variants=True):
 
     ]
 
+    # for transformation in transformations_to_do:
+    #     source_col = transformation["source"]
+    #     dest_col = transformation["dest"]
+    #     column_map = transformation["map"]
+
+    #     transformed_df[dest_col] = df[source_col].map(column_map)
+    #     metadata_df.loc[dest_col, :] = {"min": min(column_map.values()), "max": max(column_map.values())}
+
+
+
+    transformed_data = {}
+    metadata_data = {}
+
+    preserved_columns = ["YEAR", "ID", "BALLOT"]
+    for col in preserved_columns:
+        transformed_data[col] = df[col]
+
     for transformation in transformations_to_do:
         source_col = transformation["source"]
         dest_col = transformation["dest"]
         column_map = transformation["map"]
 
-        transformed_df[dest_col] = df[source_col].map(column_map)
-        metadata_df.loc[dest_col, :] = {"min": min(column_map.values()), "max": max(column_map.values())}
+        transformed_data[dest_col] = df[source_col].map(column_map)
+        metadata_data[dest_col] = {"min": min(column_map.values()), "max": max(column_map.values())}
 
-    # endregion
-
-    print(metadata_df.loc["VOTE68",:])
-
+    transformed_df = pd.DataFrame(transformed_data)
+    metadata_df = pd.DataFrame.from_dict(metadata_data, orient='index')
+    
     transformed_df, metadata_df = make_vote_supernodes(transformed_df, metadata_df, varnames=["VOTE{year}", "PRES{year}_NONCONFORM", "PRES{year}_DEMREP"])
 
-    print("hello")
-    print(metadata_df.loc["PRESLAST_DEMREP",:])
-    
     if combine_variants:
         for variant, original in variants.items():
             combined_column = transformed_df[original].combine_first(transformed_df[variant])
