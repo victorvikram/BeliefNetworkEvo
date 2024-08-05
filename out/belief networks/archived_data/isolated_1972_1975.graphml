@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><key id="d0" for="edge" attr.name="weight" attr.type="double"/>
+<graph edgedefault="undirected"><node id="POLVIEWS"/>
+<node id="COLCOM"/>
+<node id="GRASS"/>
+<node id="PREMARSX"/>
+<node id="XMARSEX"/>
+<node id="HOMOSEX"/>
+<node id="PRESLAST_DEMREP"/>
+<edge source="POLVIEWS" target="COLCOM">
+  <data key="d0">0.038647230302233514</data>
+</edge>
+<edge source="POLVIEWS" target="GRASS">
+  <data key="d0">-0.010147678642946556</data>
+</edge>
+<edge source="POLVIEWS" target="PREMARSX">
+  <data key="d0">0.02063218264510735</data>
+</edge>
+<edge source="POLVIEWS" target="XMARSEX">
+  <data key="d0">0.014711754154751084</data>
+</edge>
+<edge source="POLVIEWS" target="HOMOSEX">
+  <data key="d0">0.0036836639659633256</data>
+</edge>
+<edge source="POLVIEWS" target="PRESLAST_DEMREP">
+  <data key="d0">0.12404762759194468</data>
+</edge>
+</graph></graphml>

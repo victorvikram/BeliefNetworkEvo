@@ -217,7 +217,7 @@ def transform_dataframe_1(df, combine_variants=True):
     NAT_map = {1: -1, 2: 0, 3: 1}
 
     # COURTS: Courts deal too harshly or not harshly enough with criminals?
-    COURTS_map = {1: -1, 2: 0, 3: 1}
+    COURTS_map = {1: -1, 2: 1, 3: 0}
 
     # RACOPEN
     RACOPEN_map = {1: -1, 2: 1, 3: 0, -98: 0}
@@ -242,7 +242,7 @@ def transform_dataframe_1(df, combine_variants=True):
     other_GETAHEAD_map = {1: -1, 2: -1, 3: -1, 4: 1}
 
     # DIVLAW: Should divorce in this country be easier or more difficult to obtain than it is now?
-    DIVLAW_map = {1: 1, 2: 0, 3: -1}
+    DIVLAW_map = {1: 1, 2: -1, 3: 0}
 
     # SPANKING: It is sometimes necessary to discipline a child with a good, hard spanking.
     SPANKING_map = {1: 2, 2: 1, 3: -1, 4: -2}
