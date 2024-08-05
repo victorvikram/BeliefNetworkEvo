@@ -1,0 +1,953 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><key id="weight" for="edge" attr.name="weight" attr.type="float"/>
+<graph edgedefault="undirected"><node id="PARTYID"/>
+<node id="POLVIEWS"/>
+<node id="EQWLTH"/>
+<node id="HELPPOOR"/>
+<node id="PRESLAST_DEMREP"/>
+<node id="PREMARSX"/>
+<node id="NATSPAC"/>
+<node id="SPKATH"/>
+<node id="CONSCI"/>
+<node id="NATENVIR"/>
+<node id="NATEDUC"/>
+<node id="NATPARK"/>
+<node id="NATHEAL"/>
+<node id="NATDRUG"/>
+<node id="NATRACE"/>
+<node id="NATFARE"/>
+<node id="NATSOC"/>
+<node id="NATCITY"/>
+<node id="NATCRIME"/>
+<node id="CAPPUN"/>
+<node id="RACDIF1"/>
+<node id="RACDIF3"/>
+<node id="RACDIF4"/>
+<node id="NATARMS"/>
+<node id="CONARMY"/>
+<node id="COLATH"/>
+<node id="LIBATH"/>
+<node id="SPKRAC"/>
+<node id="SPKCOM"/>
+<node id="SPKMIL"/>
+<node id="SPKHOMO"/>
+<node id="LIBHOMO"/>
+<node id="SUICIDE1"/>
+<node id="RACDIF2"/>
+<node id="COLRAC"/>
+<node id="COLCOM"/>
+<node id="COLMIL"/>
+<node id="COLHOMO"/>
+<node id="GRASS"/>
+<node id="PRAYER"/>
+<node id="HOMOSEX"/>
+<node id="PORNLAW"/>
+<node id="FEFAM"/>
+<node id="LIBRAC"/>
+<node id="LIBCOM"/>
+<node id="LIBMIL"/>
+<node id="ABNOMORE"/>
+<node id="SEXEDUC"/>
+<node id="ABANY"/>
+<node id="FEPOL"/>
+<node id="ATTEND"/>
+<node id="ABSINGLE"/>
+<node id="XMARSEX"/>
+<node id="RELITEN"/>
+<node id="POSTLIFE"/>
+<node id="CONCLERG"/>
+<node id="ABDEFECT"/>
+<node id="ABPOOR"/>
+<node id="DIVLAW"/>
+<node id="LETDIE1"/>
+<node id="VOTELAST"/>
+<node id="HELPFUL"/>
+<node id="FAIR"/>
+<node id="TRUST"/>
+<node id="CONFINAN"/>
+<node id="CONBUS"/>
+<node id="CONEDUC"/>
+<node id="CONFED"/>
+<node id="CONMEDIC"/>
+<node id="CONTV"/>
+<node id="CONJUDGE"/>
+<node id="CONLEGIS"/>
+<node id="CONLABOR"/>
+<node id="CONPRESS"/>
+<node id="TVHOURS"/>
+<node id="ABHLTH"/>
+<node id="ABRAPE"/>
+<node id="SUICIDE2"/>
+<node id="FECHLD"/>
+<node id="POLHITOK"/>
+<node id="POLESCAP"/>
+<node id="POLATTAK"/>
+<node id="POLABUSE"/>
+<node id="POLMURDR"/>
+<node id="NEWS"/>
+<node id="FEPRESCH"/>
+<edge source="PARTYID" target="POLVIEWS">
+  <data key="weight">0.03658391308641472</data>
+</edge>
+<edge source="PARTYID" target="EQWLTH">
+  <data key="weight">-0.0034173034826091935</data>
+</edge>
+<edge source="PARTYID" target="HELPPOOR">
+  <data key="weight">-0.018288600564305812</data>
+</edge>
+<edge source="PARTYID" target="PRESLAST_DEMREP">
+  <data key="weight">0.45081913526990197</data>
+</edge>
+<edge source="POLVIEWS" target="PREMARSX">
+  <data key="weight">0.02653723290031687</data>
+</edge>
+<edge source="POLVIEWS" target="PRESLAST_DEMREP">
+  <data key="weight">0.09213296398111635</data>
+</edge>
+<edge source="EQWLTH" target="NATSOC">
+  <data key="weight">-0.0012844265693483959</data>
+</edge>
+<edge source="EQWLTH" target="HELPPOOR">
+  <data key="weight">0.15471211753593403</data>
+</edge>
+<edge source="EQWLTH" target="PRESLAST_DEMREP">
+  <data key="weight">-0.07482045668410207</data>
+</edge>
+<edge source="HELPPOOR" target="NATRACE">
+  <data key="weight">-0.0562935785552543</data>
+</edge>
+<edge source="HELPPOOR" target="NATFARE">
+  <data key="weight">-0.07402022651853418</data>
+</edge>
+<edge source="HELPPOOR" target="NATSOC">
+  <data key="weight">-0.01966304059319196</data>
+</edge>
+<edge source="HELPPOOR" target="PRESLAST_DEMREP">
+  <data key="weight">-0.05620172112825061</data>
+</edge>
+<edge source="PRESLAST_DEMREP" target="NATHEAL">
+  <data key="weight">0.01696821183172519</data>
+</edge>
+<edge source="PRESLAST_DEMREP" target="NATRACE">
+  <data key="weight">0.06638509654294558</data>
+</edge>
+<edge source="PRESLAST_DEMREP" target="NATARMS">
+  <data key="weight">-0.044274615882105975</data>
+</edge>
+<edge source="PRESLAST_DEMREP" target="NATFARE">
+  <data key="weight">0.04551850860371133</data>
+</edge>
+<edge source="PRESLAST_DEMREP" target="CAPPUN">
+  <data key="weight">0.029359707010650264</data>
+</edge>
+<edge source="PRESLAST_DEMREP" target="CONFED">
+  <data key="weight">0.06060270792303686</data>
+</edge>
+<edge source="PREMARSX" target="SPKCOM">
+  <data key="weight">-0.0015834827278546897</data>
+</edge>
+<edge source="PREMARSX" target="SPKHOMO">
+  <data key="weight">-0.015066807972343844</data>
+</edge>
+<edge source="PREMARSX" target="COLHOMO">
+  <data key="weight">-0.0722866896720004</data>
+</edge>
+<edge source="PREMARSX" target="LIBHOMO">
+  <data key="weight">0.01952409817307362</data>
+</edge>
+<edge source="PREMARSX" target="GRASS">
+  <data key="weight">-0.03806922965031202</data>
+</edge>
+<edge source="PREMARSX" target="ATTEND">
+  <data key="weight">0.12753967430153507</data>
+</edge>
+<edge source="PREMARSX" target="RELITEN">
+  <data key="weight">0.06155833714326735</data>
+</edge>
+<edge source="PREMARSX" target="ABDEFECT">
+  <data key="weight">-0.006808250916358172</data>
+</edge>
+<edge source="PREMARSX" target="ABNOMORE">
+  <data key="weight">-0.07885965096046739</data>
+</edge>
+<edge source="PREMARSX" target="ABRAPE">
+  <data key="weight">-0.04144890726173289</data>
+</edge>
+<edge source="PREMARSX" target="ABANY">
+  <data key="weight">-0.01138221714155757</data>
+</edge>
+<edge source="PREMARSX" target="SEXEDUC">
+  <data key="weight">-0.052140289583552255</data>
+</edge>
+<edge source="PREMARSX" target="DIVLAW">
+  <data key="weight">-0.1097546297963883</data>
+</edge>
+<edge source="PREMARSX" target="XMARSEX">
+  <data key="weight">0.11387289205708778</data>
+</edge>
+<edge source="PREMARSX" target="HOMOSEX">
+  <data key="weight">0.08473457548871699</data>
+</edge>
+<edge source="PREMARSX" target="PORNLAW">
+  <data key="weight">0.16781309587665594</data>
+</edge>
+<edge source="PREMARSX" target="LETDIE1">
+  <data key="weight">-0.02955396468526324</data>
+</edge>
+<edge source="PREMARSX" target="SUICIDE1">
+  <data key="weight">-0.08190814721182092</data>
+</edge>
+<edge source="PREMARSX" target="FEFAM">
+  <data key="weight">0.08188608046715534</data>
+</edge>
+<edge source="NATSPAC" target="SPKATH">
+  <data key="weight">-0.009039743430491168</data>
+</edge>
+<edge source="NATSPAC" target="CONSCI">
+  <data key="weight">-0.045216706557820556</data>
+</edge>
+<edge source="SPKATH" target="COLATH">
+  <data key="weight">0.13364778550706644</data>
+</edge>
+<edge source="SPKATH" target="LIBATH">
+  <data key="weight">-0.16431413232057449</data>
+</edge>
+<edge source="SPKATH" target="SPKRAC">
+  <data key="weight">0.1879857058090354</data>
+</edge>
+<edge source="SPKATH" target="SPKCOM">
+  <data key="weight">0.16350013311618244</data>
+</edge>
+<edge source="SPKATH" target="SPKMIL">
+  <data key="weight">0.08174646906454948</data>
+</edge>
+<edge source="SPKATH" target="SPKHOMO">
+  <data key="weight">0.1263863661334573</data>
+</edge>
+<edge source="SPKATH" target="LIBHOMO">
+  <data key="weight">-0.0009163061792235998</data>
+</edge>
+<edge source="SPKATH" target="SUICIDE1">
+  <data key="weight">0.001270179908504625</data>
+</edge>
+<edge source="SPKATH" target="RACDIF2">
+  <data key="weight">-0.006738348573307332</data>
+</edge>
+<edge source="CONSCI" target="LIBCOM">
+  <data key="weight">-0.018094434568362273</data>
+</edge>
+<edge source="CONSCI" target="CONBUS">
+  <data key="weight">0.04443311875903293</data>
+</edge>
+<edge source="CONSCI" target="CONMEDIC">
+  <data key="weight">0.062099981813316656</data>
+</edge>
+<edge source="CONSCI" target="CONJUDGE">
+  <data key="weight">0.12567424581676742</data>
+</edge>
+<edge source="CONSCI" target="CONLEGIS">
+  <data key="weight">0.031425688217307866</data>
+</edge>
+<edge source="NATENVIR" target="NATEDUC">
+  <data key="weight">0.015405744421096603</data>
+</edge>
+<edge source="NATENVIR" target="NATPARK">
+  <data key="weight">0.008125873628539223</data>
+</edge>
+<edge source="NATEDUC" target="NATHEAL">
+  <data key="weight">0.053856537906169365</data>
+</edge>
+<edge source="NATEDUC" target="NATRACE">
+  <data key="weight">0.02672561348657872</data>
+</edge>
+<edge source="NATEDUC" target="NATSOC">
+  <data key="weight">0.010182232433118065</data>
+</edge>
+<edge source="NATHEAL" target="NATDRUG">
+  <data key="weight">0.005220173286569477</data>
+</edge>
+<edge source="NATHEAL" target="NATRACE">
+  <data key="weight">0.019739931040022717</data>
+</edge>
+<edge source="NATHEAL" target="NATFARE">
+  <data key="weight">0.003939178338057928</data>
+</edge>
+<edge source="NATHEAL" target="NATSOC">
+  <data key="weight">0.05207411398763626</data>
+</edge>
+<edge source="NATDRUG" target="NATCRIME">
+  <data key="weight">0.08609527090053236</data>
+</edge>
+<edge source="NATDRUG" target="NATRACE">
+  <data key="weight">0.042281699532493666</data>
+</edge>
+<edge source="NATRACE" target="NATCITY">
+  <data key="weight">0.14538856140856837</data>
+</edge>
+<edge source="NATRACE" target="NATFARE">
+  <data key="weight">0.039705862811052935</data>
+</edge>
+<edge source="NATRACE" target="CAPPUN">
+  <data key="weight">0.012515550721006075</data>
+</edge>
+<edge source="NATRACE" target="RACDIF1">
+  <data key="weight">-0.14270482128327927</data>
+</edge>
+<edge source="NATRACE" target="RACDIF3">
+  <data key="weight">-0.07430358346071926</data>
+</edge>
+<edge source="NATRACE" target="RACDIF4">
+  <data key="weight">0.06890577622522424</data>
+</edge>
+<edge source="NATFARE" target="NATSOC">
+  <data key="weight">0.02661785629575701</data>
+</edge>
+<edge source="RACDIF1" target="RACDIF3">
+  <data key="weight">0.07763748614719919</data>
+</edge>
+<edge source="RACDIF1" target="RACDIF4">
+  <data key="weight">-0.09133691370346855</data>
+</edge>
+<edge source="RACDIF3" target="RACDIF4">
+  <data key="weight">-0.07924525808984699</data>
+</edge>
+<edge source="RACDIF4" target="COLATH">
+  <data key="weight">-0.0035202885893060505</data>
+</edge>
+<edge source="RACDIF4" target="SPKCOM">
+  <data key="weight">-0.010266286157420038</data>
+</edge>
+<edge source="RACDIF4" target="COLCOM">
+  <data key="weight">0.008737568528117043</data>
+</edge>
+<edge source="RACDIF4" target="COLHOMO">
+  <data key="weight">-0.00798756065749194</data>
+</edge>
+<edge source="RACDIF4" target="RACDIF2">
+  <data key="weight">0.09011739901429332</data>
+</edge>
+<edge source="NATARMS" target="CONARMY">
+  <data key="weight">-0.05541394794417545</data>
+</edge>
+<edge source="CONARMY" target="CONFINAN">
+  <data key="weight">0.11708038732345474</data>
+</edge>
+<edge source="CONARMY" target="CONEDUC">
+  <data key="weight">0.04445935628122644</data>
+</edge>
+<edge source="CONARMY" target="CONFED">
+  <data key="weight">0.09176529374282985</data>
+</edge>
+<edge source="CONARMY" target="CONMEDIC">
+  <data key="weight">0.005421572094985126</data>
+</edge>
+<edge source="CONARMY" target="CONLEGIS">
+  <data key="weight">0.11555575537541224</data>
+</edge>
+<edge source="COLATH" target="LIBATH">
+  <data key="weight">-0.0864337859652256</data>
+</edge>
+<edge source="COLATH" target="COLRAC">
+  <data key="weight">0.23831255189308767</data>
+</edge>
+<edge source="COLATH" target="COLCOM">
+  <data key="weight">-0.14584369719616697</data>
+</edge>
+<edge source="COLATH" target="COLMIL">
+  <data key="weight">0.18645957836653726</data>
+</edge>
+<edge source="COLATH" target="COLHOMO">
+  <data key="weight">0.116832920279981</data>
+</edge>
+<edge source="COLATH" target="GRASS">
+  <data key="weight">6.53662464949008e-05</data>
+</edge>
+<edge source="COLATH" target="PRAYER">
+  <data key="weight">0.00931602401958195</data>
+</edge>
+<edge source="COLATH" target="HOMOSEX">
+  <data key="weight">-0.03539386877663672</data>
+</edge>
+<edge source="COLATH" target="PORNLAW">
+  <data key="weight">-0.017409670079124626</data>
+</edge>
+<edge source="COLATH" target="FEFAM">
+  <data key="weight">-0.024445869199781704</data>
+</edge>
+<edge source="COLATH" target="RACDIF2">
+  <data key="weight">-0.0006674999907266303</data>
+</edge>
+<edge source="LIBATH" target="LIBRAC">
+  <data key="weight">0.22685395912509887</data>
+</edge>
+<edge source="LIBATH" target="LIBCOM">
+  <data key="weight">0.2023832921001273</data>
+</edge>
+<edge source="LIBATH" target="LIBMIL">
+  <data key="weight">0.08883112863804682</data>
+</edge>
+<edge source="LIBATH" target="SPKHOMO">
+  <data key="weight">-0.00042691273426965907</data>
+</edge>
+<edge source="LIBATH" target="LIBHOMO">
+  <data key="weight">0.11034760293266418</data>
+</edge>
+<edge source="LIBATH" target="PRAYER">
+  <data key="weight">-0.006730583804295601</data>
+</edge>
+<edge source="LIBATH" target="ABNOMORE">
+  <data key="weight">-0.013825361100546716</data>
+</edge>
+<edge source="LIBATH" target="SEXEDUC">
+  <data key="weight">-0.03256353306415828</data>
+</edge>
+<edge source="LIBATH" target="SUICIDE1">
+  <data key="weight">-0.02183853991371055</data>
+</edge>
+<edge source="LIBATH" target="FEFAM">
+  <data key="weight">0.005573548023337811</data>
+</edge>
+<edge source="SPKRAC" target="COLRAC">
+  <data key="weight">0.23393148928623853</data>
+</edge>
+<edge source="SPKRAC" target="LIBRAC">
+  <data key="weight">-0.18265509154112367</data>
+</edge>
+<edge source="SPKRAC" target="SPKCOM">
+  <data key="weight">0.04069682476195152</data>
+</edge>
+<edge source="SPKRAC" target="SPKMIL">
+  <data key="weight">0.08496534181473946</data>
+</edge>
+<edge source="SPKRAC" target="SPKHOMO">
+  <data key="weight">0.0002482386260324212</data>
+</edge>
+<edge source="SPKCOM" target="COLCOM">
+  <data key="weight">-0.1411729180906925</data>
+</edge>
+<edge source="SPKCOM" target="LIBCOM">
+  <data key="weight">-0.22231266224390173</data>
+</edge>
+<edge source="SPKCOM" target="SPKMIL">
+  <data key="weight">0.1697219580385742</data>
+</edge>
+<edge source="SPKCOM" target="SPKHOMO">
+  <data key="weight">0.11581203484165171</data>
+</edge>
+<edge source="SPKCOM" target="LIBHOMO">
+  <data key="weight">-0.0021914045615847866</data>
+</edge>
+<edge source="SPKCOM" target="PRAYER">
+  <data key="weight">0.015754091287903945</data>
+</edge>
+<edge source="SPKCOM" target="HOMOSEX">
+  <data key="weight">-0.007667161574284637</data>
+</edge>
+<edge source="SPKMIL" target="COLMIL">
+  <data key="weight">0.2517769691845945</data>
+</edge>
+<edge source="SPKMIL" target="LIBMIL">
+  <data key="weight">-0.19636869720560704</data>
+</edge>
+<edge source="SPKMIL" target="SPKHOMO">
+  <data key="weight">0.07466299652316574</data>
+</edge>
+<edge source="SPKMIL" target="PRAYER">
+  <data key="weight">0.001275263783479011</data>
+</edge>
+<edge source="SPKMIL" target="HOMOSEX">
+  <data key="weight">-0.0004336372839062632</data>
+</edge>
+<edge source="SPKHOMO" target="COLHOMO">
+  <data key="weight">0.33469411093878976</data>
+</edge>
+<edge source="SPKHOMO" target="LIBHOMO">
+  <data key="weight">-0.18220172069216448</data>
+</edge>
+<edge source="SPKHOMO" target="SEXEDUC">
+  <data key="weight">0.02033766259137845</data>
+</edge>
+<edge source="SPKHOMO" target="FEFAM">
+  <data key="weight">-0.005532573636878491</data>
+</edge>
+<edge source="LIBHOMO" target="LIBRAC">
+  <data key="weight">0.07475130172234631</data>
+</edge>
+<edge source="LIBHOMO" target="LIBCOM">
+  <data key="weight">0.16316642350735214</data>
+</edge>
+<edge source="LIBHOMO" target="LIBMIL">
+  <data key="weight">0.14588759520249733</data>
+</edge>
+<edge source="LIBHOMO" target="COLHOMO">
+  <data key="weight">-0.15657924043235763</data>
+</edge>
+<edge source="LIBHOMO" target="GRASS">
+  <data key="weight">-0.0005459509229814769</data>
+</edge>
+<edge source="LIBHOMO" target="ABNOMORE">
+  <data key="weight">-0.004805152697636104</data>
+</edge>
+<edge source="LIBHOMO" target="SEXEDUC">
+  <data key="weight">-0.01900538064623874</data>
+</edge>
+<edge source="LIBHOMO" target="HOMOSEX">
+  <data key="weight">0.058082021037523204</data>
+</edge>
+<edge source="LIBHOMO" target="PORNLAW">
+  <data key="weight">0.0038515750112022382</data>
+</edge>
+<edge source="LIBHOMO" target="SUICIDE1">
+  <data key="weight">-0.06901335153729228</data>
+</edge>
+<edge source="LIBHOMO" target="FEFAM">
+  <data key="weight">0.03612483295982364</data>
+</edge>
+<edge source="LIBHOMO" target="RACDIF2">
+  <data key="weight">0.009369582314731095</data>
+</edge>
+<edge source="SUICIDE1" target="LIBMIL">
+  <data key="weight">-0.013483987804656235</data>
+</edge>
+<edge source="SUICIDE1" target="ATTEND">
+  <data key="weight">-0.0670249766356466</data>
+</edge>
+<edge source="SUICIDE1" target="RELITEN">
+  <data key="weight">-0.025399000331418314</data>
+</edge>
+<edge source="SUICIDE1" target="ABDEFECT">
+  <data key="weight">0.018783754397395977</data>
+</edge>
+<edge source="SUICIDE1" target="ABNOMORE">
+  <data key="weight">0.022077812582597323</data>
+</edge>
+<edge source="SUICIDE1" target="ABPOOR">
+  <data key="weight">0.0351623361832419</data>
+</edge>
+<edge source="SUICIDE1" target="ABRAPE">
+  <data key="weight">0.003316335068756601</data>
+</edge>
+<edge source="SUICIDE1" target="ABSINGLE">
+  <data key="weight">0.032145918743269164</data>
+</edge>
+<edge source="SUICIDE1" target="ABANY">
+  <data key="weight">0.041725594171972975</data>
+</edge>
+<edge source="SUICIDE1" target="XMARSEX">
+  <data key="weight">-0.019611124735328552</data>
+</edge>
+<edge source="SUICIDE1" target="HOMOSEX">
+  <data key="weight">-0.03308169780082336</data>
+</edge>
+<edge source="SUICIDE1" target="PORNLAW">
+  <data key="weight">-0.03631527796167951</data>
+</edge>
+<edge source="SUICIDE1" target="LETDIE1">
+  <data key="weight">0.244558288431865</data>
+</edge>
+<edge source="SUICIDE1" target="SUICIDE2">
+  <data key="weight">0.05559083991406697</data>
+</edge>
+<edge source="RACDIF2" target="COLCOM">
+  <data key="weight">0.016165451314332144</data>
+</edge>
+<edge source="RACDIF2" target="LIBCOM">
+  <data key="weight">0.03289599905226779</data>
+</edge>
+<edge source="RACDIF2" target="LIBMIL">
+  <data key="weight">0.0005977436959596494</data>
+</edge>
+<edge source="RACDIF2" target="FEFAM">
+  <data key="weight">0.0012240209255896736</data>
+</edge>
+<edge source="COLRAC" target="LIBRAC">
+  <data key="weight">-0.061046265075852896</data>
+</edge>
+<edge source="COLRAC" target="COLMIL">
+  <data key="weight">0.14805997909001062</data>
+</edge>
+<edge source="COLCOM" target="LIBCOM">
+  <data key="weight">0.13890394048913365</data>
+</edge>
+<edge source="COLCOM" target="COLMIL">
+  <data key="weight">-0.13356862900350402</data>
+</edge>
+<edge source="COLCOM" target="COLHOMO">
+  <data key="weight">-0.07916023953802775</data>
+</edge>
+<edge source="COLCOM" target="HOMOSEX">
+  <data key="weight">0.02907316637493302</data>
+</edge>
+<edge source="COLCOM" target="FEFAM">
+  <data key="weight">0.0011883719092926983</data>
+</edge>
+<edge source="COLMIL" target="LIBMIL">
+  <data key="weight">-0.1083022778288427</data>
+</edge>
+<edge source="COLMIL" target="COLHOMO">
+  <data key="weight">0.04124869772219015</data>
+</edge>
+<edge source="COLMIL" target="PORNLAW">
+  <data key="weight">-0.016434714155065904</data>
+</edge>
+<edge source="COLHOMO" target="GRASS">
+  <data key="weight">0.002361409495900091</data>
+</edge>
+<edge source="COLHOMO" target="FEPOL">
+  <data key="weight">-0.01855101154912758</data>
+</edge>
+<edge source="COLHOMO" target="ABNOMORE">
+  <data key="weight">0.002017218793809798</data>
+</edge>
+<edge source="COLHOMO" target="ABANY">
+  <data key="weight">0.002373340144538472</data>
+</edge>
+<edge source="COLHOMO" target="SEXEDUC">
+  <data key="weight">0.02894870713854385</data>
+</edge>
+<edge source="COLHOMO" target="HOMOSEX">
+  <data key="weight">-0.08512394896823755</data>
+</edge>
+<edge source="COLHOMO" target="PORNLAW">
+  <data key="weight">-0.015512867518428508</data>
+</edge>
+<edge source="COLHOMO" target="FEFAM">
+  <data key="weight">-0.07354537322116522</data>
+</edge>
+<edge source="GRASS" target="ATTEND">
+  <data key="weight">-0.025419939432442452</data>
+</edge>
+<edge source="GRASS" target="ABSINGLE">
+  <data key="weight">0.004581316913623284</data>
+</edge>
+<edge source="GRASS" target="ABANY">
+  <data key="weight">0.02111499247233344</data>
+</edge>
+<edge source="GRASS" target="XMARSEX">
+  <data key="weight">-0.024847551404931563</data>
+</edge>
+<edge source="GRASS" target="HOMOSEX">
+  <data key="weight">-0.09029164083017353</data>
+</edge>
+<edge source="GRASS" target="PORNLAW">
+  <data key="weight">-0.033282556328087014</data>
+</edge>
+<edge source="PRAYER" target="LIBCOM">
+  <data key="weight">-0.021340122786284655</data>
+</edge>
+<edge source="PRAYER" target="ABNOMORE">
+  <data key="weight">0.001259608735341205</data>
+</edge>
+<edge source="PRAYER" target="ABANY">
+  <data key="weight">0.0019165901416089003</data>
+</edge>
+<edge source="PRAYER" target="HOMOSEX">
+  <data key="weight">-0.002041658365215059</data>
+</edge>
+<edge source="HOMOSEX" target="LIBCOM">
+  <data key="weight">0.010608067243889664</data>
+</edge>
+<edge source="HOMOSEX" target="ABNOMORE">
+  <data key="weight">-0.023238293902134242</data>
+</edge>
+<edge source="HOMOSEX" target="ABSINGLE">
+  <data key="weight">-0.02513343852941185</data>
+</edge>
+<edge source="HOMOSEX" target="ABANY">
+  <data key="weight">-0.02851290408525781</data>
+</edge>
+<edge source="HOMOSEX" target="XMARSEX">
+  <data key="weight">0.15066334068428666</data>
+</edge>
+<edge source="HOMOSEX" target="PORNLAW">
+  <data key="weight">0.018920131843237566</data>
+</edge>
+<edge source="HOMOSEX" target="FEFAM">
+  <data key="weight">0.07096795064755584</data>
+</edge>
+<edge source="PORNLAW" target="ATTEND">
+  <data key="weight">0.030108189169465588</data>
+</edge>
+<edge source="PORNLAW" target="XMARSEX">
+  <data key="weight">0.0077839347901709575</data>
+</edge>
+<edge source="FEFAM" target="LIBCOM">
+  <data key="weight">0.009052128145719665</data>
+</edge>
+<edge source="FEFAM" target="LIBMIL">
+  <data key="weight">0.007925665664199255</data>
+</edge>
+<edge source="FEFAM" target="FEPOL">
+  <data key="weight">0.15259504520477343</data>
+</edge>
+<edge source="FEFAM" target="SEXEDUC">
+  <data key="weight">-0.05775603266876934</data>
+</edge>
+<edge source="FEFAM" target="FECHLD">
+  <data key="weight">-0.14858450930779948</data>
+</edge>
+<edge source="FEFAM" target="FEPRESCH">
+  <data key="weight">0.25906153778548874</data>
+</edge>
+<edge source="LIBRAC" target="LIBCOM">
+  <data key="weight">0.09202200172071379</data>
+</edge>
+<edge source="LIBRAC" target="LIBMIL">
+  <data key="weight">0.12451063748098982</data>
+</edge>
+<edge source="LIBCOM" target="LIBMIL">
+  <data key="weight">0.2348206553269032</data>
+</edge>
+<edge source="LIBCOM" target="ABNOMORE">
+  <data key="weight">-0.004049915170619804</data>
+</edge>
+<edge source="LIBCOM" target="ABANY">
+  <data key="weight">-0.006975628744467436</data>
+</edge>
+<edge source="ABNOMORE" target="ATTEND">
+  <data key="weight">-0.0017561933726949754</data>
+</edge>
+<edge source="ABNOMORE" target="ABDEFECT">
+  <data key="weight">0.05417476373734323</data>
+</edge>
+<edge source="ABNOMORE" target="ABPOOR">
+  <data key="weight">0.26280486380356005</data>
+</edge>
+<edge source="ABNOMORE" target="ABRAPE">
+  <data key="weight">0.014225411424989759</data>
+</edge>
+<edge source="ABNOMORE" target="ABSINGLE">
+  <data key="weight">0.2551202119947706</data>
+</edge>
+<edge source="ABNOMORE" target="ABANY">
+  <data key="weight">0.267197511568889</data>
+</edge>
+<edge source="ABNOMORE" target="DIVLAW">
+  <data key="weight">0.002688004614790477</data>
+</edge>
+<edge source="ABNOMORE" target="XMARSEX">
+  <data key="weight">-0.01128549195612782</data>
+</edge>
+<edge source="SEXEDUC" target="ABDEFECT">
+  <data key="weight">0.07495761342696224</data>
+</edge>
+<edge source="SEXEDUC" target="FECHLD">
+  <data key="weight">0.024135012853502072</data>
+</edge>
+<edge source="ABANY" target="ATTEND">
+  <data key="weight">-0.0010618854345100892</data>
+</edge>
+<edge source="ABANY" target="ABDEFECT">
+  <data key="weight">0.0057536325263570845</data>
+</edge>
+<edge source="ABANY" target="ABPOOR">
+  <data key="weight">0.17470458949529116</data>
+</edge>
+<edge source="ABANY" target="ABSINGLE">
+  <data key="weight">0.3194321921973766</data>
+</edge>
+<edge source="ABANY" target="DIVLAW">
+  <data key="weight">0.0002414205849551422</data>
+</edge>
+<edge source="ABANY" target="XMARSEX">
+  <data key="weight">-0.00788342495237595</data>
+</edge>
+<edge source="ABANY" target="SUICIDE2">
+  <data key="weight">0.052882561820825374</data>
+</edge>
+<edge source="ATTEND" target="RELITEN">
+  <data key="weight">0.31649749337134886</data>
+</edge>
+<edge source="ATTEND" target="POSTLIFE">
+  <data key="weight">0.03130568966842707</data>
+</edge>
+<edge source="ATTEND" target="CONCLERG">
+  <data key="weight">0.06108594554290717</data>
+</edge>
+<edge source="ATTEND" target="ABDEFECT">
+  <data key="weight">-0.03525236655235078</data>
+</edge>
+<edge source="ATTEND" target="ABPOOR">
+  <data key="weight">-0.029514336322883403</data>
+</edge>
+<edge source="ATTEND" target="ABSINGLE">
+  <data key="weight">-0.0017080745153585314</data>
+</edge>
+<edge source="ATTEND" target="DIVLAW">
+  <data key="weight">-0.0376846525473451</data>
+</edge>
+<edge source="ATTEND" target="XMARSEX">
+  <data key="weight">0.018462644520031046</data>
+</edge>
+<edge source="ATTEND" target="LETDIE1">
+  <data key="weight">-0.01495692058766226</data>
+</edge>
+<edge source="ATTEND" target="VOTELAST">
+  <data key="weight">0.0028902176207852154</data>
+</edge>
+<edge source="ABSINGLE" target="ABDEFECT">
+  <data key="weight">0.026217798936502945</data>
+</edge>
+<edge source="ABSINGLE" target="ABPOOR">
+  <data key="weight">0.2558964718033601</data>
+</edge>
+<edge source="ABSINGLE" target="ABRAPE">
+  <data key="weight">0.04924737831425045</data>
+</edge>
+<edge source="ABSINGLE" target="DIVLAW">
+  <data key="weight">0.008643638803379598</data>
+</edge>
+<edge source="ABSINGLE" target="XMARSEX">
+  <data key="weight">-0.008518160336950138</data>
+</edge>
+<edge source="ABSINGLE" target="LETDIE1">
+  <data key="weight">0.010616703321288432</data>
+</edge>
+<edge source="XMARSEX" target="DIVLAW">
+  <data key="weight">-0.013204088063657363</data>
+</edge>
+<edge source="RELITEN" target="ABPOOR">
+  <data key="weight">-0.004044050938100069</data>
+</edge>
+<edge source="CONCLERG" target="CONEDUC">
+  <data key="weight">0.02453813254006412</data>
+</edge>
+<edge source="CONCLERG" target="CONLEGIS">
+  <data key="weight">0.012101538878922272</data>
+</edge>
+<edge source="ABDEFECT" target="ABHLTH">
+  <data key="weight">0.26414025113849515</data>
+</edge>
+<edge source="ABDEFECT" target="ABPOOR">
+  <data key="weight">0.045224358764070986</data>
+</edge>
+<edge source="ABDEFECT" target="ABRAPE">
+  <data key="weight">0.2658856642765222</data>
+</edge>
+<edge source="ABDEFECT" target="LETDIE1">
+  <data key="weight">0.13328760795944103</data>
+</edge>
+<edge source="ABPOOR" target="ABRAPE">
+  <data key="weight">0.0777381965553097</data>
+</edge>
+<edge source="ABPOOR" target="DIVLAW">
+  <data key="weight">0.019332398369977622</data>
+</edge>
+<edge source="ABPOOR" target="SUICIDE2">
+  <data key="weight">0.008784847120194277</data>
+</edge>
+<edge source="LETDIE1" target="ABHLTH">
+  <data key="weight">0.017345101314999965</data>
+</edge>
+<edge source="LETDIE1" target="ABRAPE">
+  <data key="weight">0.06690443035165085</data>
+</edge>
+<edge source="VOTELAST" target="NEWS">
+  <data key="weight">0.04589759258227501</data>
+</edge>
+<edge source="HELPFUL" target="FAIR">
+  <data key="weight">0.1673102523241628</data>
+</edge>
+<edge source="HELPFUL" target="TRUST">
+  <data key="weight">0.13041021085844098</data>
+</edge>
+<edge source="FAIR" target="TRUST">
+  <data key="weight">0.17947969310326575</data>
+</edge>
+<edge source="CONFINAN" target="CONBUS">
+  <data key="weight">0.06217428997478376</data>
+</edge>
+<edge source="CONFINAN" target="CONEDUC">
+  <data key="weight">0.026400489164037432</data>
+</edge>
+<edge source="CONFINAN" target="CONFED">
+  <data key="weight">0.026451501591194176</data>
+</edge>
+<edge source="CONFINAN" target="CONMEDIC">
+  <data key="weight">0.033743853076208113</data>
+</edge>
+<edge source="CONFINAN" target="CONTV">
+  <data key="weight">0.03427365889872653</data>
+</edge>
+<edge source="CONFINAN" target="CONJUDGE">
+  <data key="weight">0.01804571480329907</data>
+</edge>
+<edge source="CONFINAN" target="CONLEGIS">
+  <data key="weight">0.05742829639888506</data>
+</edge>
+<edge source="CONBUS" target="CONFED">
+  <data key="weight">0.0976117877694609</data>
+</edge>
+<edge source="CONBUS" target="CONMEDIC">
+  <data key="weight">0.0150424751956696</data>
+</edge>
+<edge source="CONBUS" target="CONJUDGE">
+  <data key="weight">0.06875840830139311</data>
+</edge>
+<edge source="CONBUS" target="CONLEGIS">
+  <data key="weight">0.012262099360926261</data>
+</edge>
+<edge source="CONEDUC" target="CONFED">
+  <data key="weight">0.016878245642942845</data>
+</edge>
+<edge source="CONEDUC" target="CONLABOR">
+  <data key="weight">0.005155886815467445</data>
+</edge>
+<edge source="CONEDUC" target="CONMEDIC">
+  <data key="weight">0.0580536928867032</data>
+</edge>
+<edge source="CONEDUC" target="CONJUDGE">
+  <data key="weight">0.0148986557947568</data>
+</edge>
+<edge source="CONEDUC" target="CONLEGIS">
+  <data key="weight">0.036885595531035945</data>
+</edge>
+<edge source="CONFED" target="CONJUDGE">
+  <data key="weight">0.0846128572803558</data>
+</edge>
+<edge source="CONFED" target="CONLEGIS">
+  <data key="weight">0.16002993938138302</data>
+</edge>
+<edge source="CONMEDIC" target="CONJUDGE">
+  <data key="weight">0.04493492296614898</data>
+</edge>
+<edge source="CONTV" target="CONPRESS">
+  <data key="weight">0.12176985171816566</data>
+</edge>
+<edge source="CONTV" target="TVHOURS">
+  <data key="weight">0.002828935045310313</data>
+</edge>
+<edge source="CONJUDGE" target="CONPRESS">
+  <data key="weight">0.035340225397715856</data>
+</edge>
+<edge source="CONJUDGE" target="CONLEGIS">
+  <data key="weight">0.1398968586910588</data>
+</edge>
+<edge source="CONLEGIS" target="CONLABOR">
+  <data key="weight">0.04624286672347411</data>
+</edge>
+<edge source="CONLEGIS" target="CONPRESS">
+  <data key="weight">0.013493862579325146</data>
+</edge>
+<edge source="CONLABOR" target="CONPRESS">
+  <data key="weight">0.03718279242420544</data>
+</edge>
+<edge source="ABHLTH" target="ABRAPE">
+  <data key="weight">0.22013722231074545</data>
+</edge>
+<edge source="FECHLD" target="FEPRESCH">
+  <data key="weight">-0.2737799165620411</data>
+</edge>
+<edge source="POLHITOK" target="POLESCAP">
+  <data key="weight">0.12531803748103926</data>
+</edge>
+<edge source="POLHITOK" target="POLATTAK">
+  <data key="weight">0.033468575919291116</data>
+</edge>
+<edge source="POLESCAP" target="POLATTAK">
+  <data key="weight">0.1475742553349223</data>
+</edge>
+<edge source="POLABUSE" target="POLMURDR">
+  <data key="weight">0.07145813786868294</data>
+</edge>
+</graph></graphml>

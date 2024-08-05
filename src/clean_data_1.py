@@ -28,6 +28,16 @@ def make_variable_summary(df):
     return counts, pcts, partially_complete_ballot
 
 def make_vote_supernodes(df, meta_df, varnames=["VOTE{year}", "PRES{year}_NONCONFORM", "PRES{year}_DEMREP"]):
+
+    """
+    this function converts the specific-year voting questions:
+        - voteXX - whether you voted in the election of year 'XX
+        - presXX - who you voted for in the election of year 'XX
+    and collapses them into a smaller number of nodes
+        -votelast - whether you voted in the last election
+        -preslast_demrep - whether you voted dem or rep in the last election
+        -preslast_nonconform - whether you voted for a non-major party in the last election
+    """
     
     year_order = ["68", "72", "76", "80", "84", "88", "92", "96", "00", "04", "08", "12", "16", "20"]
     new_df = df.copy()
@@ -67,11 +77,20 @@ def normalize_columns(df, meta_df, exclude=["YEAR", "BALLOT", "ID"]):
 
     return normalized_df
 
+
+
+def check_for_duplicate_column_names(df):
+    """
+    this function takes in a dataframe and returns a list of column names that are duplicated
+    """
+    return df.columns[df.columns.duplicated()].tolist()
+
+
 # The purpose of this script is to read in the GSS dataset and perform some basic data cleaning and transformation.
 # The dataset is a SAS7BDAT file, so we will use the pandas library to read in the data.
 # The basic idea here is to manually write the mappings for the variables in the dataset and then apply them to the dataset.
 
-def transform_dataframe(df, combine_variants=True):
+def transform_dataframe_1(df, combine_variants=True):
 
     """
 
@@ -105,288 +124,194 @@ def transform_dataframe(df, combine_variants=True):
         "NATFAREY": "NATFARE"
     }
 
-    # Setup the mappings
-    # PARTYID: Generally speaking, do you usually think of yourself as a Republican, Democrat, Independent, or what?
-    # SIGNED 
-    # negative DEMOCRAT --- positive REPUBLICAN
-    # also add category for OTHER
-    PARTYID_map = {0: -3, 1: -2, 2: -1, 3: 0, 4: 1, 5: 2, 6: 3}
-    other_map = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 1}
+    #####################################################################################################################################################################
+    #####################################################################################################################################################################
 
+    # Naturally binary variables
+    """Here we catch all the variables that can be naturally mapped to "anti-belief" (-1) and "belief" (1)"""
 
-
+    """They are: = ["VOTE68, PRES68, IF68WHO, VOTE72, PRES72, IF72WHO, VOTE76, PRES76, IF76WHO,	VOTE80,	PRES80,	IF80WHO, VOTE84, PRES84, IF84WHO,	
+    VOTE88,	PRES88,	IF88WHO, VOTE92, PRES92, IF92WHO, VOTE96, PRES96, IF96WHO, VOTE00, PRES00, IF00WHO, VOTE04,	PRES04,	IF04WHO, VOTE08, PRES08, IF08WHO,	
+    VOTE12,	PRES12,	IF12WHO, VOTE16, PRES16, IF16WHO, VOTE20, PRES20, IF20WHO, 
+    SPKATH,	COLATH,	LIBATH,	SPKRAC,	COLRAC,	LIBRAC,	SPKCOM,	COLCOM,	LIBCOM,	SPKMIL,	COLMIL,	LIBMIL,	SPKHOMO, COLHOMO, LIBHOMO, SPKMSLM,	COLMSLM, LIBMSLM,
+    CAPPUN,	GUNLAW,	GRASS, RELIG, POSTLIFE, PRAYER,	FEPOL, ABDEFECT, ABNOMORE, ABHLTH, ABPOOR, ABRAPE, ABSINGLE, ABANY,	SEXEDUC, LETDIE1, SUICIDE1,
+    SUICIDE2, POLHITOK, POLABUSE, POLMURDR,	POLESCAP, POLATTAK,	RACDIF1, RACDIF2, RACDIF3, RACDIF4]
+    """
     # VOTE68, VOTE72, VOTE76, VOTE80, VOTE84, VOTE88, VOTE92, VOTE96, VOTE00, VOTE04, VOTE08, VOTE12, VOTE16, VOTE20
-    # Did r vote in <YEAR> election?
-    # Three BINARY categories: "Did they vote?", "Were they eligible?", and "Don't know/remember".
-    # 0 is NO --- 1 is YES
-    VOTE_map = {1: 1, 2: 0}
-    ELIGIBLE_map = {1: 1, 2: 1, 3: 0}
-    DONT_KNOW_map = {-98: 1, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0}
-
+    VOTE_map = {1: 1, 2: -1}
+    ELIGIBLE_map = {1: 1, 2: 1, 3: -1}
+    DONT_KNOW_map = {-98: 1, 1: -1, 2: -1, 3: -1, 4: -1, 5: -1, 6: -1, 7: -1}
 
     # PRES68, PRES72, PRES76, PRES80, PRES84, PRES88, PRES92, PRES96, PRES00, PRES04, PRES08, PRES12, PRES16...
-    # For whom did r vote for?
-    # Binary category maps for all the listed candidates of the year.
-    # 1 is for the candidate, 0 is not for the candidate.
-    category_map_A = {1: 1, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0} # For mapping to the first option
-    category_map_B = {1: 0, 2: 1, 3: 0, 4: 0, 5: 0, 6: 0} # For mapping to the second option...
-    category_map_C = {1: 0, 2: 0, 3: 1, 4: 0, 5: 0, 6: 0}
-    category_map_D = {1: 0, 2: 0, 3: 0, 4: 1, 5: 0, 6: 0}
-    category_map_E = {1: 0, 2: 0, 3: 0, 4: 0, 5: 1, 6: 0}
-    category_map_F = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 1}
+    category_map_A = {1: 1, 2: -1, 3: -1, 4: -1, 5: -1, 6: -1} # For mapping to the first option
+    category_map_B = {1: -1, 2: 1, 3: -1, 4: -1, 5: -1, 6: -1} # For mapping to the second option...
+    category_map_C = {1: -1, 2: -1, 3: 1, 4: -1, 5: -1, 6: -1}
+    category_map_D = {1: -1, 2: -1, 3: -1, 4: 1, 5: -1, 6: -1}
+    category_map_E = {1: -1, 2: -1, 3: -1, 4: -1, 5: 1, 6: -1}
+    category_map_F = {1: -1, 2: -1, 3: -1, 4: -1, 5: -1, 6: 1}
+
+    # Speaking variables: SPKATH, SPKRAC, SPKCOM, SPKMIL, SPKHOMO, SPKMSLM
+    SPK_map = {1: 1, 2: -1}
+
+    # Teaching variables: COLATH, COLRAC, COLCOM, COLMIL, COLHOMO, COLMSLM
+    COLATH_map = {4: 1, 5: -1}
+
+    # Library book variables: LIBATH, LIBRAC, LIBCOM, LIBMIL, LIBHOMO, LIBMSLM
+    LIB_map = {1: 1, 2: -1}
+
+    # CAPPUN and GUNLAW
+    POL1_map = {1: 1, 2: -1}
+
+    # GRASS: Should the use of marijuana should be made legal or not?
+    GRASS_map = {1: 1, 2: -1}
+
+    # RELIG: What is your religious preference?
+    category_map_A = {1: 1, 2: -1, 3: -1, 4: -1, 5: -1, 6: -1, 7: -1, 8: -1, 9: -1, 1-1: -1, 11: -1, 12: -1, 13: -1}
+    category_map_B = {1: -1, 2: 1, 3: -1, 4: -1, 5: -1, 6: -1, 7: -1, 8: -1, 9: -1, 1-1: -1, 11: -1, 12: -1, 13: -1}
+    category_map_C = {1: -1, 2: -1, 3: 1, 4: -1, 5: -1, 6: -1, 7: -1, 8: -1, 9: -1, 1-1: -1, 11: -1, 12: -1, 13: -1}
+    category_map_D = {1: -1, 2: -1, 3: -1, 4: 1, 5: -1, 6: -1, 7: -1, 8: -1, 9: -1, 1-1: -1, 11: -1, 12: -1, 13: -1}
+    category_map_E = {1: -1, 2: -1, 3: -1, 4: -1, 5: 1, 6: -1, 7: -1, 8: -1, 9: -1, 1-1: -1, 11: -1, 12: -1, 13: -1}
+    category_map_F = {1: -1, 2: -1, 3: -1, 4: -1, 5: -1, 6: 1, 7: -1, 8: -1, 9: -1, 1-1: -1, 11: -1, 12: -1, 13: -1}
+    category_map_G = {1: -1, 2: -1, 3: -1, 4: -1, 5: -1, 6: -1, 7: 1, 8: -1, 9: -1, 1-1: -1, 11: -1, 12: -1, 13: -1}
+    category_map_H = {1: -1, 2: -1, 3: -1, 4: -1, 5: -1, 6: -1, 7: -1, 8: 1, 9: -1, 1-1: -1, 11: -1, 12: -1, 13: -1}
+    category_map_I = {1: -1, 2: -1, 3: -1, 4: -1, 5: -1, 6: -1, 7: -1, 8: -1, 9: 1, 1-1: -1, 11: -1, 12: -1, 13: -1}
+    category_map_J = {1: -1, 2: -1, 3: -1, 4: -1, 5: -1, 6: -1, 7: -1, 8: -1, 9: -1, 1-1: 1, 11: -1, 12: -1, 13: -1}
+    category_map_K = {1: -1, 2: -1, 3: -1, 4: -1, 5: -1, 6: -1, 7: -1, 8: -1, 9: -1, 1-1: -1, 11: 1, 12: -1, 13: -1}
+    category_map_L = {1: -1, 2: -1, 3: -1, 4: -1, 5: -1, 6: -1, 7: -1, 8: -1, 9: -1, 1-1: -1, 11: -1, 12: 1, 13: -1}
+    category_map_M = {1: -1, 2: -1, 3: -1, 4: -1, 5: -1, 6: -1, 7: -1, 8: -1, 9: -1, 1-1: -1, 11: -1, 12: -1, 13: 1}
+
+
+    # POSTLIFE: Do you believe in life after death?
+    POSTLIFE_map = {1: 1, 2: -1}
+
+    # PRAYER: Do you approve or disapprove that mandatory prayer is banned in public schools?
+    PRAYER_map = {1: 1, 2: -1}
+
+    # FEPOL: Most men are better suited emotionally for politics than are most women.
+    FEPOL_map = {1: 1, 2: -1}
+
+    # Abortion questions: ABDEFECT, ABNOMORE, ABHLTH, ABPOOR, ABRAPE, ABSINGLE, ABANY
+    AB_map = {1: 1, 2: -1}
+
+    # SEXEDUC: Sex education in the public schools?
+    SEXEDUC_map = {1: 1, 2: -1}
+
+    # Death: LETDIE1, SUICIDE1, SUICIDE2
+    DEATH_map = {1: 1, 2: -1}
+
+    # Police: POLHITOK, POLABUSE, POLMURDR, POLESCAP, POLATTAK
+    POLICE_map = {1: 1, 2: -1}
+
+    # Racial differences: RACDIF1, RACDIF2, RACDIF3, RACDIF4
+    RACDIF_map = {1: 1, 2: -1}
+
+    #####################################################################################################################################################################
+    #####################################################################################################################################################################
+
+    # Naturally signed variables
+    """Here we catch all the variables that can be naturally mapped to "anti-belief" (-1) --- "lack-of-belief / middle-ground-stance" (0) and "belief" (1)"""
+
+    """They are: = [PARTYID, POLVIEWS, NATSPAC, NATENVIR, NATHEAL, NATCITY, NATCRIME, NATDRUG, NATEDUC, NATRACE, NATAID, NATFARE, NATROAD, NATSOC, NATMASS, NATPARK, NATCHLD, NATSCI, NATSPACY, NATENVIY,
+        NATHEALY, NATCITYY, NATCRIMY,NATDRUGY, NATEDUCY, NATRACEY, NATARMSY, NATAIDY, NATFAREY, COURTS,	RACOPEN, AFFRMACT, WRKWAYUP, HELPFUL, FAIR,	TRUST, GETAHEAD, DIVLAW, SPANKING,
+        FECHLD,	FEPRESCH, FEFAM, HELPPOOR, HELPNOT, HELPBLK, MARHOMO]
+    """
+
+    # PARTYID: Generally speaking, do you usually think of yourself as a Republican, Democrat, Independent, or what?
+    PARTYID_map = {0: -3, 1: -2, 2: -1, 3: 0, 4: 1, 5: 2, 6: 3}
+    other_map = {0: -1, 1: -1, 2: -1, 3: -1, 4: -1, 5: -1, 6: -1, 7: 1}
 
     # POLVIEWS: Does r think of self as liberal or conservative?
-    # SIGNED
-    # negative LIBERAL --- positive CONSERVATIVE
     POLVIEWS_map = {1: -3, 2: -2, 3: -1, 4: 0, 5: 1, 6: 2, 7: 3} 
 
     # NATSPAC, NATENVIR, NATHEAL, NATCITY, NATCRIME, NATDRUG, NATEDUC, NATRACE, NATARMS, NATAID, NATFARE, NATROAD, NATSOC, NATMASS, NATPARK, NATCHLD, NATSCI, NATENRGY, NATSPACY, NATENVIY, NATHEALY, NATCITYY, NATCRIMY, NATDRUGY, NATEDUCY, NATRACEY, NATARMSY, NATAIDY, NATFAREY
-    # If Government spending too little, the right amount, or too much on <issue>?
-    # negative TOO LITTLE --- zero JUST RIGHT --- positive TOO MUCH
     NAT_map = {1: -1, 2: 0, 3: 1}
 
-    # EQWLTH: Should govt reduce income differences?
-    # UNSIGNED
-    # zero NO --- positive YES
-    EQWLTH_map = {1: 6, 2: 5, 3: 4, 4: 3, 5: 2, 6: 1, 7: 0}
-    #DONT_KNOW_map works here
-
-    # Speaking variables: SPKATH, SPKRAC, SPKCOM, SPKMIL, SPKHOMO, SPKMSLM
-    # Can <person> speak in community?
-    # zero is NO --- one is YES
-    SPK_map = {1: 1, 2: 0}
-
-    # Teaching variables: COLATH, COLRAC, COLCOM, COLMIL, COLHOMO, COLMSLM
-    # Can <person> teach in college?
-    # zero is NO --- one is YES (EXCEPT FOR COLCOM (communists), for this, zero is YES and one is NO!!)
-    COLATH_map = {4: 1, 5: 0}
-
-    # Library book variables: LIBATH, LIBRAC, LIBCOM, LIBMIL, LIBHOMO, LIBMSLM
-    # Would remove book on <topic> from library?
-    # zero WOULD NOT REMOVE --- positive WOULD REMOVE
-    LIB_map = {1: 1, 2: 0}
-
-    # CAPPUN and GUNLAW
-    # Do you favor or oppose the death penalty for persons convicted of murder?
-    # Would you favor or oppose a law which would require a person to obtain a police permit before he or she could buy a gun?
-    # BINARY
-    # zero OPPOSE --- positive FAVOUR
-    POL1_map = {1: 1, 2: 0}
-
     # COURTS: Courts deal too harshly or not harshly enough with criminals?
-    # SIGNED
-    # negative TOO HARSH --- zero JUST RIGHT --- positive NEEDS TO BE HARSHER
-    COURTS_map = {1: -1, 2: 0, 3: 1}
-
-    # GRASS: Should the use of marijuana should be made legal or not?
-    # BINARY
-    # zero ILLEGAL --- positive LEGAL
-    GRASS_map = {1: 1, 2: 0}
-
-    # RELIG: What is your religious preference?
-    # BINARY categories for various religions.
-    # zero NOT THIS RELIGION --- positive THIS RELIGION
-    category_map_A = {1: 1, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0}
-    category_map_B = {1: 0, 2: 1, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0}
-    category_map_C = {1: 0, 2: 0, 3: 1, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0}
-    category_map_D = {1: 0, 2: 0, 3: 0, 4: 1, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0}
-    category_map_E = {1: 0, 2: 0, 3: 0, 4: 0, 5: 1, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0}
-    category_map_F = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 1, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0}
-    category_map_G = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 1, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0}
-    category_map_H = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 1, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0}
-    category_map_I = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 1, 10: 0, 11: 0, 12: 0, 13: 0}
-    category_map_J = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 1, 11: 0, 12: 0, 13: 0}
-    category_map_K = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 1, 12: 0, 13: 0}
-    category_map_L = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 1, 13: 0}
-    category_map_M = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 1}
-
-    # ATTEND: How often do you attend religious services? 
-    # UNSIGNED
-    # zero NEVER --- positive ALL THE TIME
-    ATTEND_map = {0:0, 1:1, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8}
-
-    # RELITEN: Would you call yourself a strongly religious or a not very strong?
-    # UNSIGNED
-    # zero NOT RELIGIOUS --- positive VERY RELIGIOUS
-    RELITEN_map = {1: 3, 2: 2, 3: 1, 4: 0}
-    NO_ANSWER_map = {-99: 1, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0}
-
-    # POSTLIFE: Do you believe in life after death?
-    # BINARY
-    # zero DO NOT BELIEVE --- positive BELIEVE
-    POSTLIFE_map = {1: 1, 2: 0}
-
-    # PRAYER: Do you approve or disapprove that mandatory prayer is banned in public schools?
-    # BINARY
-    # zero DISAPPROVE BAN (dislikes prayer) --- positive APPROVE BAN (likes prayer)
-    PRAYER_map = {1: 1, 2: 0}
-
+    COURTS_map = {1: -1, 2: 1, 3: 0}
 
     # RACOPEN
-    # negative ALLOWED to discriminate --- 0 neither law or can't choose --- positive NOT ALLOWED 
     RACOPEN_map = {1: -1, 2: 1, 3: 0, -98: 0}
 
     # AFFRMACT: Are you for or against preferential hiring and promotion of blacks? 
-    # SIGNED
-    # negative OPPOSED --- positive SUPPORT
     AFFRMACT_map = {1: 2, 2: 1, 3: -1, 4: -2}
 
     # WRKWAYUP: Irish, Italians, Jewish and many other minorities overcame prejudice and worked their way up. 
-    # Blacks should do the same without special favors.
-    # SIGNED
-    # negative DISAGREE --- positive AGREE
     WRKWAYUP_map = {1: 2, 2: 1, 3: 0, 4: -1, 5: -2}
 
-
     # HELPFUL: Do you think people try to be helpful, or that they are mostly just looking out for themselves?
-    # SIGNED
-    # negative SELFISH --- zero DEPENDS --- positive HELPFUL
     HELPFUL_map = {1: 1, 2: -1, 3: 0}
 
-
     # FAIR: Do you think people would try to take advantage of you if they got a chance, or would they try to be fair?
-    # SIGNED
-    # negative WOULD EXPLOIT YOU --- zero DEPENDS --- positive WOULD BE FAIR
     FAIR_map = {2: 1, 1: -1, 3: 0}
 
-
     # TRUST: Can or can't most people be trusted?
-    # SIGNED
-    # negative CAN'T BE TRUSTED --- zero DEPENDS --- CAN BE TRUSTED
     TRUST_map = {1: 1, 2: -1, 3: 0}
 
-
-    # Confidence variables: CONFINAN, CONBUS, CONCLERG, CONEDUC, CONFED, CONLABOR, CONPRESS, CONMEDIC, CONTV, CONJUDGE, CONSCI, CONLEGIS, CONARMY
-    # How condident are you in <institution>?
-    # UNSIGNED
-    # zero HARDLY ANY CONFIDENCE --- positive VERY CONFIDENT
-    CON_map = {1: 2, 2: 1, 3: 0}
-
-
-    # Kid learning ranking: OBEY, POPULAR, THNKSELF, WORKHARD, HELPOTH
-    # Rank the importance of <option> for kids to learn.
-    # UNSIGNED
-    # zero LEAST IMPORTANT --- positive MOST IMPORTANT
-    KID_map = {1: 4, 2: 3, 3: 2, 4: 1, 5: 0}
-
-
     # GETAHEAD: Does hardwork or luck get you ahead in life?
-    # SIGNED
-    # negative HARD WORK --- zero BOTH EQUAL --- positive LUCK
     GETAHEAD_map = {1: -1, 2: 0, 3: 1}
-    other_GETAHEAD_map = {1: 0, 2: 0, 3: 0, 4: 1}
-
-
-    # FEPOL: Most men are better suited emotionally for politics than are most women.
-    # BINARY
-    # zero DISAGREE --- positive AGREE
-    FEPOL_map = {1: 1, 2: 0}
-
-
-    # Abortion questions: ABDEFECT, ABNOMORE, ABHLTH, ABPOOR, ABRAPE, ABSINGLE, ABANY
-    # Is abortion okay if <case>?
-    # BINARY
-    # zero NO --- positive YES
-    AB_map = {1: 1, 2: 0}
-
-
-    # SEXEDUC: Sex education in the public schools?
-    # zero AGAINST --- positive FOR
-    SEXEDUC_map = {1: 1, 2: 0}
-
+    other_GETAHEAD_map = {1: -1, 2: -1, 3: -1, 4: 1}
 
     # DIVLAW: Should divorce in this country be easier or more difficult to obtain than it is now?
-    # SIGNED
-    # negative HARDER --- zero SAME --- positive EASIER
-    DIVLAW_map = {1: 1, 2: 0, 3: -1}
-
-
-    # SEX: PREMARSX, TEENSEX, XMARSEX, HOMOSEX
-    # Is <option> wrong?  
-    # UNSIGNED
-    # zero NEVER WRONG --- positive ALWAYS WRONG
-    SEX_map = {1: 3, 2: 2, 3: 1, 4: 0}
-
-
-    # PORNLAW: Should laws forbid porn?
-    # UNSIGNED
-    # zero NO LAWS --- positive STRONG LAWS
-    PORNLAW_map = {1: 2, 2: 1, 3: 0}
-
+    DIVLAW_map = {1: 1, 2: -1, 3: 0}
 
     # SPANKING: It is sometimes necessary to discipline a child with a good, hard spanking.
-    # SIGNED
-    # negative DISAGREE --- positive AGREE
     SPANKING_map = {1: 2, 2: 1, 3: -1, 4: -2}
 
-
-    # Death: LETDIE1, SUICIDE1, SUICIDE2
-    # Is it ok to allow death in <situation>?
-    # BINARY
-    # zero NO --- positive YES
-    DEATH_map = {1: 1, 2: 0}
-
-
-    # Police: POLHITOK, POLABUSE, POLMURDR, POLESCAP, POLATTAK
-    # Are there any situations where it's okay for police to <action>?
-    # BINARY
-    # zero NO --- positive YES
-    POLICE_map = {1: 1, 2: 0}
-
-
-    # NEWS: How often do you read the newspaper?
-    # UNSIGNED
-    # zero NEVER --- positive EVERYDAY
-    NEWS_map = {1: 4, 2: 3, 3: 2, 4: 1, 5: 0}
-
-
-    # TVHOURS: On average, how many hours per day on TV?
-    # UNSIGNED
-    # zero NONE --- positive 24
-    TVHOURS_map = {0:0, 1:1, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8, 9:9, 10:10, 11:11, 12:12, 13:13, 14:14, 15:15, 16:16, 17:17, 18:18, 19:19, 20:20, 21:21, 22:22, 23:23, 24:24}
-
-
     # female: FECHLD, FEPRESCH, and FEFAM
-    # Do you agree with <statement> (concerning women's rights)?
-    # SIGNED
-    # negative DISAGREE --- positive AGREE
     FE_map = {1: 2, 2: 1, 3: -1, 4: -2}
 
-
-    # Racial differences: RACDIF1, RACDIF2, RACDIF3, RACDIF4
-    # On the average (Negroes/Blacks/African-Americans) have worse jobs, income, and housing than white people. 
-    # Do you think these differences are due to <option>? 
-    # BINARY
-    # zero NO DIFF --- positive YES DIFF
-    RACDIF_map = {1: 1, 2: 0}
-
-
     # Help people: HELPPOOR, HELPNOT, HELPBLK
-    # Should the government help <people>?
-    # SIGNED
-    # negative LET THEM HELP THEMSELF --- zero AGREE WITH BOTH --- positive YES GOVT ACTION
     HELP_map = {1: 2, 2: 1, 3: 0, 4: -1, 5: -2}
 
-
     # MARHOMO: Homosexual couples should have the right to marry one another.
-    # SIGNED
-    # negative DISAGREE --- positive AGREE
     MARHOMO_map = {1: 2, 2: 1, 3: 0, 4: -1, 5: -2}
 
 
-    # Make a new dataframe and add df['PARTYID'].map(PARTYID_map) to it
-    transformed_df = pd.DataFrame()
-    transformed_df['YEAR'] = df['YEAR']
-    transformed_df['ID'] = df['ID']
-    transformed_df['BALLOT'] = df['BALLOT']
+    #####################################################################################################################################################################
+    #####################################################################################################################################################################
 
-    # make a dataframe that for each variable gives the min, max, and step
-    metadata_df = pd.DataFrame({"min": [], "max": []})
+    # Nuanced cases: median approach for setting up ordinality
+    """See clean_data_2.py for how we treat these variables. The following mappings are sufficient for computing correlations, but not for stress calculations."""
+    
+    # EQWLTH: Should govt reduce income differences?
+    # Set the mapping around the median value
+    EQWLTH_map = {1: 3, 2: 2, 3: 1, 4: 0, 5: -1, 6: -2, 7: -3}
+    #DONT_KNOW_map works here
 
-    # This assigns a value 0 if the voter voted republican, 
-    DEMREP_map = {1: 0, 2: 1}
-    NONCONFORM_map = {1: 0, 2: 0, 3: 1} # in years where there is no significant third party, nonconforming is just other
-    NONCONFORM3P_map = {1: 0, 2: 0, 3: 1, 4: 1} # in years whre there is a significant third party, nonconforming is the third party or other
+    # ATTEND: How often do you attend religious services? 
+    ATTEND_map = {0:0, 1:1, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8}
+    
+    # RELITEN: Would you call yourself a strongly religious or a not very strong?
+    RELITEN_map = {1: 3, 2: 2, 3: 1, 4: 0}
+    NO_ANSWER_map = {-99: 1, 1: -1, 2: -1, 3: -1, 4: -1, 5: -1, 6: -1, 7: -1}
+
+    # Confidence variables: CONFINAN, CONBUS, CONCLERG, CONEDUC, CONFED, CONLABOR, CONPRESS, CONMEDIC, CONTV, CONJUDGE, CONSCI, CONLEGIS, CONARMY
+    CON_map = {1: 2, 2: 1, 3: 0}
+    
+    # Kid learning ranking: OBEY, POPULAR, THNKSELF, WORKHARD, HELPOTH
+    KID_map = {1: 4, 2: 3, 3: 2, 4: 1, 5: 0}
+    
+    # SEX: PREMARSX, TEENSEX, XMARSEX, HOMOSEX
+    SEX_map = {1: 3, 2: 2, 3: 1, 4: 0}
+    
+    # PORNLAW: Should laws forbid porn?
+    PORNLAW_map = {1: 2, 2: 1, 3: 0}
+    
+    # NEWS: How often do you read the newspaper?
+    NEWS_map = {1: 4, 2: 3, 3: 2, 4: 1, 5: 0}
+    
+    # TVHOURS: On average, how many hours per day on TV?
+    TVHOURS_map = {0:0, 1:1, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8, 9:9, 10:10, 11:11, 12:12, 13:13, 14:14, 15:15, 16:16, 17:17, 18:18, 19:19, 20:20, 21:21, 22:22, 23:23, 24:24}
+    
+    #####################################################################################################################################################################
+    #####################################################################################################################################################################
+
+    # Derived beliefs -- stuff that we've made up, constructed from the data.
+
+    DEMREP_map = {1: -1, 2: 1}
+    NONCONFORM_map = {1: -1, 2: -1, 3: 1} # in years where there is no significant third party, nonconforming is just other
+    NONCONFORM3P_map = {1: -1, 2: -1, 3: 1, 4: 1} # in years whre there is a significant third party, nonconforming is the third party or other
+
 
     transformations_to_do = [
         # PARTYID
@@ -847,16 +772,6 @@ def transform_dataframe(df, combine_variants=True):
 
     ]
 
-    # for transformation in transformations_to_do:
-    #     source_col = transformation["source"]
-    #     dest_col = transformation["dest"]
-    #     column_map = transformation["map"]
-
-    #     transformed_df[dest_col] = df[source_col].map(column_map)
-    #     metadata_df.loc[dest_col, :] = {"min": min(column_map.values()), "max": max(column_map.values())}
-
-
-
     transformed_data = {}
     metadata_data = {}
 
@@ -884,9 +799,11 @@ def transform_dataframe(df, combine_variants=True):
     
     transformed_df = transformed_df.drop(variants.keys(), axis=1)
 
-    ### Uncomment this to print select columns to a text file.
-    # with open('partyid.txt', 'w') as f:
-    #     for index, row in df.iterrows():
-    #         f.write(str(row['MARHOMO']) + ' ' + str(row['MARHOMO (mapped)']) + ' ' + str(row['PRES68 (dont know)']) + '\n')
+
+    if check_for_duplicate_column_names(transformed_df):
+        print("Warning. There are duplicate column names in the transformed dataframe.")
+        # And print the duplicate column names
+        print(check_for_duplicate_column_names(transformed_df))
+
 
     return transformed_df, metadata_df
