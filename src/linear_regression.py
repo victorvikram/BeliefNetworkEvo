@@ -1,10 +1,7 @@
-<<<<<<< HEAD
 """
 functions that perform different sorts of linear regression
 """
 
-=======
->>>>>>> e6bf9692b558f3d75297def83afb3e35d94878a7
 import pandas as pd
 import numpy as np
 import statsmodels.api as sm
@@ -13,14 +10,11 @@ from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
 
 def lin_reg_imputation(table, predictors, response, rank=False):
-<<<<<<< HEAD
     """
     does linear regression using data in `table`, using `predictors` as the predictor variables
     and `response` as the response variables (these are the column names). if `rank` is true, does
     regression on the ranked values of the predictors rather than the regular values
     """
-=======
->>>>>>> e6bf9692b558f3d75297def83afb3e35d94878a7
 
     # filter out all the rows where response is nan, isolate the predictor table]
     print(table[response].notna().shape)
@@ -52,15 +46,12 @@ def lin_reg_imputation(table, predictors, response, rank=False):
 
 def make_lin_reg_network(table, relevant_variables, rank=False):
 
-<<<<<<< HEAD
     """
     this function does a linear regression with each variable being the response, with all 
     others being predictors, making an adjacency matrix where entry (i, j) is the coefficient
     of variable j for predicting variable i.
     """
 
-=======
->>>>>>> e6bf9692b558f3d75297def83afb3e35d94878a7
     reg_coefficients = np.zeros(len(relevant_variables), len(relevant_variables))
     for i, resp in enumerate(relevant_variables):
         predictors = [pred for pred in relevant_variables if pred != resp]
