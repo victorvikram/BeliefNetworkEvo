@@ -28,7 +28,6 @@ def make_variable_summary(df):
     return counts, pcts, partially_complete_ballot
 
 def make_vote_supernodes(df, meta_df, varnames=["VOTE{year}", "PRES{year}_NONCONFORM", "PRES{year}_DEMREP"]):
-<<<<<<< HEAD
 
     """
     this function converts the specific-year voting questions:
@@ -39,8 +38,6 @@ def make_vote_supernodes(df, meta_df, varnames=["VOTE{year}", "PRES{year}_NONCON
         -preslast_demrep - whether you voted dem or rep in the last election
         -preslast_nonconform - whether you voted for a non-major party in the last election
     """
-=======
->>>>>>> e6bf9692b558f3d75297def83afb3e35d94878a7
     
     year_order = ["68", "72", "76", "80", "84", "88", "92", "96", "00", "04", "08", "12", "16", "20"]
     new_df = df.copy()

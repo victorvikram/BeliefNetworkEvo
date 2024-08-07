@@ -1,10 +1,7 @@
-<<<<<<< HEAD
 """
 generates the partial correlation matrices
 """
 
-=======
->>>>>>> e6bf9692b558f3d75297def83afb3e35d94878a7
 import numpy as np
 import pandas as pd
 from pingouin import partial_corr
@@ -12,18 +9,6 @@ from semopy.polycorr import polychoric_corr
 
 from sklearn.covariance import graphical_lasso
 
-<<<<<<< HEAD
-=======
-"""
-things to do to fix the problem
-- unit test all the functions
-- see if the problem arises once nans start to get filtered (which variables add problems?)
-- possibly require a certain number of samples to include the element in the network 
-- see if old code has the same issue 
-
-
-"""
->>>>>>> e6bf9692b558f3d75297def83afb3e35d94878a7
 
 def generate_random_partial_corr_mat(dim, alpha=0):
     random_matrix = 2 * np.random.rand(dim, dim) - 1
@@ -44,11 +29,7 @@ def my_pairwise_correlations(vars, data, method, partial=True, regularization=0,
     `method` one of "spearman", "pearson", or "polychoric"
     `partial` boolean value, whether to calculate partial correlations
     `regularization` the regularization parameter (0 is no regularization)
-<<<<<<< HEAD
     `sample_threshold` is the percent of rows of the df that must be non nan for the variable to be included
-=======
-    `sample_threshold` is the percent of rows of the df 
->>>>>>> e6bf9692b558f3d75297def83afb3e35d94878a7
 
     calculates all pairwise correlations between the variables in `var` using samples in `data` and one of the
     three methods. If partial, returns partial correlations, if regularization is greater than 0, uses lasso

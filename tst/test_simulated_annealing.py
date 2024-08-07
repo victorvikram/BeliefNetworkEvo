@@ -7,7 +7,7 @@ from numpy.testing import assert_equal
 import sys
 sys.path.append('../src')
 
-from simulated_annealing import *
+from optimization_funcs import *
 
 class TestModuleFunctions(unittest.TestCase):
 
@@ -161,10 +161,6 @@ class TestModuleFunctions(unittest.TestCase):
                                                         lambda vec: flip_step_function(vec, num_flips=1))
         
         unique_rows = np.unique(final_vectors, axis=0)
-<<<<<<< HEAD
-=======
-        print(unique_rows)
->>>>>>> e6bf9692b558f3d75297def83afb3e35d94878a7
         self.assertEqual(unique_rows.shape[0], 2**3)
     
     def test_single_pass_optimize(self):
@@ -174,37 +170,23 @@ class TestModuleFunctions(unittest.TestCase):
                               [0.25, -0.1, -0.4, 0]])
         initial_vectors = np.array([[0, 0, 0, 0],
                                     [1, 1, 1, 1],
-<<<<<<< HEAD
                                     [-1, -1, -1, -1],
                                     [-1, 1, -1, 1]])
         final_vectors, num_changed = single_pass_optimize(initial_vectors, couplings, random_order=False)
         expected_final_vectors = np.array([[-1, 1, -1, 1], [-1, 1, -1, 1], [1, -1, 1, -1], [-1, 1, -1, 1]])
         assert_equal(final_vectors, expected_final_vectors)
         self.assertEqual(num_changed, 3)
-=======
-                                    [-1, -1, -1, -1]])
-        final_vectors = single_pass_optimize(initial_vectors, couplings, random_order=False)
-        expected_final_vectors = np.array([[-1, 1, -1, 1], [-1, 1, -1, 1], [1, -1, 1, -1]])
-        assert_equal(final_vectors, expected_final_vectors)
->>>>>>> e6bf9692b558f3d75297def83afb3e35d94878a7
         
         
         couplings = np.array([[0, 0.6, 0.5],
                               [0.6, 0, -1],
                               [0.5, -1, 0]])
-<<<<<<< HEAD
         initial_vectors = np.array([[0, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, -1], [0, 0, -1], [-1, 1, -1]])
         final_vectors, num_changed = single_pass_optimize(initial_vectors, couplings, random_order=False)
         expected_final_vectors = np.array([[-1, -1, 1], [1, 1, -1], [1, -1, 1], [1, 1, -1], [-1, 1, -1], [1, 1, -1]])
         
         assert_equal(final_vectors, expected_final_vectors)
         self.assertEqual(num_changed, 5)
-=======
-        initial_vectors = np.array([[0, 0, 0], [0, 1, 0], [0, 0, 1], [0, 0, -1]])
-        final_vectors = single_pass_optimize(initial_vectors, couplings, random_order=False)
-        expected_final_vectors = np.array([[-1, -1, 1], [1, 1, -1], [1, -1, 1], [-1, 1, -1]])
-        assert_equal(final_vectors, expected_final_vectors)
->>>>>>> e6bf9692b558f3d75297def83afb3e35d94878a7
 
         dim = 10
         test_vecs = 20
@@ -215,25 +197,15 @@ class TestModuleFunctions(unittest.TestCase):
         initial_vectors = np.random.choice([-1, 0, 1], size=(test_vecs, dim))
         initial_costs = hamiltonian_objective_function(initial_vectors, couplings)
 
-<<<<<<< HEAD
         final_vectors, num_changed = single_pass_optimize(initial_vectors, couplings)
         final_costs = hamiltonian_objective_function(final_vectors, couplings)
 
         self.assertTrue(((final_costs - initial_costs) <= 0).all())
         self.assertEqual(num_changed, 20)
-=======
-        final_vectors = single_pass_optimize(initial_vectors, couplings)
-        final_costs = hamiltonian_objective_function(final_vectors, couplings)
-        print(initial_costs)
-        print(final_costs)
-
-        self.assertTrue(((final_costs - initial_costs) <= 0).all())
->>>>>>> e6bf9692b558f3d75297def83afb3e35d94878a7
 
         initial_vectors = np.random.rand(test_vecs, dim) * 2 - 1
         initial_costs = hamiltonian_objective_function(initial_vectors, couplings)
 
-<<<<<<< HEAD
         final_vectors, num_changed = single_pass_optimize(initial_vectors, couplings)
         final_costs = hamiltonian_objective_function(final_vectors, couplings)
 
@@ -302,12 +274,6 @@ class TestModuleFunctions(unittest.TestCase):
     
 
 
-=======
-        final_vectors = single_pass_optimize(initial_vectors, couplings)
-        final_costs = hamiltonian_objective_function(final_vectors, couplings)
-
-        self.assertTrue(((final_costs - initial_costs) <= 0).all())
->>>>>>> e6bf9692b558f3d75297def83afb3e35d94878a7
 
 
 
