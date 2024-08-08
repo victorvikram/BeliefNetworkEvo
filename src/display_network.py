@@ -5,6 +5,7 @@ functions for visualizing the graph
 from pyvis.network import Network
 import networkx as nx
 import numpy as np
+from scipy.stats import rankdata
 from IPython.display import display, HTML
 
 import matplotlib.pyplot as plt
@@ -18,7 +19,7 @@ def add_node_values_to_graph(G, node_values):
     return G
 
 
-def display_graph_pyvis(G, abs_val_edges=True, remove_zero_edges=True, include_physics_buttons=True, equal_edge_weights=False):
+def display_graph_pyvis(G, abs_val_edges=True, remove_zero_edges=True, include_physics_buttons=True, equal_edge_weights=False, rank_edge_coloring=False):
     """
     takes a networkx graph and makes interactive visualization, color coding based on node values
     """
@@ -42,7 +43,13 @@ def display_graph_pyvis(G, abs_val_edges=True, remove_zero_edges=True, include_p
     type_list = [abs(d['type']) if 'type' in d else 0 for u, v, d in G.edges(data=True)]
     max_edge_type = max(type_list)
 
-    edge_norm = mcolors.Normalize(vmin=-max_edge_type, vmax=max_edge_type)
+    if rank_edge_coloring:
+        all_edges = [e["type"] for e in net.edges]
+        edge_ranks = rankdata(all_edges)
+        edge_norm = mcolors.Normalize(vmin=0, vmax=len(edge_ranks))
+    else:
+        edge_norm = mcolors.Normalize(vmin=-max_edge_type, vmax=max_edge_type)
+
     node_norm = mcolors.Normalize(vmin=-1, vmax=1)
 
 
@@ -54,7 +61,10 @@ def display_graph_pyvis(G, abs_val_edges=True, remove_zero_edges=True, include_p
             e["width"] = 2
 
         if "type" in e:
-            e["color"] = mcolors.to_hex(cmap(edge_norm(-e["type"])))
+            if rank_edge_coloring:
+                e["color"] = mcolors.to_hex(cmap(edge_norm(edge_ranks[i])))
+            else:
+                e["color"] = mcolors.to_hex(cmap(edge_norm(-e["type"])))
         
         if i % 100 == 0:
             print(e)
