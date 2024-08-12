@@ -19,18 +19,16 @@ def add_node_values_to_graph(G, node_values):
     return G
 
 
-def display_graph_pyvis(G, abs_val_edges=True, remove_zero_edges=True, include_physics_buttons=True, equal_edge_weights=False, rank_edge_coloring=False):
+def display_graph_pyvis(G, abs_val_edges=True, remove_zero_edges=True, include_physics_buttons=True, 
+                        equal_edge_weights=False, rank_edge_coloring=False, size_highlight=[], border_highlight=[], shape_highlight=[], 
+                        node_colormap=plt.cm.gist_earth, edge_colormap=plt.cm.PiYG, hi_fix_node=None, lo_fix_node=None):
     """
     takes a networkx graph and makes interactive visualization, color coding based on node values
     """
     edges_to_remove = []
-    
-    if abs_val_edges:
-        for u, v, d in G.edges(data=True):
-            d['weight'] = abs(d['weight'])
-
-            if d['weight'] == 0 and remove_zero_edges:
-                edges_to_remove.append((u, v))
+    for u, v, d in G.edges(data=True):
+        if d['weight'] == 0 and remove_zero_edges:
+            edges_to_remove.append((u, v))
     
     G.remove_edges_from(edges_to_remove)
     
@@ -38,47 +36,67 @@ def display_graph_pyvis(G, abs_val_edges=True, remove_zero_edges=True, include_p
     net = Network('1000px', '1000px', notebook=True, cdn_resources='remote')
     net.from_nx(G)
     
-    cmap = plt.cm.PiYG  # You can choose other colormaps as well
-
-    type_list = [abs(d['type']) if 'type' in d else 0 for u, v, d in G.edges(data=True)]
-    max_edge_type = max(type_list)
-
+    edge_color_values = [e["type"] if "type" in e else e["width"] for e in net.edges]
+    max_edge_color_value = max(abs(min(edge_color_values)), max(edge_color_values))
+    
     if rank_edge_coloring:
-        all_edges = [e["type"] for e in net.edges]
-        edge_ranks = rankdata(all_edges)
-        edge_norm = mcolors.Normalize(vmin=0, vmax=len(edge_ranks))
+        edge_color_values = rankdata(edge_color_values)
+        edge_norm = mcolors.Normalize(vmin=0, vmax=len(edge_color_values))
     else:
-        edge_norm = mcolors.Normalize(vmin=-max_edge_type, vmax=max_edge_type)
+        edge_norm = mcolors.Normalize(vmin=-max_edge_color_value, vmax=max_edge_color_value)
 
     node_norm = mcolors.Normalize(vmin=-1, vmax=1)
 
 
     for i, e in enumerate(net.edges):
-        if not equal_edge_weights:
-            e['width'] = e['width'] * 20
+        if equal_edge_weights:
+            e['width'] = 2
         else:
-            # e["value"] = e["width"]
-            e["width"] = 2
+            e['width'] = e['width'] * 30
+           
 
-        if "type" in e:
-            if rank_edge_coloring:
-                e["color"] = mcolors.to_hex(cmap(edge_norm(edge_ranks[i])))
-            else:
-                e["color"] = mcolors.to_hex(cmap(edge_norm(-e["type"])))
+        if abs_val_edges:
+            e['width'] = abs(e["width"])
         
-        if i % 100 == 0:
-            print(e)
+        e["color"] = mcolors.to_hex(edge_colormap(edge_norm(edge_color_values[i])))
+        
+        # if i % 100 == 0:
+            # print(e)
     
     
     fixed_font_size = 20
     for node in net.nodes:
+        node['size'] = 18
         if 'value' in node:
             value = node['value']
-            node['color'] = mcolors.to_hex(cmap(node_norm(-value))) 
-            node['value'] = 1 # otherwise they end up being different sizes
+            node['color'] = mcolors.to_hex(node_colormap(node_norm(-value))) 
+            node.pop('value') # otherwise they end up being different sizes
         
         if 'font' not in node:
             node['font'] = {}
+        
+        if node['id'] in size_highlight:
+            node['size'] = 1.5 * node['size']
+        
+        if node['id'] in border_highlight:
+            node["borderWidth"] = 6
+        
+        if node['id'] in shape_highlight:
+            node['shape'] = 'box'
+        
+        if node['id'] == hi_fix_node:
+            node['x'] = 500
+            node['y'] = 1200
+            node['fixed'] = True
+            node['physics'] = False
+        
+        if node['id'] == lo_fix_node:
+            node['x'] = 500
+            node['y'] = -200
+            node['fixed'] = True
+            node['physics'] = False
+        
+        # print(node)
         node['font']['size'] = fixed_font_size
                             
     if include_physics_buttons:

@@ -1,0 +1,364 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script>function neighbourhoodHighlight(params) {
+  // console.log("in nieghbourhoodhighlight");
+  allNodes = nodes.get({ returnType: "Object" });
+  // originalNodes = JSON.parse(JSON.stringify(allNodes));
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    highlightActive = true;
+    var i, j;
+    var selectedNode = params.nodes[0];
+    var degrees = 2;
+
+    // mark all nodes as hard to read.
+    for (let nodeId in allNodes) {
+      // nodeColors[nodeId] = allNodes[nodeId].color;
+      allNodes[nodeId].color = "rgba(200,200,200,0.5)";
+      if (allNodes[nodeId].hiddenLabel === undefined) {
+        allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+    var connectedNodes = network.getConnectedNodes(selectedNode);
+    var allConnectedNodes = [];
+
+    // get the second degree nodes
+    for (i = 1; i < degrees; i++) {
+      for (j = 0; j < connectedNodes.length; j++) {
+        allConnectedNodes = allConnectedNodes.concat(
+          network.getConnectedNodes(connectedNodes[j])
+        );
+      }
+    }
+
+    // all second degree nodes get a different color and their label back
+    for (i = 0; i < allConnectedNodes.length; i++) {
+      // allNodes[allConnectedNodes[i]].color = "pink";
+      allNodes[allConnectedNodes[i]].color = "rgba(150,150,150,0.75)";
+      if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[allConnectedNodes[i]].label =
+          allNodes[allConnectedNodes[i]].hiddenLabel;
+        allNodes[allConnectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // all first degree nodes get their own color and their label back
+    for (i = 0; i < connectedNodes.length; i++) {
+      // allNodes[connectedNodes[i]].color = undefined;
+      allNodes[connectedNodes[i]].color = nodeColors[connectedNodes[i]];
+      if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[connectedNodes[i]].label =
+          allNodes[connectedNodes[i]].hiddenLabel;
+        allNodes[connectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // the main node gets its own color and its label back.
+    // allNodes[selectedNode].color = undefined;
+    allNodes[selectedNode].color = nodeColors[selectedNode];
+    if (allNodes[selectedNode].hiddenLabel !== undefined) {
+      allNodes[selectedNode].label = allNodes[selectedNode].hiddenLabel;
+      allNodes[selectedNode].hiddenLabel = undefined;
+    }
+  } else if (highlightActive === true) {
+    // console.log("highlightActive was true");
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      // allNodes[nodeId].color = "purple";
+      allNodes[nodeId].color = nodeColors[nodeId];
+      // delete allNodes[nodeId].color;
+      if (allNodes[nodeId].hiddenLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].hiddenLabel;
+        allNodes[nodeId].hiddenLabel = undefined;
+      }
+    }
+    highlightActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    // console.log("Nothing was selected");
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        // allNodes[nodeId].color = {};
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function filterHighlight(params) {
+  allNodes = nodes.get({ returnType: "Object" });
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    filterActive = true;
+    let selectedNodes = params.nodes;
+
+    // hiding all nodes and saving the label
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = true;
+      if (allNodes[nodeId].savedLabel === undefined) {
+        allNodes[nodeId].savedLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+
+    for (let i=0; i < selectedNodes.length; i++) {
+      allNodes[selectedNodes[i]].hidden = false;
+      if (allNodes[selectedNodes[i]].savedLabel !== undefined) {
+        allNodes[selectedNodes[i]].label = allNodes[selectedNodes[i]].savedLabel;
+        allNodes[selectedNodes[i]].savedLabel = undefined;
+      }
+    }
+
+  } else if (filterActive === true) {
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = false;
+      if (allNodes[nodeId].savedLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].savedLabel;
+        allNodes[nodeId].savedLabel = undefined;
+      }
+    }
+    filterActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function selectNode(nodes) {
+  network.selectNodes(nodes);
+  neighbourhoodHighlight({ nodes: nodes });
+  return nodes;
+}
+
+function selectNodes(nodes) {
+  network.selectNodes(nodes);
+  filterHighlight({nodes: nodes});
+  return nodes;
+}
+
+function highlightFilter(filter) {
+  let selectedNodes = []
+  let selectedProp = filter['property']
+  if (filter['item'] === 'node') {
+    let allNodes = nodes.get({ returnType: "Object" });
+    for (let nodeId in allNodes) {
+      if (allNodes[nodeId][selectedProp] && filter['value'].includes((allNodes[nodeId][selectedProp]).toString())) {
+        selectedNodes.push(nodeId)
+      }
+    }
+  }
+  else if (filter['item'] === 'edge'){
+    let allEdges = edges.get({returnType: 'object'});
+    // check if the selected property exists for selected edge and select the nodes connected to the edge
+    for (let edge in allEdges) {
+      if (allEdges[edge][selectedProp] && filter['value'].includes((allEdges[edge][selectedProp]).toString())) {
+        selectedNodes.push(allEdges[edge]['from'])
+        selectedNodes.push(allEdges[edge]['to'])
+      }
+    }
+  }
+  selectNodes(selectedNodes)
+}</script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+            
+            
+            
+            
+            
+
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 1000px;
+                 height: 1000px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+             #config {
+                 float: left;
+                 width: 400px;
+                 height: 600px;
+             }
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+            <div id="config"></div>
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#43984d", "font": {"size": 20}, "id": "PARTYID", "label": "PARTYID", "shape": "dot", "size": 18}, {"color": "#43984d", "font": {"size": 20}, "id": "POLVIEWS", "label": "POLVIEWS", "shape": "dot", "size": 18}, {"color": "#43984d", "font": {"size": 20}, "id": "EQWLTH", "label": "EQWLTH", "shape": "dot", "size": 18}, {"color": "#43984d", "font": {"size": 20}, "id": "HELPPOOR", "label": "HELPPOOR", "shape": "dot", "size": 18}, {"borderWidth": 6, "color": "#43984d", "font": {"size": 20}, "id": "PRESLAST_DEMREP", "label": "PRESLAST_DEMREP", "shape": "dot", "size": 27.0}, {"color": "#7ca753", "font": {"size": 20}, "id": "ABNOMORE", "label": "ABNOMORE", "shape": "dot", "size": 18}, {"borderWidth": 6, "color": "#7ca753", "font": {"size": 20}, "id": "ABSINGLE", "label": "ABSINGLE", "shape": "dot", "size": 18}, {"color": "#c0a565", "font": {"size": 20}, "id": "PREMARSX", "label": "PREMARSX", "shape": "dot", "size": 18}, {"borderWidth": 6, "color": "#c0a565", "font": {"size": 20}, "id": "HOMOSEX", "label": "HOMOSEX", "shape": "dot", "size": 18}, {"color": "#43984d", "font": {"size": 20}, "id": "NATSOC", "label": "NATSOC", "shape": "dot", "size": 18}, {"color": "#aab35c", "font": {"size": 20}, "id": "RACDIF1", "label": "RACDIF1", "shape": "dot", "size": 18}, {"borderWidth": 6, "color": "#aab35c", "font": {"size": 20}, "id": "NATRACE", "label": "NATRACE", "shape": "dot", "size": 27.0}, {"color": "#43984d", "font": {"size": 20}, "id": "NATFARE", "label": "NATFARE", "shape": "dot", "size": 18}, {"borderWidth": 6, "color": "#debba7", "font": {"size": 20}, "id": "NATARMS", "label": "NATARMS", "shape": "dot", "size": 18}, {"color": "#43984d", "font": {"size": 20}, "id": "CAPPUN", "label": "CAPPUN", "shape": "dot", "size": 18}, {"color": "#7ca753", "font": {"size": 20}, "id": "ABDEFECT", "label": "ABDEFECT", "shape": "dot", "size": 18}, {"color": "#7ca753", "font": {"size": 20}, "id": "ABPOOR", "label": "ABPOOR", "shape": "dot", "size": 18}, {"color": "#7ca753", "font": {"size": 20}, "id": "ABANY", "label": "ABANY", "shape": "dot", "size": 18}, {"color": "#7ca753", "font": {"size": 20}, "id": "LETDIE1", "label": "LETDIE1", "shape": "dot", "size": 18}, {"color": "#7ca753", "font": {"size": 20}, "id": "SUICIDE1", "label": "SUICIDE1", "shape": "dot", "size": 27.0}, {"color": "#7ca753", "font": {"size": 20}, "id": "SUICIDE2", "label": "SUICIDE2", "shape": "dot", "size": 18}, {"color": "#fdfbfb", "font": {"size": 20}, "id": "LIBHOMO", "label": "LIBHOMO", "shape": "dot", "size": 18}, {"color": "#c0a565", "font": {"size": 20}, "id": "GRASS", "label": "GRASS", "shape": "dot", "size": 18}, {"color": "#c0a565", "font": {"size": 20}, "id": "ATTEND", "label": "ATTEND", "shape": "dot", "size": 27.0}, {"color": "#c0a565", "font": {"size": 20}, "id": "RELITEN", "label": "RELITEN", "shape": "dot", "size": 18}, {"color": "#7ca753", "font": {"size": 20}, "id": "ABRAPE", "label": "ABRAPE", "shape": "dot", "size": 18}, {"color": "#fdfbfb", "font": {"size": 20}, "id": "COLATH", "label": "COLATH", "shape": "dot", "size": 27.0}, {"color": "#fdfbfb", "font": {"size": 20}, "id": "SPKHOMO", "label": "SPKHOMO", "shape": "dot", "size": 18}, {"borderWidth": 6, "color": "#fdfbfb", "font": {"size": 20}, "id": "COLHOMO", "label": "COLHOMO", "shape": "dot", "size": 18}, {"color": "#368770", "font": {"size": 20}, "id": "SEXEDUC", "label": "SEXEDUC", "shape": "dot", "size": 18}, {"color": "#c0a565", "font": {"size": 20}, "id": "DIVLAW", "label": "DIVLAW", "shape": "dot", "size": 18}, {"color": "#c0a565", "font": {"size": 20}, "id": "TEENSEX", "label": "TEENSEX", "shape": "dot", "size": 18}, {"color": "#c0a565", "font": {"size": 20}, "id": "XMARSEX", "label": "XMARSEX", "shape": "dot", "size": 18}, {"color": "#c0a565", "font": {"size": 20}, "id": "PORNLAW", "label": "PORNLAW", "shape": "dot", "size": 18}, {"borderWidth": 6, "color": "#368770", "font": {"size": 20}, "id": "FEFAM", "label": "FEFAM", "shape": "dot", "size": 27.0}, {"color": "#fdfbfb", "font": {"size": 20}, "id": "LIBATH", "label": "LIBATH", "shape": "dot", "size": 18}, {"color": "#fdfbfb", "font": {"size": 20}, "id": "SPKCOM", "label": "SPKCOM", "shape": "dot", "size": 18}, {"color": "#fdfbfb", "font": {"size": 20}, "id": "COLMIL", "label": "COLMIL", "shape": "dot", "size": 18}, {"color": "#c0a565", "font": {"size": 20}, "id": "PRAYER", "label": "PRAYER", "shape": "dot", "size": 18}, {"color": "#c0a565", "font": {"size": 20}, "id": "SPANKING", "label": "SPANKING", "shape": "dot", "size": 18}, {"color": "#fdfbfb", "font": {"size": 20}, "id": "NATSPAC", "label": "NATSPAC", "shape": "dot", "size": 18}, {"color": "#fdfbfb", "font": {"size": 20}, "id": "LIBCOM", "label": "LIBCOM", "shape": "dot", "size": 18}, {"color": "#fdfbfb", "font": {"size": 20}, "id": "LIBRAC", "label": "LIBRAC", "shape": "dot", "size": 18}, {"color": "#fdfbfb", "font": {"size": 20}, "id": "COLCOM", "label": "COLCOM", "shape": "dot", "size": 18}, {"color": "#fdfbfb", "font": {"size": 20}, "id": "LIBMIL", "label": "LIBMIL", "shape": "dot", "size": 18}, {"color": "#aab35c", "font": {"size": 20}, "id": "RACDIF2", "label": "RACDIF2", "shape": "dot", "size": 18}, {"color": "#aab35c", "font": {"size": 20}, "id": "NATENVIR", "label": "NATENVIR", "shape": "dot", "size": 18}, {"color": "#aab35c", "font": {"size": 20}, "id": "NATHEAL", "label": "NATHEAL", "shape": "dot", "size": 18}, {"color": "#aab35c", "font": {"size": 20}, "id": "NATEDUC", "label": "NATEDUC", "shape": "dot", "size": 18}, {"color": "#aab35c", "font": {"size": 20}, "id": "NATDRUG", "label": "NATDRUG", "shape": "dot", "size": 18}, {"color": "#368770", "font": {"size": 20}, "id": "FEPOL", "label": "FEPOL", "shape": "dot", "size": 18}, {"color": "#368770", "font": {"size": 20}, "id": "FECHLD", "label": "FECHLD", "shape": "dot", "size": 18}, {"color": "#368770", "font": {"size": 20}, "id": "FEPRESCH", "label": "FEPRESCH", "shape": "dot", "size": 18}, {"color": "#aab35c", "font": {"size": 20}, "id": "RACDIF4", "label": "RACDIF4", "shape": "dot", "size": 18}, {"color": "#aab35c", "font": {"size": 20}, "id": "NATCITY", "label": "NATCITY", "shape": "dot", "size": 18}, {"color": "#aab35c", "font": {"size": 20}, "id": "RACDIF3", "label": "RACDIF3", "shape": "dot", "size": 18}, {"color": "#aab35c", "font": {"size": 20}, "id": "NATCRIME", "label": "NATCRIME", "shape": "dot", "size": 18}, {"color": "#debba7", "font": {"size": 20}, "id": "CONARMY", "label": "CONARMY", "shape": "dot", "size": 18}, {"color": "#debba7", "font": {"size": 20}, "id": "CONBUS", "label": "CONBUS", "shape": "dot", "size": 18}, {"color": "#debba7", "fixed": true, "font": {"size": 20}, "id": "CONFED", "label": "CONFED", "physics": false, "shape": "dot", "size": 18, "x": 500, "y": 1200}, {"color": "#debba7", "font": {"size": 20}, "id": "CONMEDIC", "label": "CONMEDIC", "shape": "dot", "size": 27.0}, {"color": "#debba7", "font": {"size": 20}, "id": "CONJUDGE", "label": "CONJUDGE", "shape": "dot", "size": 18}, {"color": "#debba7", "font": {"size": 20}, "id": "CONSCI", "label": "CONSCI", "shape": "dot", "size": 18}, {"color": "#debba7", "font": {"size": 20}, "id": "CONLEGIS", "label": "CONLEGIS", "shape": "dot", "size": 18}, {"color": "#fdfbfb", "fixed": true, "font": {"size": 20}, "id": "SPKATH", "label": "SPKATH", "physics": false, "shape": "dot", "size": 18, "x": 500, "y": -200}, {"color": "#fdfbfb", "font": {"size": 20}, "id": "SPKRAC", "label": "SPKRAC", "shape": "dot", "size": 18}, {"color": "#fdfbfb", "font": {"size": 20}, "id": "SPKMIL", "label": "SPKMIL", "shape": "dot", "size": 18}, {"color": "#fdfbfb", "font": {"size": 20}, "id": "COLRAC", "label": "COLRAC", "shape": "dot", "size": 18}, {"color": "#c0a565", "font": {"size": 20}, "id": "POSTLIFE", "label": "POSTLIFE", "shape": "dot", "size": 18}, {"color": "#c0a565", "font": {"size": 20}, "id": "CONCLERG", "label": "CONCLERG", "shape": "dot", "size": 18}, {"color": "#debba7", "font": {"size": 20}, "id": "CONEDUC", "label": "CONEDUC", "shape": "dot", "size": 18}, {"color": "#7ca753", "font": {"size": 20}, "id": "ABHLTH", "label": "ABHLTH", "shape": "dot", "size": 18}, {"color": "#25677d", "font": {"size": 20}, "id": "HELPFUL", "label": "HELPFUL", "shape": "dot", "size": 18}, {"color": "#25677d", "font": {"size": 20}, "id": "FAIR", "label": "FAIR", "shape": "dot", "size": 27.0}, {"color": "#25677d", "font": {"size": 20}, "id": "TRUST", "label": "TRUST", "shape": "dot", "size": 18}, {"color": "#25677d", "font": {"size": 20}, "id": "NEWS", "label": "NEWS", "shape": "dot", "size": 18}, {"color": "#25677d", "font": {"size": 20}, "id": "VOTELAST", "label": "VOTELAST", "shape": "dot", "size": 18}, {"color": "#debba7", "font": {"size": 20}, "id": "CONFINAN", "label": "CONFINAN", "shape": "dot", "size": 18}, {"color": "#debba7", "font": {"size": 20}, "id": "CONLABOR", "label": "CONLABOR", "shape": "dot", "size": 18}, {"color": "#debba7", "font": {"size": 20}, "id": "CONPRESS", "label": "CONPRESS", "shape": "dot", "size": 18}, {"color": "#debba7", "font": {"size": 20}, "id": "CONTV", "label": "CONTV", "shape": "dot", "size": 18}, {"color": "#133078", "font": {"size": 20}, "id": "POLHITOK", "label": "POLHITOK", "shape": "dot", "size": 18}, {"color": "#133078", "font": {"size": 20}, "id": "POLESCAP", "label": "POLESCAP", "shape": "dot", "size": 18}, {"color": "#133078", "font": {"size": 20}, "id": "POLATTAK", "label": "POLATTAK", "shape": "dot", "size": 27.0}, {"color": "#000000", "font": {"size": 20}, "id": "POLABUSE", "label": "POLABUSE", "shape": "dot", "size": 27.0}, {"color": "#000000", "font": {"size": 20}, "id": "POLMURDR", "label": "POLMURDR", "shape": "dot", "size": 18}]);
+                  edges = new vis.DataSet([{"abs_weight": 0.045555384034801624, "color": "#d0ecad", "from": "PARTYID", "to": "POLVIEWS", "type": 0.045555384034801624, "width": 0.9111076806960325}, {"abs_weight": 0.020087589769903748, "color": "#e283b7", "from": "PARTYID", "to": "EQWLTH", "type": -0.020087589769903748, "width": 0.40175179539807493}, {"abs_weight": 0.012111269401175651, "color": "#eba1cb", "from": "PARTYID", "to": "HELPPOOR", "type": -0.012111269401175651, "width": 0.242225388023513}, {"abs_weight": 0.46136865702272595, "color": "#276419", "from": "PARTYID", "to": "PRESLAST_DEMREP", "type": 0.46136865702272595, "width": 9.22737314045452}, {"abs_weight": 0.004931784286298676, "color": "#f2b8db", "from": "POLVIEWS", "to": "ABNOMORE", "type": -0.004931784286298676, "width": 0.09863568572597353}, {"abs_weight": 0.0036726569568537345, "color": "#f4bfdf", "from": "POLVIEWS", "to": "ABSINGLE", "type": -0.0036726569568537345, "width": 0.07345313913707469}, {"abs_weight": 0.028782813344441355, "color": "#edf6e1", "from": "POLVIEWS", "to": "PREMARSX", "type": 0.028782813344441355, "width": 0.5756562668888271}, {"abs_weight": 0.0760036062028873, "color": "#a3d36c", "from": "POLVIEWS", "to": "HOMOSEX", "type": 0.0760036062028873, "width": 1.5200721240577462}, {"abs_weight": 0.11256876246477751, "color": "#7bb93e", "from": "POLVIEWS", "to": "PRESLAST_DEMREP", "type": 0.11256876246477751, "width": 2.2513752492955503}, {"abs_weight": 0.043943667568761585, "color": "#cc368b", "from": "EQWLTH", "to": "NATSOC", "type": -0.043943667568761585, "width": 0.8788733513752317}, {"abs_weight": 0.0001149523099965326, "color": "#f7cbe4", "from": "EQWLTH", "to": "RACDIF1", "type": 0.0001149523099965326, "width": 0.002299046199930652}, {"abs_weight": 0.19045705057384024, "color": "#488c20", "from": "EQWLTH", "to": "HELPPOOR", "type": 0.19045705057384024, "width": 3.8091410114768047}, {"abs_weight": 0.04148001617937846, "color": "#ce3d8f", "from": "EQWLTH", "to": "PRESLAST_DEMREP", "type": -0.04148001617937846, "width": 0.8296003235875692}, {"abs_weight": 0.06461568883063973, "color": "#c2197a", "from": "HELPPOOR", "to": "NATRACE", "type": -0.06461568883063973, "width": 1.2923137766127946}, {"abs_weight": 0.0843313028947286, "color": "#b3126f", "from": "HELPPOOR", "to": "NATFARE", "type": -0.0843313028947286, "width": 1.6866260578945718}, {"abs_weight": 0.051081972544128176, "color": "#c72482", "from": "HELPPOOR", "to": "PRESLAST_DEMREP", "type": -0.051081972544128176, "width": 1.0216394508825635}, {"abs_weight": 0.02580803965649556, "color": "#f1f6e8", "from": "PRESLAST_DEMREP", "to": "NATRACE", "type": 0.02580803965649556, "width": 0.5161607931299113}, {"abs_weight": 0.004408843043522514, "color": "#f3bdde", "from": "PRESLAST_DEMREP", "to": "NATARMS", "type": -0.004408843043522514, "width": 0.08817686087045028}, {"abs_weight": 0.03225837516183667, "color": "#e7f5d3", "from": "PRESLAST_DEMREP", "to": "CAPPUN", "type": 0.03225837516183667, "width": 0.6451675032367333}, {"abs_weight": 0.010994315268665357, "color": "#faebf3", "from": "PRESLAST_DEMREP", "to": "HOMOSEX", "type": 0.010994315268665357, "width": 0.21988630537330714}, {"abs_weight": 0.013682024919923883, "color": "#e89ac6", "from": "PRESLAST_DEMREP", "to": "RACDIF1", "type": -0.013682024919923883, "width": 0.27364049839847765}, {"abs_weight": 0.03507193792197935, "color": "#e1f3c7", "from": "ABNOMORE", "to": "ABDEFECT", "type": 0.03507193792197935, "width": 0.701438758439587}, {"abs_weight": 0.2581030250950114, "color": "#34741c", "from": "ABNOMORE", "to": "ABPOOR", "type": 0.2581030250950114, "width": 5.1620605019002275}, {"abs_weight": 0.2757624067821653, "color": "#31711b", "from": "ABNOMORE", "to": "ABSINGLE", "type": 0.2757624067821653, "width": 5.515248135643306}, {"abs_weight": 0.2840134501909252, "color": "#2b691a", "from": "ABNOMORE", "to": "ABANY", "type": 0.2840134501909252, "width": 5.680269003818505}, {"abs_weight": 0.02280193653409994, "color": "#dd73ac", "from": "ABNOMORE", "to": "PREMARSX", "type": -0.02280193653409994, "width": 0.4560387306819988}, {"abs_weight": 0.03277672117492099, "color": "#d34f99", "from": "ABNOMORE", "to": "HOMOSEX", "type": -0.03277672117492099, "width": 0.6555344234984197}, {"abs_weight": 0.01816943909352928, "color": "#f8f4f6", "from": "ABNOMORE", "to": "LETDIE1", "type": 0.01816943909352928, "width": 0.3633887818705856}, {"abs_weight": 0.08368621970983141, "color": "#95cb5c", "from": "ABNOMORE", "to": "SUICIDE1", "type": 0.08368621970983141, "width": 1.6737243941966282}, {"abs_weight": 0.03065936817665678, "color": "#e9f5d6", "from": "ABNOMORE", "to": "SUICIDE2", "type": 0.03065936817665678, "width": 0.6131873635331355}, {"abs_weight": 0.006509195000186889, "color": "#f1b5d9", "from": "ABSINGLE", "to": "LIBHOMO", "type": -0.006509195000186889, "width": 0.13018390000373778}, {"abs_weight": 0.004926358504270714, "color": "#fcdbed", "from": "ABSINGLE", "to": "GRASS", "type": 0.004926358504270714, "width": 0.09852717008541428}, {"abs_weight": 0.02666388262739297, "color": "#d861a2", "from": "ABSINGLE", "to": "ATTEND", "type": -0.02666388262739297, "width": 0.5332776525478594}, {"abs_weight": 0.0013157699604887682, "color": "#f5c6e2", "from": "ABSINGLE", "to": "RELITEN", "type": -0.0013157699604887682, "width": 0.026315399209775363}, {"abs_weight": 0.04692635211399805, "color": "#cfebaa", "from": "ABSINGLE", "to": "ABDEFECT", "type": 0.04692635211399805, "width": 0.938527042279961}, {"abs_weight": 0.25741972978307226, "color": "#36761c", "from": "ABSINGLE", "to": "ABPOOR", "type": 0.25741972978307226, "width": 5.148394595661445}, {"abs_weight": 0.030136174369755468, "color": "#ebf6dc", "from": "ABSINGLE", "to": "ABRAPE", "type": 0.030136174369755468, "width": 0.6027234873951094}, {"abs_weight": 0.28358949332043215, "color": "#2d6b1a", "from": "ABSINGLE", "to": "ABANY", "type": 0.28358949332043215, "width": 5.671789866408643}, {"abs_weight": 0.0065829007354797735, "color": "#f0b2d7", "from": "ABSINGLE", "to": "PREMARSX", "type": -0.0065829007354797735, "width": 0.13165801470959548}, {"abs_weight": 0.029295786699371724, "color": "#d75ea1", "from": "ABSINGLE", "to": "HOMOSEX", "type": -0.029295786699371724, "width": 0.5859157339874345}, {"abs_weight": 0.053361329262898084, "color": "#c6e79c", "from": "ABSINGLE", "to": "SUICIDE1", "type": 0.053361329262898084, "width": 1.0672265852579617}, {"abs_weight": 0.023909690971468844, "color": "#f3f6ed", "from": "ABSINGLE", "to": "SUICIDE2", "type": 0.023909690971468844, "width": 0.4781938194293769}, {"abs_weight": 0.008297357344933417, "color": "#efb0d6", "from": "PREMARSX", "to": "COLATH", "type": -0.008297357344933417, "width": 0.16594714689866835}, {"abs_weight": 0.004807549766036375, "color": "#f3bcdd", "from": "PREMARSX", "to": "SPKHOMO", "type": -0.004807549766036375, "width": 0.0961509953207275}, {"abs_weight": 0.03824377343662017, "color": "#cf4191", "from": "PREMARSX", "to": "COLHOMO", "type": -0.03824377343662017, "width": 0.7648754687324034}, {"abs_weight": 0.14136146870946925, "color": "#66a731", "from": "PREMARSX", "to": "ATTEND", "type": 0.14136146870946925, "width": 2.8272293741893852}, {"abs_weight": 0.04360096048523164, "color": "#d8efb9", "from": "PREMARSX", "to": "RELITEN", "type": 0.04360096048523164, "width": 0.8720192097046329}, {"abs_weight": 0.02578016187496914, "color": "#db6ca8", "from": "PREMARSX", "to": "ABDEFECT", "type": -0.02578016187496914, "width": 0.5156032374993829}, {"abs_weight": 0.03083124162302797, "color": "#d65a9f", "from": "PREMARSX", "to": "ABPOOR", "type": -0.03083124162302797, "width": 0.6166248324605593}, {"abs_weight": 0.015874894292635576, "color": "#e58dbe", "from": "PREMARSX", "to": "ABRAPE", "type": -0.015874894292635576, "width": 0.31749788585271155}, {"abs_weight": 0.048482768215647835, "color": "#c92b86", "from": "PREMARSX", "to": "ABANY", "type": -0.048482768215647835, "width": 0.9696553643129567}, {"abs_weight": 0.05218235521013518, "color": "#c51d7e", "from": "PREMARSX", "to": "SEXEDUC", "type": -0.05218235521013518, "width": 1.0436471042027036}, {"abs_weight": 0.07699189611086991, "color": "#b51370", "from": "PREMARSX", "to": "DIVLAW", "type": -0.07699189611086991, "width": 1.5398379222173983}, {"abs_weight": 0.20374091294548582, "color": "#468a20", "from": "PREMARSX", "to": "TEENSEX", "type": 0.20374091294548582, "width": 4.074818258909716}, {"abs_weight": 0.06471343300999835, "color": "#b7e085", "from": "PREMARSX", "to": "XMARSEX", "type": 0.06471343300999835, "width": 1.294268660199967}, {"abs_weight": 0.09113098166109057, "color": "#8ac34f", "from": "PREMARSX", "to": "HOMOSEX", "type": 0.09113098166109057, "width": 1.8226196332218114}, {"abs_weight": 0.1425893475353518, "color": "#64a52f", "from": "PREMARSX", "to": "PORNLAW", "type": 0.1425893475353518, "width": 2.851786950707036}, {"abs_weight": 0.022151113945615374, "color": "#df7cb1", "from": "PREMARSX", "to": "LETDIE1", "type": -0.022151113945615374, "width": 0.4430222789123075}, {"abs_weight": 0.07622743741928961, "color": "#b71472", "from": "PREMARSX", "to": "SUICIDE1", "type": -0.07622743741928961, "width": 1.5245487483857922}, {"abs_weight": 0.09081230639746192, "color": "#8ac34f", "from": "PREMARSX", "to": "FEFAM", "type": 0.09081230639746192, "width": 1.8162461279492383}, {"abs_weight": 0.014482856928690417, "color": "#e897c4", "from": "HOMOSEX", "to": "NATARMS", "type": -0.014482856928690417, "width": 0.2896571385738083}, {"abs_weight": 0.02108957615799722, "color": "#e181b5", "from": "HOMOSEX", "to": "COLATH", "type": -0.02108957615799722, "width": 0.42179152315994445}, {"abs_weight": 0.023435804348171368, "color": "#f5f7f2", "from": "HOMOSEX", "to": "LIBATH", "type": 0.023435804348171368, "width": 0.46871608696342737}, {"abs_weight": 0.010693502322853184, "color": "#eeabd2", "from": "HOMOSEX", "to": "SPKCOM", "type": -0.010693502322853184, "width": 0.21387004645706367}, {"abs_weight": 0.00491392342532285, "color": "#f2badc", "from": "HOMOSEX", "to": "COLMIL", "type": -0.00491392342532285, "width": 0.098278468506457}, {"abs_weight": 0.08852733306857691, "color": "#b1116d", "from": "HOMOSEX", "to": "COLHOMO", "type": -0.08852733306857691, "width": 1.7705466613715382}, {"abs_weight": 0.04706269813739637, "color": "#cdeaa7", "from": "HOMOSEX", "to": "LIBHOMO", "type": 0.04706269813739637, "width": 0.9412539627479275}, {"abs_weight": 0.06529927432538331, "color": "#c01879", "from": "HOMOSEX", "to": "GRASS", "type": -0.06529927432538331, "width": 1.305985486507666}, {"abs_weight": 0.12933546711396768, "color": "#9f095f", "from": "HOMOSEX", "to": "PRAYER", "type": -0.12933546711396768, "width": 2.5867093422793537}, {"abs_weight": 0.04990289995376096, "color": "#c72482", "from": "HOMOSEX", "to": "ABANY", "type": -0.04990289995376096, "width": 0.9980579990752192}, {"abs_weight": 0.09001397174164588, "color": "#8fc654", "from": "HOMOSEX", "to": "TEENSEX", "type": 0.09001397174164588, "width": 1.8002794348329176}, {"abs_weight": 0.04487581162585332, "color": "#d2ecb0", "from": "HOMOSEX", "to": "XMARSEX", "type": 0.04487581162585332, "width": 0.8975162325170665}, {"abs_weight": 0.010712191930173786, "color": "#faeaf2", "from": "HOMOSEX", "to": "PORNLAW", "type": 0.010712191930173786, "width": 0.21424383860347573}, {"abs_weight": 0.01567436216546192, "color": "#f9f1f5", "from": "HOMOSEX", "to": "SPANKING", "type": 0.01567436216546192, "width": 0.3134872433092384}, {"abs_weight": 0.04448630422891833, "color": "#cb3289", "from": "HOMOSEX", "to": "SUICIDE1", "type": -0.04448630422891833, "width": 0.8897260845783667}, {"abs_weight": 0.022458028597053502, "color": "#df79b0", "from": "HOMOSEX", "to": "SUICIDE2", "type": -0.022458028597053502, "width": 0.44916057194107006}, {"abs_weight": 0.05363319382380253, "color": "#c4e699", "from": "HOMOSEX", "to": "FEFAM", "type": 0.05363319382380253, "width": 1.0726638764760505}, {"abs_weight": 0.010514934752448175, "color": "#faeaf2", "from": "NATSPAC", "to": "LIBCOM", "type": 0.010514934752448175, "width": 0.2102986950489635}, {"abs_weight": 0.18848811293423617, "color": "#498d20", "from": "LIBCOM", "to": "LIBATH", "type": 0.18848811293423617, "width": 3.7697622586847235}, {"abs_weight": 0.10840391070195443, "color": "#7dba40", "from": "LIBCOM", "to": "LIBRAC", "type": 0.10840391070195443, "width": 2.1680782140390886}, {"abs_weight": 0.18919163284365131, "color": "#900254", "from": "LIBCOM", "to": "SPKCOM", "type": -0.18919163284365131, "width": 3.7838326568730265}, {"abs_weight": 0.15553317789645893, "color": "#589b28", "from": "LIBCOM", "to": "COLCOM", "type": 0.15553317789645893, "width": 3.1106635579291786}, {"abs_weight": 0.2645578408414362, "color": "#33721c", "from": "LIBCOM", "to": "LIBMIL", "type": 0.2645578408414362, "width": 5.291156816828724}, {"abs_weight": 0.13494811270352539, "color": "#6bac34", "from": "LIBCOM", "to": "LIBHOMO", "type": 0.13494811270352539, "width": 2.6989622540705076}, {"abs_weight": 0.014737374515699756, "color": "#e795c3", "from": "LIBCOM", "to": "PRAYER", "type": -0.014737374515699756, "width": 0.2947474903139951}, {"abs_weight": 0.005469399889940296, "color": "#fddeee", "from": "LIBCOM", "to": "PORNLAW", "type": 0.005469399889940296, "width": 0.10938799779880591}, {"abs_weight": 0.005994953695957812, "color": "#fde0ef", "from": "LIBCOM", "to": "RACDIF2", "type": 0.005994953695957812, "width": 0.11989907391915625}, {"abs_weight": 0.0021309200594043557, "color": "#fad4e9", "from": "NATENVIR", "to": "NATHEAL", "type": 0.0021309200594043557, "width": 0.042618401188087116}, {"abs_weight": 0.05920135990671474, "color": "#bde38d", "from": "NATENVIR", "to": "NATEDUC", "type": 0.05920135990671474, "width": 1.1840271981342947}, {"abs_weight": 0.030475783382432432, "color": "#ebf6db", "from": "NATENVIR", "to": "FEFAM", "type": 0.030475783382432432, "width": 0.6095156676486486}, {"abs_weight": 0.01420663186998982, "color": "#f9eef4", "from": "NATHEAL", "to": "NATEDUC", "type": 0.01420663186998982, "width": 0.28413263739979644}, {"abs_weight": 0.008447873250920283, "color": "#fce5f1", "from": "NATHEAL", "to": "NATSOC", "type": 0.008447873250920283, "width": 0.16895746501840564}, {"abs_weight": 0.01026995340531995, "color": "#fbe8f2", "from": "NATEDUC", "to": "NATDRUG", "type": 0.01026995340531995, "width": 0.205399068106399}, {"abs_weight": 0.029144223147687512, "color": "#edf6df", "from": "NATEDUC", "to": "NATRACE", "type": 0.029144223147687512, "width": 0.5828844629537502}, {"abs_weight": 0.03152765949028949, "color": "#d5579d", "from": "FEFAM", "to": "COLATH", "type": -0.03152765949028949, "width": 0.6305531898057898}, {"abs_weight": 0.024717399812257755, "color": "#f2f6ec", "from": "FEFAM", "to": "LIBATH", "type": 0.024717399812257755, "width": 0.49434799624515513}, {"abs_weight": 0.012306583816774427, "color": "#ea9fca", "from": "FEFAM", "to": "SPKHOMO", "type": -0.012306583816774427, "width": 0.24613167633548855}, {"abs_weight": 0.036346503746250855, "color": "#d04493", "from": "FEFAM", "to": "COLHOMO", "type": -0.036346503746250855, "width": 0.7269300749250172}, {"abs_weight": 0.014596529508548044, "color": "#f9eff4", "from": "FEFAM", "to": "LIBHOMO", "type": 0.014596529508548044, "width": 0.2919305901709609}, {"abs_weight": 0.012410246822973753, "color": "#e99cc8", "from": "FEFAM", "to": "PRAYER", "type": -0.012410246822973753, "width": 0.24820493645947506}, {"abs_weight": 0.14468948260361392, "color": "#60a22d", "from": "FEFAM", "to": "FEPOL", "type": 0.14468948260361392, "width": 2.8937896520722783}, {"abs_weight": 0.04318148350117846, "color": "#cd3a8d", "from": "FEFAM", "to": "SEXEDUC", "type": -0.04318148350117846, "width": 0.8636296700235692}, {"abs_weight": 0.023263682903003995, "color": "#f5f7f3", "from": "FEFAM", "to": "PORNLAW", "type": 0.023263682903003995, "width": 0.4652736580600799}, {"abs_weight": 0.019774596719468053, "color": "#e283b7", "from": "FEFAM", "to": "SUICIDE1", "type": -0.019774596719468053, "width": 0.39549193438936103}, {"abs_weight": 0.16143709510750243, "color": "#9b075c", "from": "FEFAM", "to": "FECHLD", "type": -0.16143709510750243, "width": 3.2287419021500483}, {"abs_weight": 0.24345537100048906, "color": "#3a7b1d", "from": "FEFAM", "to": "FEPRESCH", "type": 0.24345537100048906, "width": 4.869107420009781}, {"abs_weight": 0.014893878545206147, "color": "#f9f0f5", "from": "FEFAM", "to": "RACDIF2", "type": 0.014893878545206147, "width": 0.2978775709041229}, {"abs_weight": 0.0011208034615973342, "color": "#f8cee6", "from": "FEFAM", "to": "RACDIF4", "type": 0.0011208034615973342, "width": 0.022416069231946684}, {"abs_weight": 0.13068238732208848, "color": "#73b239", "from": "NATCITY", "to": "NATRACE", "type": 0.13068238732208848, "width": 2.6136477464417696}, {"abs_weight": 0.06739472368509836, "color": "#b0dc7d", "from": "NATRACE", "to": "NATDRUG", "type": 0.06739472368509836, "width": 1.3478944737019671}, {"abs_weight": 0.030552539543112357, "color": "#eaf5d9", "from": "NATRACE", "to": "NATFARE", "type": 0.030552539543112357, "width": 0.6110507908622471}, {"abs_weight": 0.16355045365610404, "color": "#99065a", "from": "NATRACE", "to": "RACDIF1", "type": -0.16355045365610404, "width": 3.271009073122081}, {"abs_weight": 0.098091772603988, "color": "#ac0f6a", "from": "NATRACE", "to": "RACDIF3", "type": -0.098091772603988, "width": 1.96183545207976}, {"abs_weight": 0.0656376530413442, "color": "#b5df82", "from": "NATRACE", "to": "RACDIF4", "type": 0.0656376530413442, "width": 1.3127530608268838}, {"abs_weight": 0.10368145331947311, "color": "#81bd44", "from": "NATCRIME", "to": "NATDRUG", "type": 0.10368145331947311, "width": 2.0736290663894623}, {"abs_weight": 0.06594322245726722, "color": "#b2dd7f", "from": "RACDIF1", "to": "RACDIF3", "type": 0.06594322245726722, "width": 1.3188644491453445}, {"abs_weight": 0.10107982252330028, "color": "#aa0e68", "from": "RACDIF1", "to": "RACDIF4", "type": -0.10107982252330028, "width": 2.0215964504660056}, {"abs_weight": 0.09396782434833535, "color": "#ae106b", "from": "RACDIF3", "to": "RACDIF4", "type": -0.09396782434833535, "width": 1.879356486966707}, {"abs_weight": 0.08125391979757503, "color": "#98cc5f", "from": "RACDIF4", "to": "RACDIF2", "type": 0.08125391979757503, "width": 1.6250783959515005}, {"abs_weight": 0.07112152882669304, "color": "#bd1777", "from": "NATARMS", "to": "CONARMY", "type": -0.07112152882669304, "width": 1.4224305765338607}, {"abs_weight": 0.017425330776910542, "color": "#f8f2f5", "from": "CONARMY", "to": "CONBUS", "type": 0.017425330776910542, "width": 0.34850661553821083}, {"abs_weight": 0.036967020505901935, "color": "#dff2c4", "from": "CONARMY", "to": "CONFED", "type": 0.036967020505901935, "width": 0.7393404101180387}, {"abs_weight": 0.05861678743272039, "color": "#bee490", "from": "CONARMY", "to": "CONMEDIC", "type": 0.05861678743272039, "width": 1.1723357486544077}, {"abs_weight": 0.021501198606487835, "color": "#f6f7f5", "from": "CONARMY", "to": "CONJUDGE", "type": 0.021501198606487835, "width": 0.4300239721297567}, {"abs_weight": 0.0021390572130471123, "color": "#fad6ea", "from": "CONARMY", "to": "CONSCI", "type": 0.0021390572130471123, "width": 0.04278114426094225}, {"abs_weight": 0.03411898752975283, "color": "#e2f3ca", "from": "CONARMY", "to": "CONLEGIS", "type": 0.03411898752975283, "width": 0.6823797505950566}, {"abs_weight": 0.15394299570982686, "color": "#5a9d29", "from": "SPKATH", "to": "COLATH", "type": 0.15394299570982686, "width": 3.078859914196537}, {"abs_weight": 0.1195238504452129, "color": "#a40b63", "from": "SPKATH", "to": "LIBATH", "type": -0.1195238504452129, "width": 2.390477008904258}, {"abs_weight": 0.18596575994992168, "color": "#4b8f21", "from": "SPKATH", "to": "SPKRAC", "type": 0.18596575994992168, "width": 3.7193151989984337}, {"abs_weight": 0.2217042401043256, "color": "#3f811e", "from": "SPKATH", "to": "SPKCOM", "type": 0.2217042401043256, "width": 4.434084802086512}, {"abs_weight": 0.10751411784324783, "color": "#7fbc41", "from": "SPKATH", "to": "SPKMIL", "type": 0.10751411784324783, "width": 2.1502823568649565}, {"abs_weight": 0.08563264322858498, "color": "#93c959", "from": "SPKATH", "to": "SPKHOMO", "type": 0.08563264322858498, "width": 1.7126528645716996}, {"abs_weight": 0.0014795070698136003, "color": "#f9d1e8", "from": "SPKATH", "to": "ABANY", "type": 0.0014795070698136003, "width": 0.02959014139627201}, {"abs_weight": 0.011873952520774564, "color": "#eca6cf", "from": "SPKATH", "to": "PORNLAW", "type": -0.011873952520774564, "width": 0.23747905041549128}, {"abs_weight": 0.07169481988065972, "color": "#bb1675", "from": "COLATH", "to": "LIBATH", "type": -0.07169481988065972, "width": 1.4338963976131944}, {"abs_weight": 0.21251441706211874, "color": "#42841f", "from": "COLATH", "to": "COLRAC", "type": 0.21251441706211874, "width": 4.250288341242375}, {"abs_weight": 0.0006088135895541948, "color": "#f7cce5", "from": "COLATH", "to": "SPKCOM", "type": 0.0006088135895541948, "width": 0.012176271791083895}, {"abs_weight": 0.11326829613559157, "color": "#a60c65", "from": "COLATH", "to": "COLCOM", "type": -0.11326829613559157, "width": 2.2653659227118315}, {"abs_weight": 0.20989812139276198, "color": "#45881f", "from": "COLATH", "to": "COLMIL", "type": 0.20989812139276198, "width": 4.19796242785524}, {"abs_weight": 0.0014182017176907016, "color": "#f5c4e1", "from": "COLATH", "to": "LIBMIL", "type": -0.0014182017176907016, "width": 0.02836403435381403}, {"abs_weight": 0.08093516521131323, "color": "#9acd61", "from": "COLATH", "to": "COLHOMO", "type": 0.08093516521131323, "width": 1.6187033042262646}, {"abs_weight": 0.039931743296136524, "color": "#dbf0bf", "from": "COLATH", "to": "PRAYER", "type": 0.039931743296136524, "width": 0.7986348659227305}, {"abs_weight": 0.00028986210295738686, "color": "#f6c7e3", "from": "COLATH", "to": "TEENSEX", "type": -0.00028986210295738686, "width": 0.005797242059147737}, {"abs_weight": 0.23296889432655568, "color": "#3c7d1d", "from": "LIBATH", "to": "LIBRAC", "type": 0.23296889432655568, "width": 4.6593778865311135}, {"abs_weight": 0.10345349820308224, "color": "#83bf46", "from": "LIBATH", "to": "LIBMIL", "type": 0.10345349820308224, "width": 2.0690699640616446}, {"abs_weight": 0.15800783034459437, "color": "#569927", "from": "LIBATH", "to": "LIBHOMO", "type": 0.15800783034459437, "width": 3.1601566068918876}, {"abs_weight": 0.02659483578200111, "color": "#d965a4", "from": "LIBATH", "to": "PRAYER", "type": -0.02659483578200111, "width": 0.5318967156400222}, {"abs_weight": 0.025368927781240516, "color": "#f1f6ea", "from": "LIBATH", "to": "PORNLAW", "type": 0.025368927781240516, "width": 0.5073785556248103}, {"abs_weight": 0.23183501599259274, "color": "#3d7f1e", "from": "SPKRAC", "to": "COLRAC", "type": 0.23183501599259274, "width": 4.636700319851855}, {"abs_weight": 0.12208029229989753, "color": "#a10a61", "from": "SPKRAC", "to": "LIBRAC", "type": -0.12208029229989753, "width": 2.441605845997951}, {"abs_weight": 0.04972507457166061, "color": "#c7e89f", "from": "SPKRAC", "to": "SPKCOM", "type": 0.04972507457166061, "width": 0.9945014914332122}, {"abs_weight": 0.13302079108541004, "color": "#6dad36", "from": "SPKRAC", "to": "SPKMIL", "type": 0.13302079108541004, "width": 2.6604158217082006}, {"abs_weight": 0.13377178326620032, "color": "#9d085e", "from": "SPKCOM", "to": "COLCOM", "type": -0.13377178326620032, "width": 2.6754356653240063}, {"abs_weight": 0.14438766104410905, "color": "#62a32e", "from": "SPKCOM", "to": "SPKMIL", "type": 0.14438766104410905, "width": 2.887753220882181}, {"abs_weight": 0.130959610668095, "color": "#71b038", "from": "SPKCOM", "to": "SPKHOMO", "type": 0.130959610668095, "width": 2.6191922133619}, {"abs_weight": 0.006269331711037733, "color": "#f1b7da", "from": "SPKCOM", "to": "FEPOL", "type": -0.006269331711037733, "width": 0.12538663422075466}, {"abs_weight": 0.017250608945748994, "color": "#e48bbc", "from": "SPKCOM", "to": "PORNLAW", "type": -0.017250608945748994, "width": 0.3450121789149799}, {"abs_weight": 0.2772801383469212, "color": "#306f1b", "from": "SPKMIL", "to": "COLMIL", "type": 0.2772801383469212, "width": 5.5456027669384245}, {"abs_weight": 0.18612963068203783, "color": "#920355", "from": "SPKMIL", "to": "LIBMIL", "type": -0.18612963068203783, "width": 3.7225926136407566}, {"abs_weight": 0.04946630421613392, "color": "#cbe9a4", "from": "SPKMIL", "to": "SPKHOMO", "type": 0.04946630421613392, "width": 0.9893260843226783}, {"abs_weight": 0.341742069665277, "color": "#276419", "from": "SPKHOMO", "to": "COLHOMO", "type": 0.341742069665277, "width": 6.83484139330554}, {"abs_weight": 0.1686300451335926, "color": "#940457", "from": "SPKHOMO", "to": "LIBHOMO", "type": -0.1686300451335926, "width": 3.3726009026718518}, {"abs_weight": 0.012043587746313736, "color": "#eba3cd", "from": "SPKHOMO", "to": "FEPOL", "type": -0.012043587746313736, "width": 0.24087175492627472}, {"abs_weight": 0.02975866216700538, "color": "#ecf6de", "from": "SPKHOMO", "to": "SEXEDUC", "type": 0.02975866216700538, "width": 0.5951732433401076}, {"abs_weight": 0.004921979954234313, "color": "#fbd9ec", "from": "ABANY", "to": "ABDEFECT", "type": 0.004921979954234313, "width": 0.09843959908468626}, {"abs_weight": 0.1705262466831076, "color": "#529624", "from": "ABANY", "to": "ABPOOR", "type": 0.1705262466831076, "width": 3.4105249336621517}, {"abs_weight": 0.01319325583326792, "color": "#faedf3", "from": "ABANY", "to": "ABRAPE", "type": 0.01319325583326792, "width": 0.2638651166653584}, {"abs_weight": 0.02253520799739456, "color": "#de77ae", "from": "ABANY", "to": "TEENSEX", "type": -0.02253520799739456, "width": 0.4507041599478912}, {"abs_weight": 0.022865672938058974, "color": "#dc70aa", "from": "ABANY", "to": "PORNLAW", "type": -0.022865672938058974, "width": 0.45731345876117946}, {"abs_weight": 0.009273311823048183, "color": "#fce5f1", "from": "ABANY", "to": "SUICIDE1", "type": 0.009273311823048183, "width": 0.18546623646096366}, {"abs_weight": 0.019659112950402766, "color": "#f7f6f7", "from": "ABANY", "to": "SUICIDE2", "type": 0.019659112950402766, "width": 0.3931822590080553}, {"abs_weight": 0.001574096317955984, "color": "#f5c2e0", "from": "PORNLAW", "to": "COLHOMO", "type": -0.001574096317955984, "width": 0.03148192635911968}, {"abs_weight": 0.030569236770362905, "color": "#e9f5d8", "from": "PORNLAW", "to": "LIBHOMO", "type": 0.030569236770362905, "width": 0.6113847354072581}, {"abs_weight": 0.026568941313380057, "color": "#da69a6", "from": "PORNLAW", "to": "GRASS", "type": -0.026568941313380057, "width": 0.5313788262676011}, {"abs_weight": 0.02902417246922589, "color": "#edf6e1", "from": "PORNLAW", "to": "ATTEND", "type": 0.02902417246922589, "width": 0.5804834493845178}, {"abs_weight": 0.032353124521094935, "color": "#d4539b", "from": "PORNLAW", "to": "PRAYER", "type": -0.032353124521094935, "width": 0.6470624904218987}, {"abs_weight": 0.019558623437036966, "color": "#e286b8", "from": "PORNLAW", "to": "ABRAPE", "type": -0.019558623437036966, "width": 0.3911724687407393}, {"abs_weight": 0.03368572655609755, "color": "#e6f5d0", "from": "PORNLAW", "to": "TEENSEX", "type": 0.03368572655609755, "width": 0.673714531121951}, {"abs_weight": 0.002720875412992458, "color": "#f4c1df", "from": "PORNLAW", "to": "SUICIDE1", "type": -0.002720875412992458, "width": 0.05441750825984916}, {"abs_weight": 0.061865395189447454, "color": "#c41a7c", "from": "COLRAC", "to": "LIBRAC", "type": -0.061865395189447454, "width": 1.2373079037889492}, {"abs_weight": 0.18548142087893027, "color": "#4c9121", "from": "COLRAC", "to": "COLMIL", "type": 0.18548142087893027, "width": 3.7096284175786054}, {"abs_weight": 0.10382314414193315, "color": "#a80d66", "from": "COLCOM", "to": "COLMIL", "type": -0.10382314414193315, "width": 2.076462882838663}, {"abs_weight": 0.045094415127856655, "color": "#ca2f88", "from": "COLCOM", "to": "COLHOMO", "type": -0.045094415127856655, "width": 0.9018883025571331}, {"abs_weight": 0.0758960130242591, "color": "#b91574", "from": "COLMIL", "to": "LIBMIL", "type": -0.0758960130242591, "width": 1.517920260485182}, {"abs_weight": 0.07730869577148304, "color": "#9ed067", "from": "COLMIL", "to": "COLHOMO", "type": 0.07730869577148304, "width": 1.5461739154296608}, {"abs_weight": 0.13869198027587998, "color": "#67a832", "from": "LIBMIL", "to": "LIBRAC", "type": 0.13869198027587998, "width": 2.7738396055175993}, {"abs_weight": 0.11511761422669907, "color": "#77b53c", "from": "LIBMIL", "to": "LIBHOMO", "type": 0.11511761422669907, "width": 2.302352284533981}, {"abs_weight": 0.16382578564473768, "color": "#970559", "from": "COLHOMO", "to": "LIBHOMO", "type": -0.16382578564473768, "width": 3.2765157128947537}, {"abs_weight": 0.01150962629177973, "color": "#eda8d1", "from": "COLHOMO", "to": "FEPOL", "type": -0.01150962629177973, "width": 0.23019252583559463}, {"abs_weight": 0.021169123631473816, "color": "#e07eb3", "from": "PRAYER", "to": "ATTEND", "type": -0.021169123631473816, "width": 0.4233824726294763}, {"abs_weight": 0.0002622357604488837, "color": "#f6c9e3", "from": "PRAYER", "to": "TEENSEX", "type": -0.0002622357604488837, "width": 0.005244715208977674}, {"abs_weight": 0.0488056442642946, "color": "#c82884", "from": "TEENSEX", "to": "GRASS", "type": -0.0488056442642946, "width": 0.976112885285892}, {"abs_weight": 0.02802982941476308, "color": "#eef6e2", "from": "TEENSEX", "to": "ATTEND", "type": 0.02802982941476308, "width": 0.5605965882952616}, {"abs_weight": 0.14556814287895803, "color": "#5ea02c", "from": "TEENSEX", "to": "XMARSEX", "type": 0.14556814287895803, "width": 2.9113628575791606}, {"abs_weight": 0.07245514201587835, "color": "#a5d56f", "from": "LIBRAC", "to": "LIBHOMO", "type": 0.07245514201587835, "width": 1.449102840317567}, {"abs_weight": 0.02592256749662568, "color": "#f0f6e7", "from": "SEXEDUC", "to": "ABDEFECT", "type": 0.02592256749662568, "width": 0.5184513499325136}, {"abs_weight": 0.01908196978078816, "color": "#f8f5f6", "from": "SEXEDUC", "to": "ABRAPE", "type": 0.01908196978078816, "width": 0.3816393956157632}, {"abs_weight": 0.0015693682628841613, "color": "#f5c4e1", "from": "GRASS", "to": "ATTEND", "type": -0.0015693682628841613, "width": 0.03138736525768322}, {"abs_weight": 0.30631083323352476, "color": "#286619", "from": "ATTEND", "to": "RELITEN", "type": 0.30631083323352476, "width": 6.126216664670495}, {"abs_weight": 0.019750537305360256, "color": "#f7f7f7", "from": "ATTEND", "to": "POSTLIFE", "type": 0.019750537305360256, "width": 0.3950107461072051}, {"abs_weight": 0.09188964630474827, "color": "#88c24c", "from": "ATTEND", "to": "CONCLERG", "type": 0.09188964630474827, "width": 1.8377929260949655}, {"abs_weight": 0.033022245980654626, "color": "#d24c97", "from": "ATTEND", "to": "ABDEFECT", "type": -0.033022245980654626, "width": 0.6604449196130925}, {"abs_weight": 0.014985194305763847, "color": "#e692c1", "from": "ATTEND", "to": "ABPOOR", "type": -0.014985194305763847, "width": 0.29970388611527693}, {"abs_weight": 0.01798499774311834, "color": "#e388ba", "from": "ATTEND", "to": "ABRAPE", "type": -0.01798499774311834, "width": 0.35969995486236683}, {"abs_weight": 0.015366228850343331, "color": "#e590bf", "from": "ATTEND", "to": "DIVLAW", "type": -0.015366228850343331, "width": 0.3073245770068666}, {"abs_weight": 0.03546059542866021, "color": "#d14895", "from": "ATTEND", "to": "LETDIE1", "type": -0.03546059542866021, "width": 0.7092119085732042}, {"abs_weight": 0.05183404461192716, "color": "#c62080", "from": "ATTEND", "to": "SUICIDE1", "type": -0.05183404461192716, "width": 1.036680892238543}, {"abs_weight": 0.0102759958295162, "color": "#eeadd4", "from": "RELITEN", "to": "SUICIDE1", "type": -0.0102759958295162, "width": 0.205519916590324}, {"abs_weight": 0.033570815304608544, "color": "#e7f5d2", "from": "CONCLERG", "to": "CONBUS", "type": 0.033570815304608544, "width": 0.6714163060921708}, {"abs_weight": 0.010288248274067517, "color": "#fbe9f2", "from": "CONCLERG", "to": "CONEDUC", "type": 0.010288248274067517, "width": 0.20576496548135034}, {"abs_weight": 0.009732864284165144, "color": "#fbe6f1", "from": "CONCLERG", "to": "CONMEDIC", "type": 0.009732864284165144, "width": 0.19465728568330287}, {"abs_weight": 0.2535876847239185, "color": "#37781c", "from": "ABDEFECT", "to": "ABHLTH", "type": 0.2535876847239185, "width": 5.07175369447837}, {"abs_weight": 0.044552136750580305, "color": "#d4edb3", "from": "ABDEFECT", "to": "ABPOOR", "type": 0.044552136750580305, "width": 0.8910427350116061}, {"abs_weight": 0.24589825587820188, "color": "#397a1d", "from": "ABDEFECT", "to": "ABRAPE", "type": 0.24589825587820188, "width": 4.917965117564037}, {"abs_weight": 0.090453321618719, "color": "#8cc551", "from": "ABDEFECT", "to": "LETDIE1", "type": 0.090453321618719, "width": 1.80906643237438}, {"abs_weight": 0.020717854957459887, "color": "#f7f7f6", "from": "ABDEFECT", "to": "SUICIDE1", "type": 0.020717854957459887, "width": 0.4143570991491977}, {"abs_weight": 0.06109158883608806, "color": "#b9e187", "from": "ABPOOR", "to": "ABRAPE", "type": 0.06109158883608806, "width": 1.2218317767217612}, {"abs_weight": 0.031760025151461695, "color": "#e8f5d5", "from": "ABPOOR", "to": "LETDIE1", "type": 0.031760025151461695, "width": 0.6352005030292339}, {"abs_weight": 0.011410735128053021, "color": "#faecf3", "from": "ABPOOR", "to": "SUICIDE1", "type": 0.011410735128053021, "width": 0.2282147025610604}, {"abs_weight": 0.2775800155206341, "color": "#2e6d1b", "from": "ABRAPE", "to": "ABHLTH", "type": 0.2775800155206341, "width": 5.551600310412682}, {"abs_weight": 0.0873364549550708, "color": "#91c857", "from": "ABRAPE", "to": "LETDIE1", "type": 0.0873364549550708, "width": 1.746729099101416}, {"abs_weight": 0.04958888826745954, "color": "#c9e8a2", "from": "ABRAPE", "to": "SUICIDE1", "type": 0.04958888826745954, "width": 0.9917777653491908}, {"abs_weight": 0.2978612866618932, "color": "#2a681a", "from": "LETDIE1", "to": "SUICIDE1", "type": 0.2978612866618932, "width": 5.957225733237864}, {"abs_weight": 0.014089118183349073, "color": "#f9eef4", "from": "SUICIDE1", "to": "SUICIDE2", "type": 0.014089118183349073, "width": 0.28178236366698145}, {"abs_weight": 0.213812138216111, "color": "#40831e", "from": "HELPFUL", "to": "FAIR", "type": 0.213812138216111, "width": 4.27624276432222}, {"abs_weight": 0.09615819236607577, "color": "#86c049", "from": "HELPFUL", "to": "TRUST", "type": 0.09615819236607577, "width": 1.9231638473215154}, {"abs_weight": 0.16115113054415317, "color": "#549825", "from": "FAIR", "to": "TRUST", "type": 0.16115113054415317, "width": 3.2230226108830635}, {"abs_weight": 0.0028429352834752567, "color": "#fbd8eb", "from": "FAIR", "to": "NEWS", "type": 0.0028429352834752567, "width": 0.056858705669505134}, {"abs_weight": 0.05405702873280677, "color": "#c2e596", "from": "NEWS", "to": "VOTELAST", "type": 0.05405702873280677, "width": 1.0811405746561353}, {"abs_weight": 0.008228614286591702, "color": "#fce4f0", "from": "CONFINAN", "to": "CONBUS", "type": 0.008228614286591702, "width": 0.16457228573183405}, {"abs_weight": 0.03401694282235756, "color": "#e4f4cd", "from": "CONFINAN", "to": "CONEDUC", "type": 0.03401694282235756, "width": 0.6803388564471512}, {"abs_weight": 0.001244212833242178, "color": "#f8d0e7", "from": "CONFINAN", "to": "CONLABOR", "type": 0.001244212833242178, "width": 0.02488425666484356}, {"abs_weight": 0.04196615195989479, "color": "#d9f0bc", "from": "CONFINAN", "to": "CONMEDIC", "type": 0.04196615195989479, "width": 0.8393230391978957}, {"abs_weight": 0.06920347384803945, "color": "#acd977", "from": "CONFINAN", "to": "CONLEGIS", "type": 0.06920347384803945, "width": 1.3840694769607889}, {"abs_weight": 0.06048753333269733, "color": "#bbe28a", "from": "CONBUS", "to": "CONFED", "type": 0.06048753333269733, "width": 1.2097506666539466}, {"abs_weight": 0.02384580852603261, "color": "#f4f7f0", "from": "CONBUS", "to": "CONMEDIC", "type": 0.02384580852603261, "width": 0.47691617052065216}, {"abs_weight": 0.06887776298291791, "color": "#aeda7a", "from": "CONBUS", "to": "CONJUDGE", "type": 0.06887776298291791, "width": 1.3775552596583582}, {"abs_weight": 0.023901970492344344, "color": "#f3f7ef", "from": "CONBUS", "to": "CONSCI", "type": 0.023901970492344344, "width": 0.47803940984688686}, {"abs_weight": 0.0389969125472957, "color": "#ddf1c1", "from": "CONEDUC", "to": "CONFED", "type": 0.0389969125472957, "width": 0.7799382509459141}, {"abs_weight": 0.043683203197104656, "color": "#d6eeb6", "from": "CONEDUC", "to": "CONMEDIC", "type": 0.043683203197104656, "width": 0.8736640639420932}, {"abs_weight": 0.005098655899435549, "color": "#fcdded", "from": "CONEDUC", "to": "CONJUDGE", "type": 0.005098655899435549, "width": 0.10197311798871098}, {"abs_weight": 0.07723801844177307, "color": "#a1d26a", "from": "CONEDUC", "to": "CONLEGIS", "type": 0.07723801844177307, "width": 1.5447603688354614}, {"abs_weight": 0.027123350219018103, "color": "#eff6e5", "from": "CONLABOR", "to": "CONPRESS", "type": 0.027123350219018103, "width": 0.5424670043803621}, {"abs_weight": 0.07796135734565954, "color": "#9ccf64", "from": "CONLABOR", "to": "CONLEGIS", "type": 0.07796135734565954, "width": 1.5592271469131909}, {"abs_weight": 0.00719787396510446, "color": "#fde1ef", "from": "CONMEDIC", "to": "CONFED", "type": 0.00719787396510446, "width": 0.14395747930208921}, {"abs_weight": 0.008141952424755029, "color": "#fce3f0", "from": "CONMEDIC", "to": "CONPRESS", "type": 0.008141952424755029, "width": 0.16283904849510059}, {"abs_weight": 0.02783173802729888, "color": "#eff6e4", "from": "CONMEDIC", "to": "CONTV", "type": 0.02783173802729888, "width": 0.5566347605459776}, {"abs_weight": 0.05238166801039758, "color": "#c7e89f", "from": "CONMEDIC", "to": "CONJUDGE", "type": 0.05238166801039758, "width": 1.0476333602079515}, {"abs_weight": 0.11267651793136016, "color": "#79b73d", "from": "CONMEDIC", "to": "CONSCI", "type": 0.11267651793136016, "width": 2.253530358627203}, {"abs_weight": 0.007391027916092596, "color": "#fde2f0", "from": "CONMEDIC", "to": "CONLEGIS", "type": 0.007391027916092596, "width": 0.14782055832185192}, {"abs_weight": 0.2116719761388628, "color": "#43861f", "from": "CONLEGIS", "to": "CONFED", "type": 0.2116719761388628, "width": 4.233439522777256}, {"abs_weight": 0.072410221402769, "color": "#a7d672", "from": "CONLEGIS", "to": "CONPRESS", "type": 0.072410221402769, "width": 1.4482044280553799}, {"abs_weight": 0.054337651602206, "color": "#c0e593", "from": "CONLEGIS", "to": "CONTV", "type": 0.054337651602206, "width": 1.08675303204412}, {"abs_weight": 0.1222455415374223, "color": "#75b43b", "from": "CONLEGIS", "to": "CONJUDGE", "type": 0.1222455415374223, "width": 2.444910830748446}, {"abs_weight": 0.0017012939077880045, "color": "#f9d3e8", "from": "CONFED", "to": "CONPRESS", "type": 0.0017012939077880045, "width": 0.03402587815576009}, {"abs_weight": 0.13125334322242904, "color": "#6faf37", "from": "CONFED", "to": "CONJUDGE", "type": 0.13125334322242904, "width": 2.6250668644485806}, {"abs_weight": 0.017453836101993418, "color": "#f8f3f6", "from": "CONFED", "to": "CONSCI", "type": 0.017453836101993418, "width": 0.34907672203986834}, {"abs_weight": 0.009854068907377682, "color": "#fbe7f2", "from": "CONJUDGE", "to": "CONPRESS", "type": 0.009854068907377682, "width": 0.19708137814755364}, {"abs_weight": 0.17341819696739297, "color": "#529624", "from": "CONJUDGE", "to": "CONSCI", "type": 0.17341819696739297, "width": 3.468363939347859}, {"abs_weight": 0.14999141281328512, "color": "#5c9e2a", "from": "CONPRESS", "to": "CONTV", "type": 0.14999141281328512, "width": 2.9998282562657024}, {"abs_weight": 0.17825094507016898, "color": "#509423", "from": "POLHITOK", "to": "POLESCAP", "type": 0.17825094507016898, "width": 3.5650189014033797}, {"abs_weight": 0.06924634964793093, "color": "#a9d874", "from": "POLHITOK", "to": "POLATTAK", "type": 0.06924634964793093, "width": 1.3849269929586185}, {"abs_weight": 0.18400542835268924, "color": "#4e9322", "from": "POLESCAP", "to": "POLATTAK", "type": 0.18400542835268924, "width": 3.680108567053785}, {"abs_weight": 0.13813980116659336, "color": "#69aa33", "from": "POLABUSE", "to": "POLMURDR", "type": 0.13813980116659336, "width": 2.762796023331867}, {"abs_weight": 0.2919602770408233, "color": "#8e0152", "from": "FECHLD", "to": "FEPRESCH", "type": -0.2919602770408233, "width": 5.839205540816465}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": true,
+        "filter": [
+            "physics"
+        ]
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+                  // if this network requires displaying the configure window,
+                  // put it in its div
+                  options.configure["container"] = document.getElementById("config");
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
