@@ -80,6 +80,12 @@ def make_belief_network(dataframe, variables_of_interest=None, years_of_interest
     variables_list, correlation_matrix = my_pairwise_correlations(all_variables, df_subset, method, partial=is_partial, regularization=regularisation, sample_threshold=sample_threshold)
 
     # Initialize an undirected graph to represent the belief network.
+    graph = networkx_graph_from_vars_adj_mat(variables_list, correlation_matrix, threshold=threshold)
+
+    # Return the graph, correlation information, and the correlation matrix itself.
+    return graph, variables_list, correlation_matrix
+
+def networkx_graph_from_vars_adj_mat(variables_list, correlation_matrix, threshold=None):
     graph = nx.Graph()
     
     # Add edges between nodes (variables) with significant correlations as per the threshold.
@@ -94,5 +100,4 @@ def make_belief_network(dataframe, variables_of_interest=None, years_of_interest
                     # If no threshold is specified, add an edge for all pairs.
                     graph.add_edge(variables_list[i], variables_list[j], weight=correlation_matrix[i, j])
 
-    # Return the graph, correlation information, and the correlation matrix itself.
-    return graph, variables_list, correlation_matrix
+    return graph
