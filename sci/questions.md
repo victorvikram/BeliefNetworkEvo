@@ -1,6 +1,19 @@
 This file contains questions we would like to ask about the belief networks. 
 
-# Hypothesis/Question-motivated Analysis
+
+# Aug 2024
+## Hypothesis/Question motivated analysis
+1. What are the persistence structure (triangles) in the network and how do they move around over the course of history (e.g. polviews, partyid, preslast_demrep)?
+2. To what extent is there framework fracturing or perspectival polarization in different subpopulations? How much does this explain the polarization that we see (even the basic types like single-issue polarization)
+3. What are some general principles by which the network evolves?
+  - how does centrality tend to change?
+  - can frustration predict network change?
+  - does the network tend toward greater connectedness?
+4. Can we group belief vectors into clusters? Could the clusters correspond to different energy valleys in the space? What is the shape of these clusters and what are ways that beliefs could conceivably move through the space?
+
+
+# May 2024
+## Hypothesis/Question-motivated Analysis
 1. **Stability and instability of local structures in the belief network.**
   a. Does an analog of social balance hold on the network? That is, are "stable" triads more likely to persist than unstable ones?
   b. What about cycles? Cycles with an odd number of negative edges might be unstable.
@@ -27,7 +40,7 @@ This file contains questions we would like to ask about the belief networks.
 8. **Party and ideology** how do the variables that most strongly influence party identification change over time? is there some pattern where, for instance, certain variables are particularly well-suited to becoming associated with a particular party?
 9. **Structure flexibility** ising models have energy valleys of configurations that work together. I wonder if there is an analog of that for this system. Can we look at how many "allowable configurations" there are, and how distributed they are in the space? This might be tied up with modules because modules might be sets of nodes that can vary relatively independently of one another.
 
-# Exploratory Analysis
+## Exploratory Analysis
 1. **Rate of change**
   a. Does link creation and deletion happen at a constant rate? If not, when are the spikes?
   b. Can make a rate of change network to see what its structure is

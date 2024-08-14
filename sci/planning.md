@@ -1,4 +1,6 @@
-# Planning 
+# Planning 2024.
+
+# Planning 2024.05.16
 1. To what extent do beliefs constrain each other. [updated 16 May]
     *description* 
     - Constraint == one thing encouraging/discouraging (tax/subsidise) another from being adopted
@@ -18,7 +20,7 @@
     *long term*
     create a belief network that removes sprurious "common effect " correlations and that can be used to calculate an energy landcape. then, do analysis of the energy landscape to see how many valleys there are, how steep they are, and so on. also would be interesting if there was a measure of modularity where, if there are *n* modules, that would imply that there are 2^n energy valleys (each module would have two valleys, and they can be set independently of one another). and it would be cool to interpret degree and stuff in light of the energy valley interpretation — that is, I am hoping to link the energy valley interpretation with the network interpretation. what does high degree mean? what does modularity mean?
 
-2. do subgroups agree on network structure.
+2. are subgroups perspectivally polarized? How much? And how much does this drive changes in opinion?
     *so far*
     - This basically means: if we condition on some belief (like being conservative or liberal), in what way to the contraints between beliefs change? 
     - This would give some insight into "intepretation" of beliefs. I.e., how if conservatives and liberals have different patterns of contraints, this could imply either a different intepretation certain beliefs, or a different underlying method of taxation and subsidisation.  
