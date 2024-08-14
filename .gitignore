@@ -1,5 +1,7 @@
 dat/
 nbk/data/
 
+out/analyses/
+
 __pycache__/
 *.py[cod]
