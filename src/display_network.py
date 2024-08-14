@@ -18,12 +18,43 @@ def add_node_values_to_graph(G, node_values):
     
     return G
 
+def recenter_ranks(ranks, values):
+    smallest_pos_ind = np.argmin(np.where(np.array(values) > 0, values, np.inf))
+    actual_midpoint = ranks[smallest_pos_ind]
+    naive_vmin = 1
+    naive_vmax = len(ranks)
+    naive_midpoint = np.ceil(len(ranks) / 2) + 1
+
+    print("old", naive_vmin, actual_midpoint, naive_vmax)
+
+    vmin = naive_vmin if actual_midpoint >= naive_midpoint else 2*(actual_midpoint - 1) - naive_vmax
+    vmax = naive_vmax if actual_midpoint < naive_midpoint else 2*(actual_midpoint - 2) + 1
+
+    print("adjusted", vmin, actual_midpoint, vmax)
+    return vmin, vmax, actual_midpoint
 
 def display_graph_pyvis(G, abs_val_edges=True, remove_zero_edges=True, include_physics_buttons=True, 
-                        equal_edge_weights=False, rank_edge_coloring=False, size_highlight=[], border_highlight=[], shape_highlight=[], 
+                        equal_edge_weights=False, rank_edge_coloring=False, make_zero_edge_midpoint=True, size_highlight=[], border_highlight=[], shape_highlight=[], 
                         node_colormap=plt.cm.gist_earth, edge_colormap=plt.cm.PiYG, hi_fix_node=None, lo_fix_node=None):
     """
+    `abs_val_edges` - make the edge thicknesses and gravity based on the absolute value 
+    `remove_zero_edges` - remove any edges that have zero weights
+    `include_physics_buttons` - show physics buttons in the html to mess with the gravity and spring parameters 
+    `equal_edge_weights` - display all edges as having the same weight
+    `rank_edge_coloring` - color edges based on their rank rather than their value
+    `make_zero_edge_midpoint` - make zero the midpoint of the color scale for edges
+    `size_highlight` - a list of nodes to highlight by making them bigger
+    `border_highlight` - a list of nodes to highlight by making their border heavier
+    `node_colormap` - the colormap to use for coloring the nodes (which is done based on the node['value'])
+    `edge_colormap` - the colormap to use for coloring the edges (which is done based on e['type'] if it is in the edge dictionary, and if not
+    e['width'])
+    `hi_fix_node` - the node fixed to the top part of the canvas
+    `lo_fix_node` - the node fixed to the bottom part of the canvas 
+    
     takes a networkx graph and makes interactive visualization, color coding based on node values
+
+    # TODO make robust to zero edge weights
+    # TODO check centering
     """
     edges_to_remove = []
     for u, v, d in G.edges(data=True):
@@ -32,18 +63,32 @@ def display_graph_pyvis(G, abs_val_edges=True, remove_zero_edges=True, include_p
     
     G.remove_edges_from(edges_to_remove)
     
+    print("number of edges", len(G.edges(data=True)))
     # pos = nx.spring_layout(G, scale=1000)
     net = Network('1000px', '1000px', notebook=True, cdn_resources='remote')
     net.from_nx(G)
     
     edge_color_values = [e["type"] if "type" in e else e["width"] for e in net.edges]
-    max_edge_color_value = max(abs(min(edge_color_values)), max(edge_color_values))
+    max_edge_color_value = max(abs(min(edge_color_values)), max(edge_color_values)) if make_zero_edge_midpoint else max(edge_color_values)
+    min_edge_color_value = max(abs(min(edge_color_values)), max(edge_color_values)) if make_zero_edge_midpoint else min(edge_color_values)
     
     if rank_edge_coloring:
-        edge_color_values = rankdata(edge_color_values)
-        edge_norm = mcolors.Normalize(vmin=0, vmax=len(edge_color_values))
+        edge_rank_values = rankdata(edge_color_values)
+
+        if make_zero_edge_midpoint:
+            vmin, vmax, actual_midpoint = recenter_ranks(edge_rank_values, edge_color_values)
+            edge_norm = mcolors.Normalize(vmin=vmin, vmax=vmax)
+            
+            print("min", edge_norm(vmin))
+            print("zero", edge_norm(0))
+            print("first pos", edge_norm(actual_midpoint))
+            print("max", edge_norm(vmax))
+        else:
+            edge_norm = mcolors.Normalize(vmin=0, vmax=len(edge_rank_values))
+        
+        edge_color_values = edge_rank_values
     else:
-        edge_norm = mcolors.Normalize(vmin=-max_edge_color_value, vmax=max_edge_color_value)
+        edge_norm = mcolors.Normalize(vmin=-min_edge_color_value, vmax=max_edge_color_value)
 
     node_norm = mcolors.Normalize(vmin=-1, vmax=1)
 

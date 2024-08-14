@@ -6,19 +6,24 @@ import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
 
-def create_graph_from_adjacency_matrix(adj_matrix):
-    """
-    makes a networkx graph from adjacency matrix
-    TODO: combine with the other function that does this with a var list `make_networkx_graph...`
-    """
-    G = nx.Graph()
-    n = adj_matrix.shape[0]
-    for i in range(n):
-        G.add_node(i)
-        for j in range(i + 1, n):
-            if adj_matrix[i, j] > 0:
-                G.add_edge(i, j, weight=adj_matrix[i, j])
-    return G
+
+def create_graph_from_adj_mat(correlation_matrix, variables_list=None, threshold=0):
+    graph = nx.Graph()
+
+    if variables_list is None:
+        variables_list = list(range(correlation_matrix.shape[0]))
+    
+    for node in variables_list:
+        graph.add_node(node)
+    
+    # Add edges between nodes (variables) with significant correlations as per the threshold.
+    for i, var1 in enumerate(variables_list):
+        for j, var2 in enumerate(variables_list[i+1:], start=i+1):
+            # If a threshold is specified, only add an edge if the absolute correlation exceeds it.
+            if abs(correlation_matrix[i, j]) > threshold:
+                graph.add_edge(var1, var2, weight=correlation_matrix[i, j])
+
+    return graph
 
 def make_consistent_matrix(shuffled_var_list, var_list, mat):
     indices = []

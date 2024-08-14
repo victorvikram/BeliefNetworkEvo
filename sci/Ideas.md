@@ -1,10 +1,13 @@
+Questions
+- If we were to cluster beliefs into political ideologies, does it *really* make sense to invoke a split between physical/circumstantial attributes and beliefs? For example, is (should) being black, rich, addicted to drugs, lonely, or popular, part of your ideology? I want to sort out our concepts before we dive into analysis on ideologies.  
+
+
 Try different conditionings
 - condition on "supports big gob" and "supports small gov"
 - condition on race, class, gender, age
 - condition on internet usage
 - condition on beliefs that change a lot over time
 - generally, could condition on variables that are fairly polarised, so as to ensure sample size isn't crushed 
-
 
 Diffusion map approach for understanding the manifold in the high dimensional belief space 
 - see https://www.kaggle.com/code/rahulrajpl/diffusion-map-for-manifold-learning
@@ -24,5 +27,4 @@ Themes for narratives that I'm starting to build are:
 4. Structural evolution of BNs / dynamics of belief-spaces (also, linking the notion of vector cluster and belief network cluster would be interesting to me) 
 5. Ideology-respecting paths (just think this could be a good meme paper honestly)
 
-Question:
-- If we were to cluster beliefs into political ideologies, does it *really* make sense to invoke a split between physical/circumstantial attributes and beliefs? For example, is (should) being black, rich, addicted to drugs, lonely, or popular, part of your ideology? I want to sort out our concepts before we dive into analysis on ideologies.  
+

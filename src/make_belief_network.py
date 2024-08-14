@@ -7,6 +7,7 @@ from corr_networks import my_pairwise_correlations, pairwise_polychoric_correlat
 import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
+from graph_tools import create_graph_from_adj_mat
 
 import numpy as np
 
@@ -80,24 +81,7 @@ def make_belief_network(dataframe, variables_of_interest=None, years_of_interest
     variables_list, correlation_matrix = my_pairwise_correlations(all_variables, df_subset, method, partial=is_partial, regularization=regularisation, sample_threshold=sample_threshold)
 
     # Initialize an undirected graph to represent the belief network.
-    graph = networkx_graph_from_vars_adj_mat(variables_list, correlation_matrix, threshold=threshold)
+    graph = create_graph_from_adj_mat(correlation_matrix, variables_list, threshold=threshold)
 
     # Return the graph, correlation information, and the correlation matrix itself.
     return graph, variables_list, correlation_matrix
-
-def networkx_graph_from_vars_adj_mat(variables_list, correlation_matrix, threshold=None):
-    graph = nx.Graph()
-    
-    # Add edges between nodes (variables) with significant correlations as per the threshold.
-    for i in range(len(variables_list)):
-        for j in range(i+1, len(variables_list)):
-            if threshold:
-                # If a threshold is specified, only add an edge if the absolute correlation exceeds it.
-                if abs(correlation_matrix[i, j]) > threshold:
-                    graph.add_edge(variables_list[i], variables_list[j], weight=correlation_matrix[i, j])
-            else:
-                if abs(correlation_matrix[i, j]) > 0:
-                    # If no threshold is specified, add an edge for all pairs.
-                    graph.add_edge(variables_list[i], variables_list[j], weight=correlation_matrix[i, j])
-
-    return graph
