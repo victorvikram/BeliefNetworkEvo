@@ -1,0 +1,349 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script>function neighbourhoodHighlight(params) {
+  // console.log("in nieghbourhoodhighlight");
+  allNodes = nodes.get({ returnType: "Object" });
+  // originalNodes = JSON.parse(JSON.stringify(allNodes));
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    highlightActive = true;
+    var i, j;
+    var selectedNode = params.nodes[0];
+    var degrees = 2;
+
+    // mark all nodes as hard to read.
+    for (let nodeId in allNodes) {
+      // nodeColors[nodeId] = allNodes[nodeId].color;
+      allNodes[nodeId].color = "rgba(200,200,200,0.5)";
+      if (allNodes[nodeId].hiddenLabel === undefined) {
+        allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+    var connectedNodes = network.getConnectedNodes(selectedNode);
+    var allConnectedNodes = [];
+
+    // get the second degree nodes
+    for (i = 1; i < degrees; i++) {
+      for (j = 0; j < connectedNodes.length; j++) {
+        allConnectedNodes = allConnectedNodes.concat(
+          network.getConnectedNodes(connectedNodes[j])
+        );
+      }
+    }
+
+    // all second degree nodes get a different color and their label back
+    for (i = 0; i < allConnectedNodes.length; i++) {
+      // allNodes[allConnectedNodes[i]].color = "pink";
+      allNodes[allConnectedNodes[i]].color = "rgba(150,150,150,0.75)";
+      if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[allConnectedNodes[i]].label =
+          allNodes[allConnectedNodes[i]].hiddenLabel;
+        allNodes[allConnectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // all first degree nodes get their own color and their label back
+    for (i = 0; i < connectedNodes.length; i++) {
+      // allNodes[connectedNodes[i]].color = undefined;
+      allNodes[connectedNodes[i]].color = nodeColors[connectedNodes[i]];
+      if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[connectedNodes[i]].label =
+          allNodes[connectedNodes[i]].hiddenLabel;
+        allNodes[connectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // the main node gets its own color and its label back.
+    // allNodes[selectedNode].color = undefined;
+    allNodes[selectedNode].color = nodeColors[selectedNode];
+    if (allNodes[selectedNode].hiddenLabel !== undefined) {
+      allNodes[selectedNode].label = allNodes[selectedNode].hiddenLabel;
+      allNodes[selectedNode].hiddenLabel = undefined;
+    }
+  } else if (highlightActive === true) {
+    // console.log("highlightActive was true");
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      // allNodes[nodeId].color = "purple";
+      allNodes[nodeId].color = nodeColors[nodeId];
+      // delete allNodes[nodeId].color;
+      if (allNodes[nodeId].hiddenLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].hiddenLabel;
+        allNodes[nodeId].hiddenLabel = undefined;
+      }
+    }
+    highlightActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    // console.log("Nothing was selected");
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        // allNodes[nodeId].color = {};
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function filterHighlight(params) {
+  allNodes = nodes.get({ returnType: "Object" });
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    filterActive = true;
+    let selectedNodes = params.nodes;
+
+    // hiding all nodes and saving the label
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = true;
+      if (allNodes[nodeId].savedLabel === undefined) {
+        allNodes[nodeId].savedLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+
+    for (let i=0; i < selectedNodes.length; i++) {
+      allNodes[selectedNodes[i]].hidden = false;
+      if (allNodes[selectedNodes[i]].savedLabel !== undefined) {
+        allNodes[selectedNodes[i]].label = allNodes[selectedNodes[i]].savedLabel;
+        allNodes[selectedNodes[i]].savedLabel = undefined;
+      }
+    }
+
+  } else if (filterActive === true) {
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = false;
+      if (allNodes[nodeId].savedLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].savedLabel;
+        allNodes[nodeId].savedLabel = undefined;
+      }
+    }
+    filterActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function selectNode(nodes) {
+  network.selectNodes(nodes);
+  neighbourhoodHighlight({ nodes: nodes });
+  return nodes;
+}
+
+function selectNodes(nodes) {
+  network.selectNodes(nodes);
+  filterHighlight({nodes: nodes});
+  return nodes;
+}
+
+function highlightFilter(filter) {
+  let selectedNodes = []
+  let selectedProp = filter['property']
+  if (filter['item'] === 'node') {
+    let allNodes = nodes.get({ returnType: "Object" });
+    for (let nodeId in allNodes) {
+      if (allNodes[nodeId][selectedProp] && filter['value'].includes((allNodes[nodeId][selectedProp]).toString())) {
+        selectedNodes.push(nodeId)
+      }
+    }
+  }
+  else if (filter['item'] === 'edge'){
+    let allEdges = edges.get({returnType: 'object'});
+    // check if the selected property exists for selected edge and select the nodes connected to the edge
+    for (let edge in allEdges) {
+      if (allEdges[edge][selectedProp] && filter['value'].includes((allEdges[edge][selectedProp]).toString())) {
+        selectedNodes.push(allEdges[edge]['from'])
+        selectedNodes.push(allEdges[edge]['to'])
+      }
+    }
+  }
+  selectNodes(selectedNodes)
+}</script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+            
+            
+            
+            
+            
+
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 1000px;
+                 height: 1000px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "font": {"size": 20}, "id": "PARTYID", "label": "PARTYID", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "POLVIEWS", "label": "POLVIEWS", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATRACE", "label": "NATRACE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "EQWLTH", "label": "EQWLTH", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "HELPPOOR", "label": "HELPPOOR", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "PRESLAST_DEMREP", "label": "PRESLAST_DEMREP", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATENVIR", "label": "NATENVIR", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "GRASS", "label": "GRASS", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "ABPOOR", "label": "ABPOOR", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "ABANY", "label": "ABANY", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "DIVLAW", "label": "DIVLAW", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "PREMARSX", "label": "PREMARSX", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "TEENSEX", "label": "TEENSEX", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "HOMOSEX", "label": "HOMOSEX", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "LETDIE1", "label": "LETDIE1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "FEFAM", "label": "FEFAM", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATCITY", "label": "NATCITY", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATDRUG", "label": "NATDRUG", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATCHLD", "label": "NATCHLD", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CAPPUN", "label": "CAPPUN", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "AFFRMACT", "label": "AFFRMACT", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "WRKWAYUP", "label": "WRKWAYUP", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "RACDIF1", "label": "RACDIF1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "RACDIF3", "label": "RACDIF3", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATFARE", "label": "NATFARE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATHEAL", "label": "NATHEAL", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATARMS", "label": "NATARMS", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "GUNLAW", "label": "GUNLAW", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATEDUC", "label": "NATEDUC", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATPARK", "label": "NATPARK", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "SEXEDUC", "label": "SEXEDUC", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "ATTEND", "label": "ATTEND", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "ABNOMORE", "label": "ABNOMORE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "ABSINGLE", "label": "ABSINGLE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "PORNLAW", "label": "PORNLAW", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "SUICIDE1", "label": "SUICIDE1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "ABDEFECT", "label": "ABDEFECT", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "ABRAPE", "label": "ABRAPE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "SUICIDE2", "label": "SUICIDE2", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "PRAYER", "label": "PRAYER", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "XMARSEX", "label": "XMARSEX", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "SPKHOMO", "label": "SPKHOMO", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "COLHOMO", "label": "COLHOMO", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "RELITEN", "label": "RELITEN", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "COLATH", "label": "COLATH", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "LIBATH", "label": "LIBATH", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "SPKCOM", "label": "SPKCOM", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "SPKMIL", "label": "SPKMIL", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "LIBHOMO", "label": "LIBHOMO", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONCLERG", "label": "CONCLERG", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "SPANKING", "label": "SPANKING", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "RACDIF4", "label": "RACDIF4", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "FEPOL", "label": "FEPOL", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "FECHLD", "label": "FECHLD", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "FEPRESCH", "label": "FEPRESCH", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATSPAC", "label": "NATSPAC", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATSCI", "label": "NATSCI", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATSOC", "label": "NATSOC", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "ABHLTH", "label": "ABHLTH", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATCRIME", "label": "NATCRIME", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "COURTS", "label": "COURTS", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONARMY", "label": "CONARMY", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONFINAN", "label": "CONFINAN", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONFED", "label": "CONFED", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONMEDIC", "label": "CONMEDIC", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONJUDGE", "label": "CONJUDGE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONLEGIS", "label": "CONLEGIS", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "SPKATH", "label": "SPKATH", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "SPKRAC", "label": "SPKRAC", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "COLRAC", "label": "COLRAC", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "COLCOM", "label": "COLCOM", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "COLMIL", "label": "COLMIL", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "LIBRAC", "label": "LIBRAC", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "LIBCOM", "label": "LIBCOM", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "LIBMIL", "label": "LIBMIL", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "POLHITOK", "label": "POLHITOK", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "POLESCAP", "label": "POLESCAP", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "POLATTAK", "label": "POLATTAK", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "POSTLIFE", "label": "POSTLIFE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONBUS", "label": "CONBUS", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONEDUC", "label": "CONEDUC", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "RACDIF2", "label": "RACDIF2", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "HELPFUL", "label": "HELPFUL", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "FAIR", "label": "FAIR", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "TRUST", "label": "TRUST", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONSCI", "label": "CONSCI", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONLABOR", "label": "CONLABOR", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONPRESS", "label": "CONPRESS", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONTV", "label": "CONTV", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "TVHOURS", "label": "TVHOURS", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "POLABUSE", "label": "POLABUSE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "POLMURDR", "label": "POLMURDR", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NEWS", "label": "NEWS", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "VOTELAST", "label": "VOTELAST", "shape": "dot", "size": 10}]);
+                  edges = new vis.DataSet([{"from": "PARTYID", "to": "POLVIEWS", "width": 1.321602387876029}, {"from": "PARTYID", "to": "NATRACE", "width": 0.07811879917797726}, {"from": "PARTYID", "to": "EQWLTH", "width": 0.4113324326017842}, {"from": "PARTYID", "to": "HELPPOOR", "width": 0.5007313652755752}, {"from": "PARTYID", "to": "PRESLAST_DEMREP", "width": 9.21783679972796}, {"from": "POLVIEWS", "to": "NATENVIR", "width": 0.14543781124010358}, {"from": "POLVIEWS", "to": "EQWLTH", "width": 0.13222884699290066}, {"from": "POLVIEWS", "to": "GRASS", "width": 0.006526855161720749}, {"from": "POLVIEWS", "to": "ABPOOR", "width": 0.3938435176577601}, {"from": "POLVIEWS", "to": "ABANY", "width": 0.07820480440680387}, {"from": "POLVIEWS", "to": "DIVLAW", "width": 0.005386885251797724}, {"from": "POLVIEWS", "to": "PREMARSX", "width": 0.6801415278581191}, {"from": "POLVIEWS", "to": "TEENSEX", "width": 0.2500717658421359}, {"from": "POLVIEWS", "to": "HOMOSEX", "width": 1.1714693850403488}, {"from": "POLVIEWS", "to": "LETDIE1", "width": 0.09877522044864387}, {"from": "POLVIEWS", "to": "FEFAM", "width": 0.054707543867245426}, {"from": "POLVIEWS", "to": "PRESLAST_DEMREP", "width": 3.417726508603225}, {"from": "NATRACE", "to": "NATCITY", "width": 1.5864076645489855}, {"from": "NATRACE", "to": "NATDRUG", "width": 1.0456374736305876}, {"from": "NATRACE", "to": "NATCHLD", "width": 1.06821242670247}, {"from": "NATRACE", "to": "EQWLTH", "width": 0.2552612048862774}, {"from": "NATRACE", "to": "CAPPUN", "width": 0.24311556449221766}, {"from": "NATRACE", "to": "AFFRMACT", "width": 2.0993621283849757}, {"from": "NATRACE", "to": "WRKWAYUP", "width": 2.3145309352912373}, {"from": "NATRACE", "to": "RACDIF1", "width": 2.396839580655998}, {"from": "NATRACE", "to": "RACDIF3", "width": 1.261816971890898}, {"from": "NATRACE", "to": "HELPPOOR", "width": 0.6846832033603543}, {"from": "NATRACE", "to": "PRESLAST_DEMREP", "width": 1.7216772022834554}, {"from": "EQWLTH", "to": "NATFARE", "width": 0.7931720467832848}, {"from": "EQWLTH", "to": "NATCHLD", "width": 0.8418986922612226}, {"from": "EQWLTH", "to": "AFFRMACT", "width": 0.003889155585375054}, {"from": "EQWLTH", "to": "HELPPOOR", "width": 3.369954039386739}, {"from": "EQWLTH", "to": "PRESLAST_DEMREP", "width": 1.6788358681168958}, {"from": "HELPPOOR", "to": "NATFARE", "width": 1.1721096198791794}, {"from": "HELPPOOR", "to": "AFFRMACT", "width": 0.24366073586167783}, {"from": "HELPPOOR", "to": "PRESLAST_DEMREP", "width": 1.3341261591691402}, {"from": "PRESLAST_DEMREP", "to": "NATENVIR", "width": 1.0359154679025022}, {"from": "PRESLAST_DEMREP", "to": "NATHEAL", "width": 0.09921120221210497}, {"from": "PRESLAST_DEMREP", "to": "NATARMS", "width": 1.537928160876897}, {"from": "PRESLAST_DEMREP", "to": "NATFARE", "width": 0.6621484330065668}, {"from": "PRESLAST_DEMREP", "to": "NATCHLD", "width": 0.4672610407592875}, {"from": "PRESLAST_DEMREP", "to": "CAPPUN", "width": 0.25408277288947156}, {"from": "PRESLAST_DEMREP", "to": "GUNLAW", "width": 0.06603580549674291}, {"from": "PRESLAST_DEMREP", "to": "AFFRMACT", "width": 0.48625522860688136}, {"from": "PRESLAST_DEMREP", "to": "WRKWAYUP", "width": 0.08540196561981918}, {"from": "PRESLAST_DEMREP", "to": "RACDIF1", "width": 0.2706204746634345}, {"from": "NATENVIR", "to": "NATHEAL", "width": 0.9287481118150591}, {"from": "NATENVIR", "to": "NATEDUC", "width": 0.5866017406313871}, {"from": "NATENVIR", "to": "NATPARK", "width": 0.2547319302669654}, {"from": "NATENVIR", "to": "SEXEDUC", "width": 0.22323780043577737}, {"from": "NATENVIR", "to": "FEFAM", "width": 0.08897683380223428}, {"from": "GRASS", "to": "ATTEND", "width": 1.0273302631121477}, {"from": "GRASS", "to": "ABNOMORE", "width": 0.2374799117917385}, {"from": "GRASS", "to": "ABSINGLE", "width": 0.028096750623424087}, {"from": "GRASS", "to": "PREMARSX", "width": 0.4392827820483519}, {"from": "GRASS", "to": "TEENSEX", "width": 0.6156310722223833}, {"from": "GRASS", "to": "HOMOSEX", "width": 1.8698874419942753}, {"from": "GRASS", "to": "PORNLAW", "width": 0.7399786247605378}, {"from": "GRASS", "to": "LETDIE1", "width": 0.2070558949319798}, {"from": "GRASS", "to": "SUICIDE1", "width": 0.7247327429189951}, {"from": "ABPOOR", "to": "ATTEND", "width": 0.0007982010243878252}, {"from": "ABPOOR", "to": "ABDEFECT", "width": 0.49415820807508093}, {"from": "ABPOOR", "to": "ABNOMORE", "width": 5.074133625957532}, {"from": "ABPOOR", "to": "ABRAPE", "width": 1.2584392772934982}, {"from": "ABPOOR", "to": "ABSINGLE", "width": 5.787285640943996}, {"from": "ABPOOR", "to": "ABANY", "width": 4.4006479483406284}, {"from": "ABPOOR", "to": "HOMOSEX", "width": 0.31338455528967973}, {"from": "ABPOOR", "to": "PORNLAW", "width": 0.5212400676035803}, {"from": "ABPOOR", "to": "LETDIE1", "width": 0.26044435152859735}, {"from": "ABPOOR", "to": "SUICIDE2", "width": 0.3471194168482572}, {"from": "ABANY", "to": "ATTEND", "width": 0.02790649873565105}, {"from": "ABANY", "to": "PRAYER", "width": 0.4034641579343809}, {"from": "ABANY", "to": "ABDEFECT", "width": 0.4429834629980134}, {"from": "ABANY", "to": "ABNOMORE", "width": 4.933426505294992}, {"from": "ABANY", "to": "ABRAPE", "width": 0.2924852313149391}, {"from": "ABANY", "to": "ABSINGLE", "width": 5.545295218051254}, {"from": "ABANY", "to": "PREMARSX", "width": 0.2055102567455232}, {"from": "ABANY", "to": "HOMOSEX", "width": 0.6572633345527651}, {"from": "ABANY", "to": "PORNLAW", "width": 0.1542111724320613}, {"from": "ABANY", "to": "LETDIE1", "width": 0.055688641596835155}, {"from": "ABANY", "to": "SUICIDE1", "width": 0.6104856857896955}, {"from": "ABANY", "to": "SUICIDE2", "width": 0.0809652123006365}, {"from": "DIVLAW", "to": "PREMARSX", "width": 0.9203555501563885}, {"from": "DIVLAW", "to": "XMARSEX", "width": 0.07734018625595009}, {"from": "PREMARSX", "to": "SPKHOMO", "width": 0.32158989650276504}, {"from": "PREMARSX", "to": "COLHOMO", "width": 0.19722189915255306}, {"from": "PREMARSX", "to": "ATTEND", "width": 2.9964481618792247}, {"from": "PREMARSX", "to": "RELITEN", "width": 0.7707286008829105}, {"from": "PREMARSX", "to": "ABDEFECT", "width": 0.36086847334735606}, {"from": "PREMARSX", "to": "ABSINGLE", "width": 0.2852678965743574}, {"from": "PREMARSX", "to": "SEXEDUC", "width": 1.2509582195994964}, {"from": "PREMARSX", "to": "TEENSEX", "width": 3.081955149902051}, {"from": "PREMARSX", "to": "XMARSEX", "width": 0.5178372701548878}, {"from": "PREMARSX", "to": "HOMOSEX", "width": 2.996559066381325}, {"from": "PREMARSX", "to": "PORNLAW", "width": 2.2567343258207613}, {"from": "PREMARSX", "to": "LETDIE1", "width": 1.2996229458537336}, {"from": "PREMARSX", "to": "SUICIDE1", "width": 1.566255124691209}, {"from": "PREMARSX", "to": "FEFAM", "width": 1.008050271353214}, {"from": "TEENSEX", "to": "RELITEN", "width": 0.17539621909098846}, {"from": "TEENSEX", "to": "XMARSEX", "width": 2.851097815663741}, {"from": "TEENSEX", "to": "HOMOSEX", "width": 0.7487519645117429}, {"from": "TEENSEX", "to": "PORNLAW", "width": 1.5634032382858498}, {"from": "HOMOSEX", "to": "COLATH", "width": 0.31397969306824336}, {"from": "HOMOSEX", "to": "LIBATH", "width": 0.6406779271704217}, {"from": "HOMOSEX", "to": "SPKCOM", "width": 0.27746136574978225}, {"from": "HOMOSEX", "to": "SPKMIL", "width": 0.2264850143092528}, {"from": "HOMOSEX", "to": "SPKHOMO", "width": 0.3280805452973437}, {"from": "HOMOSEX", "to": "COLHOMO", "width": 0.9738023635227727}, {"from": "HOMOSEX", "to": "LIBHOMO", "width": 1.5519345942527527}, {"from": "HOMOSEX", "to": "RELITEN", "width": 0.8370802173506829}, {"from": "HOMOSEX", "to": "PRAYER", "width": 1.686252856665378}, {"from": "HOMOSEX", "to": "CONCLERG", "width": 0.44512537847548084}, {"from": "HOMOSEX", "to": "ABNOMORE", "width": 0.6636383491385907}, {"from": "HOMOSEX", "to": "ABSINGLE", "width": 0.38202131607411005}, {"from": "HOMOSEX", "to": "XMARSEX", "width": 1.1837398881907093}, {"from": "HOMOSEX", "to": "PORNLAW", "width": 1.4928492612240278}, {"from": "HOMOSEX", "to": "SPANKING", "width": 0.24003748258513163}, {"from": "HOMOSEX", "to": "SUICIDE1", "width": 1.0846876351161225}, {"from": "HOMOSEX", "to": "FEFAM", "width": 3.0135762392573673}, {"from": "HOMOSEX", "to": "RACDIF4", "width": 0.19522434234960126}, {"from": "LETDIE1", "to": "ATTEND", "width": 0.6032202427278162}, {"from": "LETDIE1", "to": "RELITEN", "width": 0.2952816690843009}, {"from": "LETDIE1", "to": "ABDEFECT", "width": 1.8521604330081658}, {"from": "LETDIE1", "to": "ABRAPE", "width": 1.4393762889922024}, {"from": "LETDIE1", "to": "ABSINGLE", "width": 0.22593513827820297}, {"from": "LETDIE1", "to": "SEXEDUC", "width": 0.4077303284284649}, {"from": "LETDIE1", "to": "PORNLAW", "width": 0.16663703655830103}, {"from": "LETDIE1", "to": "SUICIDE1", "width": 6.223480649368664}, {"from": "FEFAM", "to": "SPKCOM", "width": 0.07357278286703639}, {"from": "FEFAM", "to": "SPKHOMO", "width": 0.3346599904715359}, {"from": "FEFAM", "to": "COLHOMO", "width": 0.44709250215823515}, {"from": "FEFAM", "to": "LIBHOMO", "width": 0.40802797897708265}, {"from": "FEFAM", "to": "FEPOL", "width": 2.0634109882596094}, {"from": "FEFAM", "to": "SEXEDUC", "width": 0.9186298104309878}, {"from": "FEFAM", "to": "PORNLAW", "width": 0.03211222347190764}, {"from": "FEFAM", "to": "FECHLD", "width": 2.763749820351846}, {"from": "FEFAM", "to": "FEPRESCH", "width": 3.5869806925826433}, {"from": "NATSPAC", "to": "NATSCI", "width": 0.42529032433608005}, {"from": "NATHEAL", "to": "NATEDUC", "width": 1.0884164053738528}, {"from": "NATHEAL", "to": "NATSOC", "width": 1.3271778133436767}, {"from": "NATHEAL", "to": "NATCHLD", "width": 0.6657384015955856}, {"from": "NATEDUC", "to": "NATSOC", "width": 0.16691081244437822}, {"from": "NATEDUC", "to": "NATCHLD", "width": 1.264259089490438}, {"from": "NATPARK", "to": "NATCHLD", "width": 0.10286988799928012}, {"from": "SEXEDUC", "to": "ABDEFECT", "width": 1.186181953400494}, {"from": "SEXEDUC", "to": "ABHLTH", "width": 0.45003481410782314}, {"from": "SEXEDUC", "to": "ABRAPE", "width": 0.7254509386255787}, {"from": "NATSOC", "to": "NATCHLD", "width": 0.5107591684023659}, {"from": "NATCHLD", "to": "NATDRUG", "width": 0.20298737997515975}, {"from": "NATCHLD", "to": "NATFARE", "width": 0.7074486460864395}, {"from": "NATCRIME", "to": "NATDRUG", "width": 1.164539962880433}, {"from": "CAPPUN", "to": "COURTS", "width": 0.05809557026250983}, {"from": "CAPPUN", "to": "WRKWAYUP", "width": 0.7557418150595364}, {"from": "AFFRMACT", "to": "NATFARE", "width": 0.2697544304764984}, {"from": "AFFRMACT", "to": "WRKWAYUP", "width": 2.651180096230372}, {"from": "AFFRMACT", "to": "RACDIF1", "width": 1.0094206540479282}, {"from": "WRKWAYUP", "to": "NATARMS", "width": 0.038652294593562175}, {"from": "WRKWAYUP", "to": "SPANKING", "width": 0.012922489111753685}, {"from": "WRKWAYUP", "to": "RACDIF1", "width": 1.1412773805160736}, {"from": "WRKWAYUP", "to": "RACDIF3", "width": 1.6585408958053862}, {"from": "WRKWAYUP", "to": "RACDIF4", "width": 3.3342023185037792}, {"from": "RACDIF1", "to": "RACDIF3", "width": 2.4341806965114725}, {"from": "RACDIF1", "to": "RACDIF4", "width": 0.42022088257271334}, {"from": "RACDIF3", "to": "RACDIF4", "width": 0.4143457514524218}, {"from": "NATARMS", "to": "CONARMY", "width": 0.41817393365046185}, {"from": "CONARMY", "to": "CONFINAN", "width": 1.7357808213390267}, {"from": "CONARMY", "to": "CONFED", "width": 1.1613010823521355}, {"from": "CONARMY", "to": "CONMEDIC", "width": 0.8767853529313376}, {"from": "CONARMY", "to": "CONJUDGE", "width": 0.81207188961901}, {"from": "CONARMY", "to": "CONLEGIS", "width": 0.9332469094987415}, {"from": "SPKATH", "to": "COLATH", "width": 3.579977481224865}, {"from": "SPKATH", "to": "LIBATH", "width": 2.0174850185844115}, {"from": "SPKATH", "to": "SPKRAC", "width": 2.850709050128299}, {"from": "SPKATH", "to": "SPKCOM", "width": 3.7278377906610616}, {"from": "SPKATH", "to": "SPKMIL", "width": 1.9091915080218218}, {"from": "SPKATH", "to": "SPKHOMO", "width": 2.2274529280590167}, {"from": "SPKATH", "to": "PORNLAW", "width": 0.26594400309495847}, {"from": "SPKATH", "to": "SUICIDE1", "width": 0.11950807184654007}, {"from": "COLATH", "to": "LIBATH", "width": 1.4795524242613673}, {"from": "COLATH", "to": "COLRAC", "width": 5.046211016102658}, {"from": "COLATH", "to": "SPKCOM", "width": 0.6343784515385503}, {"from": "COLATH", "to": "COLCOM", "width": 1.736296446189987}, {"from": "COLATH", "to": "COLMIL", "width": 3.7579555746152598}, {"from": "COLATH", "to": "COLHOMO", "width": 1.2962695180456714}, {"from": "COLATH", "to": "PORNLAW", "width": 0.1102948540715698}, {"from": "LIBATH", "to": "LIBRAC", "width": 4.60407492394033}, {"from": "LIBATH", "to": "LIBCOM", "width": 3.558616797033049}, {"from": "LIBATH", "to": "LIBMIL", "width": 2.090081267221045}, {"from": "LIBATH", "to": "LIBHOMO", "width": 2.4335083503616004}, {"from": "LIBATH", "to": "PORNLAW", "width": 0.49775744574297426}, {"from": "LIBATH", "to": "SUICIDE1", "width": 0.3214678010188738}, {"from": "SPKRAC", "to": "COLRAC", "width": 5.771718813696641}, {"from": "SPKRAC", "to": "LIBRAC", "width": 3.0040673839017824}, {"from": "SPKRAC", "to": "SPKCOM", "width": 2.467660958544399}, {"from": "SPKRAC", "to": "SPKMIL", "width": 2.009523482964307}, {"from": "SPKCOM", "to": "COLCOM", "width": 2.3901177773876117}, {"from": "SPKCOM", "to": "LIBCOM", "width": 4.2867742519570005}, {"from": "SPKCOM", "to": "SPKMIL", "width": 3.301241821301926}, {"from": "SPKCOM", "to": "SPKHOMO", "width": 1.580893849962147}, {"from": "SPKCOM", "to": "PRAYER", "width": 0.10444608813343378}, {"from": "SPKCOM", "to": "SUICIDE1", "width": 0.34169550514046937}, {"from": "SPKMIL", "to": "COLMIL", "width": 6.1087330630121635}, {"from": "SPKMIL", "to": "LIBMIL", "width": 3.0770105424065886}, {"from": "SPKMIL", "to": "SPKHOMO", "width": 1.0933905438229112}, {"from": "SPKMIL", "to": "PORNLAW", "width": 0.3849923698980256}, {"from": "SPKHOMO", "to": "COLHOMO", "width": 8.028743671356493}, {"from": "SPKHOMO", "to": "LIBHOMO", "width": 2.8813395279724623}, {"from": "SPKHOMO", "to": "FEPOL", "width": 0.01077218766587341}, {"from": "PORNLAW", "to": "ATTEND", "width": 0.3802013878245496}, {"from": "PORNLAW", "to": "ABNOMORE", "width": 0.5488254163841779}, {"from": "SUICIDE1", "to": "LIBCOM", "width": 0.05623797216908841}, {"from": "SUICIDE1", "to": "LIBHOMO", "width": 0.22427061280867133}, {"from": "SUICIDE1", "to": "ATTEND", "width": 0.7200010415571566}, {"from": "SUICIDE1", "to": "RELITEN", "width": 0.5809562097976508}, {"from": "SUICIDE1", "to": "ABDEFECT", "width": 0.6949304357848236}, {"from": "SUICIDE1", "to": "ABNOMORE", "width": 0.6780449426504987}, {"from": "SUICIDE1", "to": "ABRAPE", "width": 0.0915078026812276}, {"from": "SUICIDE1", "to": "ABSINGLE", "width": 0.4100581990900625}, {"from": "SUICIDE1", "to": "SUICIDE2", "width": 0.679333873713392}, {"from": "COLRAC", "to": "LIBRAC", "width": 1.469506560185626}, {"from": "COLRAC", "to": "COLMIL", "width": 2.7153432030284517}, {"from": "COLCOM", "to": "LIBCOM", "width": 3.482201879978234}, {"from": "COLCOM", "to": "COLMIL", "width": 2.125985886430003}, {"from": "COLCOM", "to": "LIBMIL", "width": 0.029658131198009738}, {"from": "COLMIL", "to": "LIBMIL", "width": 2.1829107834846413}, {"from": "COLMIL", "to": "COLHOMO", "width": 0.6720018898964377}, {"from": "COLMIL", "to": "PRAYER", "width": 0.0878728714392283}, {"from": "COLHOMO", "to": "LIBHOMO", "width": 3.310334716706718}, {"from": "LIBRAC", "to": "LIBCOM", "width": 2.8767211497274685}, {"from": "LIBRAC", "to": "LIBMIL", "width": 2.582390915142917}, {"from": "LIBRAC", "to": "LIBHOMO", "width": 0.47438223680414554}, {"from": "LIBCOM", "to": "LIBMIL", "width": 4.3788711574696855}, {"from": "LIBCOM", "to": "LIBHOMO", "width": 2.7269588436801966}, {"from": "LIBCOM", "to": "PRAYER", "width": 0.5197367502968905}, {"from": "LIBCOM", "to": "POLHITOK", "width": 0.13280492896601656}, {"from": "LIBMIL", "to": "LIBHOMO", "width": 2.9590079039018367}, {"from": "LIBMIL", "to": "PRAYER", "width": 0.1368651124133659}, {"from": "PRAYER", "to": "ABNOMORE", "width": 0.13141692963256876}, {"from": "PRAYER", "to": "ABSINGLE", "width": 0.34435475055418935}, {"from": "POLHITOK", "to": "POLESCAP", "width": 3.952889539131308}, {"from": "POLHITOK", "to": "POLATTAK", "width": 1.7691211174697485}, {"from": "ATTEND", "to": "RELITEN", "width": 6.467834791928676}, {"from": "ATTEND", "to": "POSTLIFE", "width": 0.14922016354934742}, {"from": "ATTEND", "to": "CONCLERG", "width": 1.7333880053997672}, {"from": "ATTEND", "to": "ABDEFECT", "width": 0.010233007199629393}, {"from": "ATTEND", "to": "ABNOMORE", "width": 0.09855560407609537}, {"from": "ATTEND", "to": "ABRAPE", "width": 0.7220753985602142}, {"from": "ABNOMORE", "to": "CONCLERG", "width": 0.24580751960351363}, {"from": "ABNOMORE", "to": "ABDEFECT", "width": 1.0949656271746733}, {"from": "ABNOMORE", "to": "ABRAPE", "width": 0.6854841875249579}, {"from": "ABNOMORE", "to": "ABSINGLE", "width": 5.939635884144309}, {"from": "ABNOMORE", "to": "SUICIDE2", "width": 0.8157026655071347}, {"from": "ABSINGLE", "to": "ABDEFECT", "width": 0.5480530266843613}, {"from": "ABSINGLE", "to": "ABRAPE", "width": 0.5880329222407049}, {"from": "ABSINGLE", "to": "SUICIDE2", "width": 0.7608704782600191}, {"from": "RELITEN", "to": "POSTLIFE", "width": 0.24465961396961292}, {"from": "RELITEN", "to": "CONCLERG", "width": 0.23603053944120797}, {"from": "CONCLERG", "to": "CONBUS", "width": 0.10043217786810417}, {"from": "CONCLERG", "to": "CONEDUC", "width": 0.4994094164163104}, {"from": "CONCLERG", "to": "CONLEGIS", "width": 0.3764098310031034}, {"from": "ABDEFECT", "to": "ABHLTH", "width": 5.205042307619547}, {"from": "ABDEFECT", "to": "ABRAPE", "width": 4.471458054634455}, {"from": "ABRAPE", "to": "ABHLTH", "width": 4.41989472631238}, {"from": "RACDIF4", "to": "RACDIF2", "width": 0.9835523735978906}, {"from": "HELPFUL", "to": "FAIR", "width": 4.231194073202519}, {"from": "HELPFUL", "to": "TRUST", "width": 2.023287497648643}, {"from": "FAIR", "to": "TRUST", "width": 3.419257221342478}, {"from": "CONFINAN", "to": "CONBUS", "width": 2.4791601636992273}, {"from": "CONFINAN", "to": "CONMEDIC", "width": 1.2591269974729082}, {"from": "CONFINAN", "to": "CONJUDGE", "width": 0.9318508334118641}, {"from": "CONFINAN", "to": "CONSCI", "width": 0.5905452230968236}, {"from": "CONFINAN", "to": "CONLEGIS", "width": 1.5182320545443768}, {"from": "CONBUS", "to": "CONMEDIC", "width": 0.18748144184807103}, {"from": "CONBUS", "to": "CONJUDGE", "width": 0.5846711103859665}, {"from": "CONBUS", "to": "CONSCI", "width": 1.1808282798270366}, {"from": "CONBUS", "to": "CONLEGIS", "width": 0.1794306778862697}, {"from": "CONMEDIC", "to": "CONEDUC", "width": 1.5500235078171085}, {"from": "CONMEDIC", "to": "CONJUDGE", "width": 0.3479428814489032}, {"from": "CONMEDIC", "to": "CONSCI", "width": 2.0016503015641094}, {"from": "CONMEDIC", "to": "CONLEGIS", "width": 0.046899876428407386}, {"from": "CONJUDGE", "to": "CONFED", "width": 2.12248601453825}, {"from": "CONJUDGE", "to": "CONSCI", "width": 2.809339027560451}, {"from": "CONJUDGE", "to": "CONLEGIS", "width": 3.0285889442883396}, {"from": "CONLEGIS", "to": "CONEDUC", "width": 0.8639950904238946}, {"from": "CONLEGIS", "to": "CONFED", "width": 4.400331434876833}, {"from": "CONLEGIS", "to": "CONLABOR", "width": 0.8267729421474981}, {"from": "CONLEGIS", "to": "CONPRESS", "width": 1.25049358915474}, {"from": "CONEDUC", "to": "CONFED", "width": 0.5271270202272461}, {"from": "CONEDUC", "to": "CONLABOR", "width": 0.40289485313365336}, {"from": "CONFED", "to": "CONLABOR", "width": 1.085293430972594}, {"from": "CONLABOR", "to": "CONPRESS", "width": 0.6647131951321973}, {"from": "CONPRESS", "to": "CONTV", "width": 3.21071083168367}, {"from": "CONTV", "to": "TVHOURS", "width": 0.2991191471120808}, {"from": "POLESCAP", "to": "POLATTAK", "width": 3.043627094342238}, {"from": "POLABUSE", "to": "POLMURDR", "width": 1.2790129501519976}, {"from": "NEWS", "to": "VOTELAST", "width": 0.6862771562634284}, {"from": "FECHLD", "to": "FEPRESCH", "width": 4.7352724003731055}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

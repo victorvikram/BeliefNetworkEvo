@@ -1,0 +1,349 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script>function neighbourhoodHighlight(params) {
+  // console.log("in nieghbourhoodhighlight");
+  allNodes = nodes.get({ returnType: "Object" });
+  // originalNodes = JSON.parse(JSON.stringify(allNodes));
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    highlightActive = true;
+    var i, j;
+    var selectedNode = params.nodes[0];
+    var degrees = 2;
+
+    // mark all nodes as hard to read.
+    for (let nodeId in allNodes) {
+      // nodeColors[nodeId] = allNodes[nodeId].color;
+      allNodes[nodeId].color = "rgba(200,200,200,0.5)";
+      if (allNodes[nodeId].hiddenLabel === undefined) {
+        allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+    var connectedNodes = network.getConnectedNodes(selectedNode);
+    var allConnectedNodes = [];
+
+    // get the second degree nodes
+    for (i = 1; i < degrees; i++) {
+      for (j = 0; j < connectedNodes.length; j++) {
+        allConnectedNodes = allConnectedNodes.concat(
+          network.getConnectedNodes(connectedNodes[j])
+        );
+      }
+    }
+
+    // all second degree nodes get a different color and their label back
+    for (i = 0; i < allConnectedNodes.length; i++) {
+      // allNodes[allConnectedNodes[i]].color = "pink";
+      allNodes[allConnectedNodes[i]].color = "rgba(150,150,150,0.75)";
+      if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[allConnectedNodes[i]].label =
+          allNodes[allConnectedNodes[i]].hiddenLabel;
+        allNodes[allConnectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // all first degree nodes get their own color and their label back
+    for (i = 0; i < connectedNodes.length; i++) {
+      // allNodes[connectedNodes[i]].color = undefined;
+      allNodes[connectedNodes[i]].color = nodeColors[connectedNodes[i]];
+      if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[connectedNodes[i]].label =
+          allNodes[connectedNodes[i]].hiddenLabel;
+        allNodes[connectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // the main node gets its own color and its label back.
+    // allNodes[selectedNode].color = undefined;
+    allNodes[selectedNode].color = nodeColors[selectedNode];
+    if (allNodes[selectedNode].hiddenLabel !== undefined) {
+      allNodes[selectedNode].label = allNodes[selectedNode].hiddenLabel;
+      allNodes[selectedNode].hiddenLabel = undefined;
+    }
+  } else if (highlightActive === true) {
+    // console.log("highlightActive was true");
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      // allNodes[nodeId].color = "purple";
+      allNodes[nodeId].color = nodeColors[nodeId];
+      // delete allNodes[nodeId].color;
+      if (allNodes[nodeId].hiddenLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].hiddenLabel;
+        allNodes[nodeId].hiddenLabel = undefined;
+      }
+    }
+    highlightActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    // console.log("Nothing was selected");
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        // allNodes[nodeId].color = {};
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function filterHighlight(params) {
+  allNodes = nodes.get({ returnType: "Object" });
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    filterActive = true;
+    let selectedNodes = params.nodes;
+
+    // hiding all nodes and saving the label
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = true;
+      if (allNodes[nodeId].savedLabel === undefined) {
+        allNodes[nodeId].savedLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+
+    for (let i=0; i < selectedNodes.length; i++) {
+      allNodes[selectedNodes[i]].hidden = false;
+      if (allNodes[selectedNodes[i]].savedLabel !== undefined) {
+        allNodes[selectedNodes[i]].label = allNodes[selectedNodes[i]].savedLabel;
+        allNodes[selectedNodes[i]].savedLabel = undefined;
+      }
+    }
+
+  } else if (filterActive === true) {
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = false;
+      if (allNodes[nodeId].savedLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].savedLabel;
+        allNodes[nodeId].savedLabel = undefined;
+      }
+    }
+    filterActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function selectNode(nodes) {
+  network.selectNodes(nodes);
+  neighbourhoodHighlight({ nodes: nodes });
+  return nodes;
+}
+
+function selectNodes(nodes) {
+  network.selectNodes(nodes);
+  filterHighlight({nodes: nodes});
+  return nodes;
+}
+
+function highlightFilter(filter) {
+  let selectedNodes = []
+  let selectedProp = filter['property']
+  if (filter['item'] === 'node') {
+    let allNodes = nodes.get({ returnType: "Object" });
+    for (let nodeId in allNodes) {
+      if (allNodes[nodeId][selectedProp] && filter['value'].includes((allNodes[nodeId][selectedProp]).toString())) {
+        selectedNodes.push(nodeId)
+      }
+    }
+  }
+  else if (filter['item'] === 'edge'){
+    let allEdges = edges.get({returnType: 'object'});
+    // check if the selected property exists for selected edge and select the nodes connected to the edge
+    for (let edge in allEdges) {
+      if (allEdges[edge][selectedProp] && filter['value'].includes((allEdges[edge][selectedProp]).toString())) {
+        selectedNodes.push(allEdges[edge]['from'])
+        selectedNodes.push(allEdges[edge]['to'])
+      }
+    }
+  }
+  selectNodes(selectedNodes)
+}</script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+            
+            
+            
+            
+            
+
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 1000px;
+                 height: 1000px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "font": {"size": 20}, "id": "PARTYID", "label": "PARTYID", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "POLVIEWS", "label": "POLVIEWS", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATRACE", "label": "NATRACE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATSOC", "label": "NATSOC", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "EQWLTH", "label": "EQWLTH", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CAPPUN", "label": "CAPPUN", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONBUS", "label": "CONBUS", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "DIVLAW", "label": "DIVLAW", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "POLESCAP", "label": "POLESCAP", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "TVHOURS", "label": "TVHOURS", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "RACDIF1", "label": "RACDIF1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "HELPPOOR", "label": "HELPPOOR", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "PRESLAST_DEMREP", "label": "PRESLAST_DEMREP", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATENVIR", "label": "NATENVIR", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATCITY", "label": "NATCITY", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATARMS", "label": "NATARMS", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATCHLD", "label": "NATCHLD", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "GRASS", "label": "GRASS", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "ATTEND", "label": "ATTEND", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "RELITEN", "label": "RELITEN", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "PRAYER", "label": "PRAYER", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "WRKWAYUP", "label": "WRKWAYUP", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONLABOR", "label": "CONLABOR", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONPRESS", "label": "CONPRESS", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "ABPOOR", "label": "ABPOOR", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "ABRAPE", "label": "ABRAPE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "ABANY", "label": "ABANY", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "SEXEDUC", "label": "SEXEDUC", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "PREMARSX", "label": "PREMARSX", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "TEENSEX", "label": "TEENSEX", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "XMARSEX", "label": "XMARSEX", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "HOMOSEX", "label": "HOMOSEX", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "SPANKING", "label": "SPANKING", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "LETDIE1", "label": "LETDIE1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "FECHLD", "label": "FECHLD", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "FEPRESCH", "label": "FEPRESCH", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "FEFAM", "label": "FEFAM", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATDRUG", "label": "NATDRUG", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATEDUC", "label": "NATEDUC", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATAID", "label": "NATAID", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATFARE", "label": "NATFARE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATMASS", "label": "NATMASS", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATPARK", "label": "NATPARK", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "GUNLAW", "label": "GUNLAW", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "AFFRMACT", "label": "AFFRMACT", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "FEPOL", "label": "FEPOL", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "POLHITOK", "label": "POLHITOK", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "RACDIF3", "label": "RACDIF3", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "RACDIF4", "label": "RACDIF4", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATSPAC", "label": "NATSPAC", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATHEAL", "label": "NATHEAL", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATCRIME", "label": "NATCRIME", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "FAIR", "label": "FAIR", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONFINAN", "label": "CONFINAN", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "LIBATH", "label": "LIBATH", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "SPKRAC", "label": "SPKRAC", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "SPKCOM", "label": "SPKCOM", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "LIBCOM", "label": "LIBCOM", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "SPKMIL", "label": "SPKMIL", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "LIBMIL", "label": "LIBMIL", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "TRUST", "label": "TRUST", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "VOTELAST", "label": "VOTELAST", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "COURTS", "label": "COURTS", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONARMY", "label": "CONARMY", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "HELPFUL", "label": "HELPFUL", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONCLERG", "label": "CONCLERG", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONFED", "label": "CONFED", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONMEDIC", "label": "CONMEDIC", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONJUDGE", "label": "CONJUDGE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONSCI", "label": "CONSCI", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONLEGIS", "label": "CONLEGIS", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "POSTLIFE", "label": "POSTLIFE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONTV", "label": "CONTV", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "PORNLAW", "label": "PORNLAW", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "SUICIDE1", "label": "SUICIDE1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "POLABUSE", "label": "POLABUSE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "POLATTAK", "label": "POLATTAK", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "COLATH", "label": "COLATH", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "COLMIL", "label": "COLMIL", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "RACDIF2", "label": "RACDIF2", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "ABDEFECT", "label": "ABDEFECT", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATSCI", "label": "NATSCI", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NATROAD", "label": "NATROAD", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "SPKATH", "label": "SPKATH", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "COLHOMO", "label": "COLHOMO", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "ABNOMORE", "label": "ABNOMORE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "ABSINGLE", "label": "ABSINGLE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "PRESLAST_NONCONFORM", "label": "PRESLAST_NONCONFORM", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "COLCOM", "label": "COLCOM", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "SUICIDE2", "label": "SUICIDE2", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "CONEDUC", "label": "CONEDUC", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "ABHLTH", "label": "ABHLTH", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "SPKHOMO", "label": "SPKHOMO", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "LIBHOMO", "label": "LIBHOMO", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "LIBRAC", "label": "LIBRAC", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "POLMURDR", "label": "POLMURDR", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "NEWS", "label": "NEWS", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "COLRAC", "label": "COLRAC", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"size": 20}, "id": "GETAHEAD", "label": "GETAHEAD", "shape": "dot", "size": 10}]);
+                  edges = new vis.DataSet([{"from": "PARTYID", "to": "POLVIEWS", "width": 1.7360653551473504}, {"from": "PARTYID", "to": "NATRACE", "width": 0.48627797450957105}, {"from": "PARTYID", "to": "NATSOC", "width": 0.007528777198451713}, {"from": "PARTYID", "to": "EQWLTH", "width": 0.7733372603253466}, {"from": "PARTYID", "to": "CAPPUN", "width": 0.2980082481571708}, {"from": "PARTYID", "to": "CONBUS", "width": 0.2841401757150587}, {"from": "PARTYID", "to": "DIVLAW", "width": 0.08097060445888021}, {"from": "PARTYID", "to": "POLESCAP", "width": 0.20564607306395963}, {"from": "PARTYID", "to": "TVHOURS", "width": 0.0022491181910204846}, {"from": "PARTYID", "to": "RACDIF1", "width": 0.05502425367191896}, {"from": "PARTYID", "to": "HELPPOOR", "width": 0.9316270908318189}, {"from": "PARTYID", "to": "PRESLAST_DEMREP", "width": 10.183549814815985}, {"from": "POLVIEWS", "to": "NATENVIR", "width": 0.9157207601619838}, {"from": "POLVIEWS", "to": "NATCITY", "width": 0.3920730764923589}, {"from": "POLVIEWS", "to": "NATARMS", "width": 0.6222869995616528}, {"from": "POLVIEWS", "to": "NATCHLD", "width": 0.2915368542507675}, {"from": "POLVIEWS", "to": "EQWLTH", "width": 0.9185480268949525}, {"from": "POLVIEWS", "to": "GRASS", "width": 0.7448195526079802}, {"from": "POLVIEWS", "to": "ATTEND", "width": 0.017023626082427915}, {"from": "POLVIEWS", "to": "RELITEN", "width": 0.1156842973682781}, {"from": "POLVIEWS", "to": "PRAYER", "width": 0.06613369712950348}, {"from": "POLVIEWS", "to": "WRKWAYUP", "width": 0.5359314538447467}, {"from": "POLVIEWS", "to": "CONLABOR", "width": 0.36345043369656427}, {"from": "POLVIEWS", "to": "CONPRESS", "width": 0.07398669665692237}, {"from": "POLVIEWS", "to": "ABPOOR", "width": 0.6434778659940853}, {"from": "POLVIEWS", "to": "ABRAPE", "width": 0.276216156361785}, {"from": "POLVIEWS", "to": "ABANY", "width": 0.2941251401198232}, {"from": "POLVIEWS", "to": "SEXEDUC", "width": 0.6362575308157654}, {"from": "POLVIEWS", "to": "DIVLAW", "width": 1.0507780040572652}, {"from": "POLVIEWS", "to": "PREMARSX", "width": 0.6490529816184685}, {"from": "POLVIEWS", "to": "TEENSEX", "width": 0.9788890202355293}, {"from": "POLVIEWS", "to": "XMARSEX", "width": 0.02028025564975038}, {"from": "POLVIEWS", "to": "HOMOSEX", "width": 1.2724812713478375}, {"from": "POLVIEWS", "to": "SPANKING", "width": 0.012691358142515503}, {"from": "POLVIEWS", "to": "LETDIE1", "width": 0.7514442706844058}, {"from": "POLVIEWS", "to": "FECHLD", "width": 0.08898550090321083}, {"from": "POLVIEWS", "to": "FEPRESCH", "width": 0.06613050555195636}, {"from": "POLVIEWS", "to": "FEFAM", "width": 0.5151451095319239}, {"from": "POLVIEWS", "to": "HELPPOOR", "width": 0.5401623629824945}, {"from": "POLVIEWS", "to": "PRESLAST_DEMREP", "width": 3.430570512941725}, {"from": "NATRACE", "to": "NATENVIR", "width": 0.32905622587396455}, {"from": "NATRACE", "to": "NATCITY", "width": 2.8830439578530376}, {"from": "NATRACE", "to": "NATDRUG", "width": 2.081610221314188}, {"from": "NATRACE", "to": "NATEDUC", "width": 0.6479377071324508}, {"from": "NATRACE", "to": "NATAID", "width": 1.1247914037978337}, {"from": "NATRACE", "to": "NATFARE", "width": 0.5808615655147511}, {"from": "NATRACE", "to": "NATMASS", "width": 0.666010404206387}, {"from": "NATRACE", "to": "NATPARK", "width": 0.4402873137473517}, {"from": "NATRACE", "to": "NATCHLD", "width": 1.6112179956834556}, {"from": "NATRACE", "to": "EQWLTH", "width": 0.5771241555328023}, {"from": "NATRACE", "to": "CAPPUN", "width": 0.9043595251756307}, {"from": "NATRACE", "to": "GUNLAW", "width": 0.2430775946328603}, {"from": "NATRACE", "to": "AFFRMACT", "width": 2.4183376026780405}, {"from": "NATRACE", "to": "WRKWAYUP", "width": 2.507942139725251}, {"from": "NATRACE", "to": "FEPOL", "width": 0.06937830652121021}, {"from": "NATRACE", "to": "SEXEDUC", "width": 0.22428386479147316}, {"from": "NATRACE", "to": "POLHITOK", "width": 0.4888722669132244}, {"from": "NATRACE", "to": "POLESCAP", "width": 0.6319275710982258}, {"from": "NATRACE", "to": "FEPRESCH", "width": 0.1515148010397782}, {"from": "NATRACE", "to": "FEFAM", "width": 0.28711636265150825}, {"from": "NATRACE", "to": "RACDIF1", "width": 2.918821970819463}, {"from": "NATRACE", "to": "RACDIF3", "width": 1.9077613255551613}, {"from": "NATRACE", "to": "RACDIF4", "width": 0.6110430866392544}, {"from": "NATRACE", "to": "HELPPOOR", "width": 1.1177645988831504}, {"from": "NATRACE", "to": "PRESLAST_DEMREP", "width": 1.3386273895249374}, {"from": "NATSOC", "to": "NATSPAC", "width": 0.3183290974966667}, {"from": "NATSOC", "to": "NATHEAL", "width": 2.6833956513961743}, {"from": "NATSOC", "to": "NATCITY", "width": 0.013363819219983784}, {"from": "NATSOC", "to": "NATCRIME", "width": 0.7351423399732759}, {"from": "NATSOC", "to": "NATEDUC", "width": 1.3909877556238726}, {"from": "NATSOC", "to": "NATFARE", "width": 0.36041912029727496}, {"from": "NATSOC", "to": "NATCHLD", "width": 1.5427899678819075}, {"from": "NATSOC", "to": "EQWLTH", "width": 1.0764306442346874}, {"from": "NATSOC", "to": "PRAYER", "width": 0.3547527998282658}, {"from": "NATSOC", "to": "FAIR", "width": 0.18906531159951423}, {"from": "NATSOC", "to": "CONFINAN", "width": 0.23779218754890802}, {"from": "NATSOC", "to": "SPANKING", "width": 0.0855251447144534}, {"from": "NATSOC", "to": "POLHITOK", "width": 0.2680462982145198}, {"from": "NATSOC", "to": "HELPPOOR", "width": 0.761140589643372}, {"from": "NATSOC", "to": "PRESLAST_DEMREP", "width": 0.19605638231448286}, {"from": "EQWLTH", "to": "NATSPAC", "width": 0.5474520403396452}, {"from": "EQWLTH", "to": "NATDRUG", "width": 0.6556890708676486}, {"from": "EQWLTH", "to": "NATARMS", "width": 0.06579292570074483}, {"from": "EQWLTH", "to": "NATFARE", "width": 1.5416390747462017}, {"from": "EQWLTH", "to": "NATCHLD", "width": 1.5239645702558309}, {"from": "EQWLTH", "to": "LIBATH", "width": 0.28236697353625484}, {"from": "EQWLTH", "to": "SPKRAC", "width": 0.049334403176826636}, {"from": "EQWLTH", "to": "SPKCOM", "width": 0.042949873341567024}, {"from": "EQWLTH", "to": "LIBCOM", "width": 0.25238643547291595}, {"from": "EQWLTH", "to": "SPKMIL", "width": 0.29007906245226545}, {"from": "EQWLTH", "to": "LIBMIL", "width": 0.1504385264006803}, {"from": "EQWLTH", "to": "GUNLAW", "width": 0.7183911725311276}, {"from": "EQWLTH", "to": "AFFRMACT", "width": 0.7208067866675151}, {"from": "EQWLTH", "to": "TRUST", "width": 0.7124394495087312}, {"from": "EQWLTH", "to": "CONFINAN", "width": 0.02988760342078349}, {"from": "EQWLTH", "to": "CONBUS", "width": 1.5156401378409123}, {"from": "EQWLTH", "to": "CONLABOR", "width": 0.5339075271334554}, {"from": "EQWLTH", "to": "DIVLAW", "width": 0.07712277057063342}, {"from": "EQWLTH", "to": "RACDIF1", "width": 0.2390496720750089}, {"from": "EQWLTH", "to": "HELPPOOR", "width": 4.18040903038322}, {"from": "EQWLTH", "to": "PRESLAST_DEMREP", "width": 1.580840291102017}, {"from": "EQWLTH", "to": "VOTELAST", "width": 0.31680670988805915}, {"from": "CAPPUN", "to": "NATARMS", "width": 0.5635984199973072}, {"from": "CAPPUN", "to": "NATAID", "width": 0.8966181233836155}, {"from": "CAPPUN", "to": "NATFARE", "width": 0.19731483752712764}, {"from": "CAPPUN", "to": "COURTS", "width": 1.7897490590785199}, {"from": "CAPPUN", "to": "AFFRMACT", "width": 0.438285349921433}, {"from": "CAPPUN", "to": "WRKWAYUP", "width": 1.6260583401692073}, {"from": "CAPPUN", "to": "CONBUS", "width": 0.1628296943394592}, {"from": "CAPPUN", "to": "CONARMY", "width": 0.05152856979805252}, {"from": "CAPPUN", "to": "SPANKING", "width": 0.9835616172764727}, {"from": "CAPPUN", "to": "LETDIE1", "width": 1.38162584782445}, {"from": "CAPPUN", "to": "POLHITOK", "width": 1.142959537758262}, {"from": "CAPPUN", "to": "POLESCAP", "width": 0.7779090845146485}, {"from": "CAPPUN", "to": "RACDIF3", "width": 0.41011068973963183}, {"from": "CAPPUN", "to": "HELPPOOR", "width": 0.6975543491039871}, {"from": "CAPPUN", "to": "PRESLAST_DEMREP", "width": 0.8253817487757696}, {"from": "CONBUS", "to": "HELPFUL", "width": 0.3559488083712426}, {"from": "CONBUS", "to": "TRUST", "width": 0.20306182213191912}, {"from": "CONBUS", "to": "CONFINAN", "width": 3.457478208654183}, {"from": "CONBUS", "to": "CONCLERG", "width": 1.4481500541513839}, {"from": "CONBUS", "to": "CONFED", "width": 0.3407206950105426}, {"from": "CONBUS", "to": "CONPRESS", "width": 0.07139705059749141}, {"from": "CONBUS", "to": "CONMEDIC", "width": 1.0369102508516983}, {"from": "CONBUS", "to": "CONJUDGE", "width": 1.196397014549533}, {"from": "CONBUS", "to": "CONSCI", "width": 2.0930599394857845}, {"from": "CONBUS", "to": "CONLEGIS", "width": 0.7271111693528367}, {"from": "DIVLAW", "to": "COURTS", "width": 0.004926455998912772}, {"from": "DIVLAW", "to": "ATTEND", "width": 0.43979707344837077}, {"from": "DIVLAW", "to": "POSTLIFE", "width": 0.5203075360857154}, {"from": "DIVLAW", "to": "HELPFUL", "width": 0.2136521111997776}, {"from": "DIVLAW", "to": "FAIR", "width": 0.13013564769593483}, {"from": "DIVLAW", "to": "CONTV", "width": 0.8626434429052316}, {"from": "DIVLAW", "to": "PREMARSX", "width": 1.7098147003299742}, {"from": "DIVLAW", "to": "XMARSEX", "width": 1.452928736971634}, {"from": "DIVLAW", "to": "PORNLAW", "width": 0.8852514919874841}, {"from": "DIVLAW", "to": "POLESCAP", "width": 0.5040165241265151}, {"from": "DIVLAW", "to": "HELPPOOR", "width": 0.9806324690837285}, {"from": "DIVLAW", "to": "PRESLAST_DEMREP", "width": 0.35382932716576954}, {"from": "POLESCAP", "to": "NATARMS", "width": 0.7919543517662614}, {"from": "POLESCAP", "to": "CONARMY", "width": 0.10765602507407968}, {"from": "POLESCAP", "to": "LETDIE1", "width": 0.19610975730754096}, {"from": "POLESCAP", "to": "SUICIDE1", "width": 0.013173742225081216}, {"from": "POLESCAP", "to": "POLHITOK", "width": 5.130739398603375}, {"from": "POLESCAP", "to": "POLABUSE", "width": 0.4087220132930875}, {"from": "POLESCAP", "to": "POLATTAK", "width": 4.379136771804188}, {"from": "POLESCAP", "to": "HELPPOOR", "width": 0.005967198357633533}, {"from": "POLESCAP", "to": "PRESLAST_DEMREP", "width": 0.6357868659158449}, {"from": "POLESCAP", "to": "VOTELAST", "width": 0.22422241042457547}, {"from": "TVHOURS", "to": "COLATH", "width": 0.3281545228854248}, {"from": "TVHOURS", "to": "LIBCOM", "width": 0.005605648498286616}, {"from": "TVHOURS", "to": "COLMIL", "width": 0.036580136041378136}, {"from": "TVHOURS", "to": "PRAYER", "width": 0.1965711540910885}, {"from": "TVHOURS", "to": "FAIR", "width": 0.1318843165474534}, {"from": "TVHOURS", "to": "CONTV", "width": 2.2160189120674954}, {"from": "TVHOURS", "to": "CONLEGIS", "width": 0.04368850346016141}, {"from": "TVHOURS", "to": "SPANKING", "width": 0.01779015396194026}, {"from": "TVHOURS", "to": "FEFAM", "width": 0.0018717914205382332}, {"from": "TVHOURS", "to": "RACDIF2", "width": 0.1504668403789574}, {"from": "RACDIF1", "to": "AFFRMACT", "width": 1.757909336812888}, {"from": "RACDIF1", "to": "WRKWAYUP", "width": 1.501679663587354}, {"from": "RACDIF1", "to": "CONARMY", "width": 0.16314316415276905}, {"from": "RACDIF1", "to": "RACDIF3", "width": 3.446761111705539}, {"from": "RACDIF1", "to": "RACDIF4", "width": 1.270969804306796}, {"from": "RACDIF1", "to": "PRESLAST_DEMREP", "width": 0.9037046591336263}, {"from": "HELPPOOR", "to": "NATHEAL", "width": 0.46515259825338706}, {"from": "HELPPOOR", "to": "NATFARE", "width": 2.031172817878967}, {"from": "HELPPOOR", "to": "NATCHLD", "width": 0.46330805469387}, {"from": "HELPPOOR", "to": "GUNLAW", "width": 0.4798078928444467}, {"from": "HELPPOOR", "to": "COURTS", "width": 0.3806480142594407}, {"from": "HELPPOOR", "to": "AFFRMACT", "width": 0.9457466547627934}, {"from": "HELPPOOR", "to": "CONLABOR", "width": 0.257001494392685}, {"from": "HELPPOOR", "to": "SEXEDUC", "width": 0.15882639132015786}, {"from": "HELPPOOR", "to": "RACDIF3", "width": 0.15093109527774112}, {"from": "HELPPOOR", "to": "PRESLAST_DEMREP", "width": 1.1994348490332103}, {"from": "PRESLAST_DEMREP", "to": "NATSPAC", "width": 0.1570911310321454}, {"from": "PRESLAST_DEMREP", "to": "NATENVIR", "width": 1.4854874644380531}, {"from": "PRESLAST_DEMREP", "to": "NATHEAL", "width": 0.8060986640324266}, {"from": "PRESLAST_DEMREP", "to": "NATEDUC", "width": 0.5705153421065232}, {"from": "PRESLAST_DEMREP", "to": "NATARMS", "width": 2.277557408550337}, {"from": "PRESLAST_DEMREP", "to": "NATFARE", "width": 1.127250307439922}, {"from": "PRESLAST_DEMREP", "to": "NATPARK", "width": 0.27530299339114245}, {"from": "PRESLAST_DEMREP", "to": "NATCHLD", "width": 0.6247847243811258}, {"from": "PRESLAST_DEMREP", "to": "GUNLAW", "width": 1.162407896175198}, {"from": "PRESLAST_DEMREP", "to": "COURTS", "width": 0.06548992883099641}, {"from": "PRESLAST_DEMREP", "to": "AFFRMACT", "width": 0.7471180238256846}, {"from": "PRESLAST_DEMREP", "to": "WRKWAYUP", "width": 0.1901967778238442}, {"from": "PRESLAST_DEMREP", "to": "CONLABOR", "width": 1.013088623096517}, {"from": "PRESLAST_DEMREP", "to": "CONPRESS", "width": 0.4432341488556132}, {"from": "PRESLAST_DEMREP", "to": "CONARMY", "width": 0.43335918813504104}, {"from": "PRESLAST_DEMREP", "to": "ABDEFECT", "width": 0.33993582524618615}, {"from": "PRESLAST_DEMREP", "to": "PREMARSX", "width": 0.12788998661624792}, {"from": "PRESLAST_DEMREP", "to": "HOMOSEX", "width": 0.07273310971605763}, {"from": "PRESLAST_DEMREP", "to": "POLHITOK", "width": 0.4901634824853382}, {"from": "PRESLAST_DEMREP", "to": "FEFAM", "width": 0.24661904113070876}, {"from": "PRESLAST_DEMREP", "to": "VOTELAST", "width": 0.29115797343780164}, {"from": "NATENVIR", "to": "NATHEAL", "width": 2.1640083324362247}, {"from": "NATENVIR", "to": "NATCITY", "width": 0.08780388682897093}, {"from": "NATENVIR", "to": "NATDRUG", "width": 0.3175864516782797}, {"from": "NATENVIR", "to": "NATEDUC", "width": 1.6034683243408216}, {"from": "NATENVIR", "to": "NATFARE", "width": 0.3807496377034253}, {"from": "NATENVIR", "to": "NATMASS", "width": 0.4253309195425834}, {"from": "NATENVIR", "to": "NATPARK", "width": 1.842650644745062}, {"from": "NATENVIR", "to": "NATCHLD", "width": 0.5983392309964035}, {"from": "NATENVIR", "to": "NATSCI", "width": 0.32739692236646883}, {"from": "NATENVIR", "to": "GUNLAW", "width": 0.10014545857919409}, {"from": "NATENVIR", "to": "GRASS", "width": 0.5142591552189152}, {"from": "NATENVIR", "to": "FEPOL", "width": 0.18008732330731494}, {"from": "NATENVIR", "to": "SEXEDUC", "width": 1.401200191365779}, {"from": "NATENVIR", "to": "PREMARSX", "width": 0.26364169127063747}, {"from": "NATENVIR", "to": "HOMOSEX", "width": 0.2306878175226321}, {"from": "NATENVIR", "to": "FEFAM", "width": 1.0145934112268886}, {"from": "NATCITY", "to": "NATHEAL", "width": 0.14532365123215846}, {"from": "NATCITY", "to": "NATCRIME", "width": 0.4358032072522343}, {"from": "NATCITY", "to": "NATDRUG", "width": 1.3846869908995445}, {"from": "NATCITY", "to": "NATAID", "width": 0.4583128991628316}, {"from": "NATCITY", "to": "NATMASS", "width": 0.4232853501400985}, {"from": "NATCITY", "to": "NATCHLD", "width": 0.4765308200787272}, {"from": "NATCITY", "to": "GUNLAW", "width": 0.3016522683913118}, {"from": "NATARMS", "to": "NATSPAC", "width": 0.16792233191339473}, {"from": "NATARMS", "to": "NATROAD", "width": 0.1356362377247362}, {"from": "NATARMS", "to": "NATSCI", "width": 0.5018099073820359}, {"from": "NATARMS", "to": "COURTS", "width": 0.056142890879586294}, {"from": "NATARMS", "to": "GRASS", "width": 0.43952076588433087}, {"from": "NATARMS", "to": "PRAYER", "width": 0.4415126985486022}, {"from": "NATARMS", "to": "WRKWAYUP", "width": 1.2138177223736915}, {"from": "NATARMS", "to": "CONARMY", "width": 2.1111092080812464}, {"from": "NATARMS", "to": "PREMARSX", "width": 0.04561311211984316}, {"from": "NATARMS", "to": "TEENSEX", "width": 0.6949963941640619}, {"from": "NATARMS", "to": "HOMOSEX", "width": 0.6996409342616559}, {"from": "NATARMS", "to": "FEFAM", "width": 0.23263002662916493}, {"from": "NATCHLD", "to": "NATHEAL", "width": 1.565106321922942}, {"from": "NATCHLD", "to": "NATDRUG", "width": 1.2959244190753672}, {"from": "NATCHLD", "to": "NATEDUC", "width": 2.1738809860821733}, {"from": "NATCHLD", "to": "NATFARE", "width": 1.7563322187212087}, {"from": "NATCHLD", "to": "NATPARK", "width": 1.638016407322518}, {"from": "NATCHLD", "to": "GUNLAW", "width": 0.33309662977636517}, {"from": "NATCHLD", "to": "FECHLD", "width": 0.5008357407421922}, {"from": "NATCHLD", "to": "FEPRESCH", "width": 0.13015453318046707}, {"from": "GRASS", "to": "NATCRIME", "width": 0.13319612825236538}, {"from": "GRASS", "to": "SPKATH", "width": 0.0007953043680614252}, {"from": "GRASS", "to": "COLATH", "width": 0.33336615948081766}, {"from": "GRASS", "to": "SPKMIL", "width": 0.03500709707024677}, {"from": "GRASS", "to": "COLHOMO", "width": 0.4788193976584135}, {"from": "GRASS", "to": "COURTS", "width": 1.125751583782322}, {"from": "GRASS", "to": "ATTEND", "width": 1.582617593251459}, {"from": "GRASS", "to": "CONCLERG", "width": 0.21615015595392367}, {"from": "GRASS", "to": "CONLEGIS", "width": 0.37167325762289455}, {"from": "GRASS", "to": "ABNOMORE", "width": 0.36041950415371954}, {"from": "GRASS", "to": "ABPOOR", "width": 0.07357749992713489}, {"from": "GRASS", "to": "ABSINGLE", "width": 0.17607476549351342}, {"from": "GRASS", "to": "PREMARSX", "width": 0.38030907219439813}, {"from": "GRASS", "to": "TEENSEX", "width": 1.152150778397746}, {"from": "GRASS", "to": "XMARSEX", "width": 0.6924615494121494}, {"from": "GRASS", "to": "HOMOSEX", "width": 2.0074674297237345}, {"from": "GRASS", "to": "PORNLAW", "width": 1.2643162932293106}, {"from": "GRASS", "to": "LETDIE1", "width": 0.6342572165141912}, {"from": "GRASS", "to": "SUICIDE1", "width": 1.0807654939083535}, {"from": "ATTEND", "to": "RELITEN", "width": 7.298074587558515}, {"from": "ATTEND", "to": "POSTLIFE", "width": 1.1953539133709092}, {"from": "ATTEND", "to": "PRAYER", "width": 0.10777724581946801}, {"from": "ATTEND", "to": "FAIR", "width": 0.16263383227955014}, {"from": "ATTEND", "to": "CONCLERG", "width": 2.5288750901163004}, {"from": "ATTEND", "to": "CONTV", "width": 0.04337918418732074}, {"from": "ATTEND", "to": "ABDEFECT", "width": 0.2508405488021593}, {"from": "ATTEND", "to": "ABPOOR", "width": 0.037409043585883484}, {"from": "ATTEND", "to": "ABRAPE", "width": 1.1023433291104525}, {"from": "ATTEND", "to": "ABANY", "width": 0.10710241382299412}, {"from": "ATTEND", "to": "PREMARSX", "width": 3.1885524362970594}, {"from": "ATTEND", "to": "PORNLAW", "width": 0.7307390219448978}, {"from": "ATTEND", "to": "LETDIE1", "width": 0.6835010974047311}, {"from": "ATTEND", "to": "SUICIDE1", "width": 0.780812989639716}, {"from": "ATTEND", "to": "PRESLAST_NONCONFORM", "width": 0.37685848940064276}, {"from": "ATTEND", "to": "VOTELAST", "width": 1.4179961011181297}, {"from": "RELITEN", "to": "LIBATH", "width": 0.556695593794043}, {"from": "RELITEN", "to": "POSTLIFE", "width": 1.380057673657066}, {"from": "RELITEN", "to": "PRAYER", "width": 0.8350010518065856}, {"from": "RELITEN", "to": "CONCLERG", "width": 1.0196910983266276}, {"from": "RELITEN", "to": "ABDEFECT", "width": 0.07437469657490399}, {"from": "RELITEN", "to": "ABRAPE", "width": 0.03238484603253025}, {"from": "RELITEN", "to": "PREMARSX", "width": 0.7750058954893453}, {"from": "RELITEN", "to": "TEENSEX", "width": 0.7051573151544666}, {"from": "RELITEN", "to": "XMARSEX", "width": 0.7806485919113308}, {"from": "RELITEN", "to": "HOMOSEX", "width": 0.855440368775411}, {"from": "RELITEN", "to": "LETDIE1", "width": 0.665999178081869}, {"from": "RELITEN", "to": "SUICIDE1", "width": 0.8526651509386938}, {"from": "PRAYER", "to": "NATSPAC", "width": 0.8195666271938242}, {"from": "PRAYER", "to": "COLATH", "width": 0.3051729566920828}, {"from": "PRAYER", "to": "LIBATH", "width": 0.0876759248653542}, {"from": "PRAYER", "to": "SPKCOM", "width": 0.34140243403527715}, {"from": "PRAYER", "to": "COLCOM", "width": 0.35841098609005445}, {"from": "PRAYER", "to": "LIBCOM", "width": 0.6709735408161577}, {"from": "PRAYER", "to": "COLMIL", "width": 0.45549691108560414}, {"from": "PRAYER", "to": "LIBMIL", "width": 0.4810617617442509}, {"from": "PRAYER", "to": "COURTS", "width": 0.19347173485283847}, {"from": "PRAYER", "to": "TRUST", "width": 0.5502074232044653}, {"from": "PRAYER", "to": "CONJUDGE", "width": 0.5902779131271446}, {"from": "PRAYER", "to": "CONSCI", "width": 0.37217961430774044}, {"from": "PRAYER", "to": "ABNOMORE", "width": 0.2928677903457922}, {"from": "PRAYER", "to": "ABSINGLE", "width": 0.5332160188738908}, {"from": "PRAYER", "to": "ABANY", "width": 0.6595525499935523}, {"from": "PRAYER", "to": "PREMARSX", "width": 0.0027495735961631652}, {"from": "PRAYER", "to": "TEENSEX", "width": 0.6965030620598154}, {"from": "PRAYER", "to": "HOMOSEX", "width": 1.9445839573209684}, {"from": "PRAYER", "to": "SPANKING", "width": 1.258200710963639}, {"from": "PRAYER", "to": "SUICIDE2", "width": 0.24610997209541113}, {"from": "PRAYER", "to": "RACDIF3", "width": 0.7894363053412817}, {"from": "PRAYER", "to": "RACDIF4", "width": 0.31380873874995413}, {"from": "WRKWAYUP", "to": "NATMASS", "width": 0.03749931374232167}, {"from": "WRKWAYUP", "to": "COLATH", "width": 0.10664764659724466}, {"from": "WRKWAYUP", "to": "LIBMIL", "width": 0.02067215408285892}, {"from": "WRKWAYUP", "to": "COLHOMO", "width": 0.5107249775029155}, {"from": "WRKWAYUP", "to": "COURTS", "width": 1.026430398806317}, {"from": "WRKWAYUP", "to": "AFFRMACT", "width": 3.4661547193636473}, {"from": "WRKWAYUP", "to": "TRUST", "width": 0.028210622963558855}, {"from": "WRKWAYUP", "to": "CONJUDGE", "width": 0.03247434464465938}, {"from": "WRKWAYUP", "to": "FEPOL", "width": 0.1527944935893818}, {"from": "WRKWAYUP", "to": "ABNOMORE", "width": 0.13886440222674745}, {"from": "WRKWAYUP", "to": "TEENSEX", "width": 0.29617550543067594}, {"from": "WRKWAYUP", "to": "SPANKING", "width": 1.1627735778614132}, {"from": "WRKWAYUP", "to": "FEFAM", "width": 0.11704046228544686}, {"from": "WRKWAYUP", "to": "RACDIF3", "width": 2.2399581249500935}, {"from": "WRKWAYUP", "to": "RACDIF4", "width": 4.197887555651131}, {"from": "CONLABOR", "to": "CONFINAN", "width": 0.17680303853951018}, {"from": "CONLABOR", "to": "CONEDUC", "width": 1.5396356318489643}, {"from": "CONLABOR", "to": "CONFED", "width": 2.1541687498250424}, {"from": "CONLABOR", "to": "CONPRESS", "width": 1.8372867953379637}, {"from": "CONLABOR", "to": "CONMEDIC", "width": 0.6331044444038416}, {"from": "CONLABOR", "to": "CONTV", "width": 0.4626828223505397}, {"from": "CONLABOR", "to": "CONLEGIS", "width": 1.5352703476573741}, {"from": "CONLABOR", "to": "FEPRESCH", "width": 0.14371631919543054}, {"from": "CONPRESS", "to": "NATAID", "width": 0.16629964678361026}, {"from": "CONPRESS", "to": "GUNLAW", "width": 0.6195845512166116}, {"from": "CONPRESS", "to": "CONFINAN", "width": 0.4602165692885991}, {"from": "CONPRESS", "to": "CONEDUC", "width": 0.8645465370982854}, {"from": "CONPRESS", "to": "CONTV", "width": 4.71812991138218}, {"from": "CONPRESS", "to": "CONJUDGE", "width": 0.6518736645105044}, {"from": "CONPRESS", "to": "CONSCI", "width": 0.24163282509919962}, {"from": "CONPRESS", "to": "CONLEGIS", "width": 1.9369417155753035}, {"from": "ABPOOR", "to": "ABDEFECT", "width": 0.44309926077947487}, {"from": "ABPOOR", "to": "ABNOMORE", "width": 5.249846066304295}, {"from": "ABPOOR", "to": "ABRAPE", "width": 1.3910663992441021}, {"from": "ABPOOR", "to": "ABSINGLE", "width": 6.201793481751774}, {"from": "ABPOOR", "to": "ABANY", "width": 4.425516020182966}, {"from": "ABPOOR", "to": "HOMOSEX", "width": 0.24368578791763634}, {"from": "ABPOOR", "to": "PORNLAW", "width": 0.6752802285981535}, {"from": "ABPOOR", "to": "LETDIE1", "width": 0.236584955803673}, {"from": "ABPOOR", "to": "SUICIDE2", "width": 0.5679290188758476}, {"from": "ABRAPE", "to": "CONJUDGE", "width": 0.09744526721056022}, {"from": "ABRAPE", "to": "ABDEFECT", "width": 4.77709312387331}, {"from": "ABRAPE", "to": "ABNOMORE", "width": 0.6178969331916416}, {"from": "ABRAPE", "to": "ABHLTH", "width": 5.12578935586107}, {"from": "ABRAPE", "to": "ABSINGLE", "width": 0.5450389505252522}, {"from": "ABRAPE", "to": "ABANY", "width": 0.2556902870683214}, {"from": "ABRAPE", "to": "SEXEDUC", "width": 1.1072265518713138}, {"from": "ABRAPE", "to": "HOMOSEX", "width": 0.15644585021907273}, {"from": "ABRAPE", "to": "PORNLAW", "width": 0.22073190512171187}, {"from": "ABRAPE", "to": "LETDIE1", "width": 1.650859365151533}, {"from": "ABRAPE", "to": "SUICIDE1", "width": 0.05993911271907955}, {"from": "ABANY", "to": "NATSCI", "width": 0.13794415825596093}, {"from": "ABANY", "to": "COLATH", "width": 0.3310119318682122}, {"from": "ABANY", "to": "LIBATH", "width": 0.04927026898432736}, {"from": "ABANY", "to": "ABDEFECT", "width": 0.4555923592260255}, {"from": "ABANY", "to": "ABNOMORE", "width": 5.083209816224343}, {"from": "ABANY", "to": "ABSINGLE", "width": 5.891009489090236}, {"from": "ABANY", "to": "PREMARSX", "width": 0.1158142191063228}, {"from": "ABANY", "to": "TEENSEX", "width": 0.18165688219000475}, {"from": "ABANY", "to": "HOMOSEX", "width": 0.5925908216217111}, {"from": "ABANY", "to": "PORNLAW", "width": 0.19162338033243728}, {"from": "ABANY", "to": "LETDIE1", "width": 0.049988298445749285}, {"from": "ABANY", "to": "SUICIDE1", "width": 0.6281340846377492}, {"from": "ABANY", "to": "SUICIDE2", "width": 0.2275117618083169}, {"from": "ABANY", "to": "FECHLD", "width": 0.25265997441046234}, {"from": "SEXEDUC", "to": "NATEDUC", "width": 0.9770600866102798}, {"from": "SEXEDUC", "to": "NATSCI", "width": 0.19221562038083112}, {"from": "SEXEDUC", "to": "SPKHOMO", "width": 0.22703744709805196}, {"from": "SEXEDUC", "to": "COLHOMO", "width": 0.17229990054200178}, {"from": "SEXEDUC", "to": "CONTV", "width": 0.24965107598294245}, {"from": "SEXEDUC", "to": "CONJUDGE", "width": 0.46553623093544894}, {"from": "SEXEDUC", "to": "CONSCI", "width": 0.03645131230400926}, {"from": "SEXEDUC", "to": "FEPOL", "width": 0.7745774998460199}, {"from": "SEXEDUC", "to": "ABDEFECT", "width": 1.5254290910764294}, {"from": "SEXEDUC", "to": "ABHLTH", "width": 1.1527339043866298}, {"from": "SEXEDUC", "to": "PREMARSX", "width": 1.7463870058568647}, {"from": "SEXEDUC", "to": "LETDIE1", "width": 0.9851472486551451}, {"from": "SEXEDUC", "to": "FECHLD", "width": 0.15610163173490854}, {"from": "SEXEDUC", "to": "FEPRESCH", "width": 0.6383082581948345}, {"from": "SEXEDUC", "to": "FEFAM", "width": 1.3611207721263647}, {"from": "PREMARSX", "to": "SPKHOMO", "width": 0.504709137297876}, {"from": "PREMARSX", "to": "COLHOMO", "width": 0.38327962436177504}, {"from": "PREMARSX", "to": "CONTV", "width": 0.7900233872298944}, {"from": "PREMARSX", "to": "ABDEFECT", "width": 0.47406754127388384}, {"from": "PREMARSX", "to": "ABSINGLE", "width": 0.23553764030899527}, {"from": "PREMARSX", "to": "TEENSEX", "width": 3.4555347782511507}, {"from": "PREMARSX", "to": "XMARSEX", "width": 0.7535056864179456}, {"from": "PREMARSX", "to": "HOMOSEX", "width": 2.8344918284437663}, {"from": "PREMARSX", "to": "PORNLAW", "width": 2.2963547909630537}, {"from": "PREMARSX", "to": "LETDIE1", "width": 1.2938114288868894}, {"from": "PREMARSX", "to": "SUICIDE1", "width": 1.6323358388946319}, {"from": "PREMARSX", "to": "FEFAM", "width": 1.215974862255377}, {"from": "TEENSEX", "to": "NATCRIME", "width": 0.21149723041860907}, {"from": "TEENSEX", "to": "NATSCI", "width": 0.21227084155702625}, {"from": "TEENSEX", "to": "COLATH", "width": 0.37225558926255087}, {"from": "TEENSEX", "to": "COURTS", "width": 0.2559890689011428}, {"from": "TEENSEX", "to": "XMARSEX", "width": 3.877452748269943}, {"from": "TEENSEX", "to": "HOMOSEX", "width": 0.6452029844105983}, {"from": "TEENSEX", "to": "PORNLAW", "width": 2.1630522628625184}, {"from": "TEENSEX", "to": "SUICIDE2", "width": 0.06904277942607323}, {"from": "XMARSEX", "to": "COLATH", "width": 0.1412333682364997}, {"from": "XMARSEX", "to": "POSTLIFE", "width": 0.35710664447972434}, {"from": "XMARSEX", "to": "CONCLERG", "width": 0.02139239622548666}, {"from": "XMARSEX", "to": "CONARMY", "width": 0.17186927457420986}, {"from": "XMARSEX", "to": "ABNOMORE", "width": 0.25783948988352773}, {"from": "XMARSEX", "to": "HOMOSEX", "width": 1.722216372894049}, {"from": "XMARSEX", "to": "PORNLAW", "width": 0.21753406702843697}, {"from": "XMARSEX", "to": "SUICIDE2", "width": 0.011463808652939464}, {"from": "HOMOSEX", "to": "COLATH", "width": 0.20749930704769737}, {"from": "HOMOSEX", "to": "LIBATH", "width": 0.6387811122957028}, {"from": "HOMOSEX", "to": "SPKCOM", "width": 0.19417246716612865}, {"from": "HOMOSEX", "to": "SPKMIL", "width": 0.31682963189966074}, {"from": "HOMOSEX", "to": "SPKHOMO", "width": 0.24741158711348804}, {"from": "HOMOSEX", "to": "COLHOMO", "width": 0.9574759406455982}, {"from": "HOMOSEX", "to": "LIBHOMO", "width": 1.6310664505205352}, {"from": "HOMOSEX", "to": "TRUST", "width": 0.24099072578257025}, {"from": "HOMOSEX", "to": "CONCLERG", "width": 1.3147492842795243}, {"from": "HOMOSEX", "to": "CONJUDGE", "width": 0.1120795936595815}, {"from": "HOMOSEX", "to": "FEPOL", "width": 0.23062206518637554}, {"from": "HOMOSEX", "to": "ABNOMORE", "width": 0.48052929526918786}, {"from": "HOMOSEX", "to": "ABSINGLE", "width": 0.2606866125958205}, {"from": "HOMOSEX", "to": "PORNLAW", "width": 1.386087012352197}, {"from": "HOMOSEX", "to": "SPANKING", "width": 1.2873770097517767}, {"from": "HOMOSEX", "to": "SUICIDE1", "width": 0.9657641069102663}, {"from": "HOMOSEX", "to": "SUICIDE2", "width": 0.48139085826567013}, {"from": "HOMOSEX", "to": "FECHLD", "width": 0.37189302775400424}, {"from": "HOMOSEX", "to": "FEFAM", "width": 3.0332390397024565}, {"from": "HOMOSEX", "to": "RACDIF3", "width": 0.09762643791259726}, {"from": "HOMOSEX", "to": "RACDIF4", "width": 0.9039482431367905}, {"from": "SPANKING", "to": "NATAID", "width": 1.341190391337682}, {"from": "SPANKING", "to": "COLHOMO", "width": 0.5164284194483298}, {"from": "SPANKING", "to": "HELPFUL", "width": 0.09970163451881904}, {"from": "SPANKING", "to": "FAIR", "width": 1.1270427712237856}, {"from": "SPANKING", "to": "CONJUDGE", "width": 0.20348781419043332}, {"from": "SPANKING", "to": "ABSINGLE", "width": 0.056334463276779115}, {"from": "SPANKING", "to": "FEFAM", "width": 0.09733454281279524}, {"from": "SPANKING", "to": "RACDIF3", "width": 0.002487239746948536}, {"from": "SPANKING", "to": "RACDIF4", "width": 0.9728035920261275}, {"from": "LETDIE1", "to": "NATSCI", "width": 0.11950237486261153}, {"from": "LETDIE1", "to": "LIBHOMO", "width": 0.07028066945696344}, {"from": "LETDIE1", "to": "CONSCI", "width": 0.5753061572857858}, {"from": "LETDIE1", "to": "ABDEFECT", "width": 2.0800654376692322}, {"from": "LETDIE1", "to": "ABSINGLE", "width": 0.23216835612150927}, {"from": "LETDIE1", "to": "PORNLAW", "width": 0.5246381294066186}, {"from": "LETDIE1", "to": "SUICIDE1", "width": 6.96401738151541}, {"from": "FECHLD", "to": "LIBHOMO", "width": 0.1562285577078625}, {"from": "FECHLD", "to": "HELPFUL", "width": 0.26312090887797246}, {"from": "FECHLD", "to": "FEPOL", "width": 0.1889476476397105}, {"from": "FECHLD", "to": "FEPRESCH", "width": 6.027844165003541}, {"from": "FECHLD", "to": "FEFAM", "width": 3.425259381139283}, {"from": "FEPRESCH", "to": "NATSCI", "width": 0.450704342733272}, {"from": "FEPRESCH", "to": "COLHOMO", "width": 0.49124251971755545}, {"from": "FEPRESCH", "to": "CONEDUC", "width": 0.1692819391375905}, {"from": "FEPRESCH", "to": "CONMEDIC", "width": 0.017192403557053537}, {"from": "FEPRESCH", "to": "FEPOL", "width": 0.10239514786796773}, {"from": "FEPRESCH", "to": "FEFAM", "width": 4.344117173710317}, {"from": "FEFAM", "to": "NATEDUC", "width": 0.25226359835085765}, {"from": "FEFAM", "to": "NATPARK", "width": 0.15989170259558091}, {"from": "FEFAM", "to": "SPKATH", "width": 0.02593757189093859}, {"from": "FEFAM", "to": "COLATH", "width": 0.10675291995831307}, {"from": "FEFAM", "to": "SPKCOM", "width": 0.45248004806535147}, {"from": "FEFAM", "to": "LIBMIL", "width": 0.04263062039201519}, {"from": "FEFAM", "to": "SPKHOMO", "width": 0.32132471976471766}, {"from": "FEFAM", "to": "COLHOMO", "width": 0.5354090391428372}, {"from": "FEFAM", "to": "LIBHOMO", "width": 0.6425066886818965}, {"from": "FEFAM", "to": "CONSCI", "width": 0.6161666277017831}, {"from": "FEFAM", "to": "FEPOL", "width": 3.1242490256482998}, {"from": "FEFAM", "to": "PORNLAW", "width": 0.5801138064950997}, {"from": "FEFAM", "to": "POLABUSE", "width": 0.45263454128783265}, {"from": "FEFAM", "to": "RACDIF2", "width": 0.9796593010491011}, {"from": "FEFAM", "to": "RACDIF4", "width": 0.6839987655376285}, {"from": "NATSPAC", "to": "NATAID", "width": 0.6487879243537232}, {"from": "NATSPAC", "to": "NATSCI", "width": 2.2851452812714164}, {"from": "NATSPAC", "to": "LIBATH", "width": 0.28367375132980355}, {"from": "NATSPAC", "to": "SPKCOM", "width": 0.9844486742479566}, {"from": "NATSPAC", "to": "LIBCOM", "width": 0.2586274573884726}, {"from": "NATSPAC", "to": "GUNLAW", "width": 0.10969545272766715}, {"from": "NATSPAC", "to": "TRUST", "width": 0.4757602952980627}, {"from": "NATSPAC", "to": "CONJUDGE", "width": 0.17807581114065812}, {"from": "NATSPAC", "to": "CONSCI", "width": 1.3959122527691548}, {"from": "NATSPAC", "to": "PORNLAW", "width": 0.22491072185968175}, {"from": "NATSPAC", "to": "POLHITOK", "width": 0.8334565442998025}, {"from": "NATSPAC", "to": "RACDIF4", "width": 0.22046273729780347}, {"from": "NATAID", "to": "COURTS", "width": 0.08091863405287712}, {"from": "NATAID", "to": "AFFRMACT", "width": 0.5694374830271163}, {"from": "NATAID", "to": "CONFED", "width": 0.25273201514958726}, {"from": "NATAID", "to": "CONLEGIS", "width": 0.6815322090105767}, {"from": "NATAID", "to": "RACDIF4", "width": 0.2980860302790427}, {"from": "NATSCI", "to": "NATHEAL", "width": 0.2540934801493145}, {"from": "NATSCI", "to": "COURTS", "width": 0.030813468857411805}, {"from": "NATSCI", "to": "CONSCI", "width": 0.637531884583372}, {"from": "NATSCI", "to": "PORNLAW", "width": 0.4443942790147429}, {"from": "NATSCI", "to": "SUICIDE1", "width": 0.27069643294567525}, {"from": "LIBATH", "to": "SPKATH", "width": 1.997292379629803}, {"from": "LIBATH", "to": "COLATH", "width": 1.4060959009895164}, {"from": "LIBATH", "to": "LIBRAC", "width": 5.115845395317928}, {"from": "LIBATH", "to": "LIBCOM", "width": 3.6806844401569183}, {"from": "LIBATH", "to": "LIBMIL", "width": 2.0545997099427646}, {"from": "LIBATH", "to": "LIBHOMO", "width": 2.560384162041976}, {"from": "LIBATH", "to": "TRUST", "width": 0.5243305497166516}, {"from": "LIBATH", "to": "CONSCI", "width": 0.061784882174597516}, {"from": "LIBATH", "to": "PORNLAW", "width": 0.6856617152004228}, {"from": "LIBATH", "to": "SUICIDE1", "width": 0.45982163131419296}, {"from": "LIBATH", "to": "POLHITOK", "width": 0.0038124411426186926}, {"from": "LIBATH", "to": "RACDIF4", "width": 0.17411237156494302}, {"from": "SPKCOM", "to": "SPKATH", "width": 4.011765413605718}, {"from": "SPKCOM", "to": "COLATH", "width": 0.24962293447598644}, {"from": "SPKCOM", "to": "SPKRAC", "width": 2.603689995667973}, {"from": "SPKCOM", "to": "COLCOM", "width": 2.714362429566955}, {"from": "SPKCOM", "to": "LIBCOM", "width": 4.3116581520134725}, {"from": "SPKCOM", "to": "SPKMIL", "width": 3.400838107384004}, {"from": "SPKCOM", "to": "SPKHOMO", "width": 1.592199147435459}, {"from": "SPKCOM", "to": "COURTS", "width": 0.036930853596521665}, {"from": "SPKCOM", "to": "TRUST", "width": 0.5083150897543031}, {"from": "SPKCOM", "to": "CONEDUC", "width": 0.0021358329779544226}, {"from": "SPKCOM", "to": "SUICIDE1", "width": 0.5748037428892236}, {"from": "SPKCOM", "to": "POLHITOK", "width": 0.13916482274591999}, {"from": "SPKCOM", "to": "RACDIF2", "width": 0.07033458558042159}, {"from": "LIBCOM", "to": "LIBRAC", "width": 2.955440861645462}, {"from": "LIBCOM", "to": "COLCOM", "width": 3.8870283679267996}, {"from": "LIBCOM", "to": "LIBMIL", "width": 4.646590850276563}, {"from": "LIBCOM", "to": "LIBHOMO", "width": 2.7768236774292965}, {"from": "LIBCOM", "to": "ABNOMORE", "width": 0.02379250674994065}, {"from": "LIBCOM", "to": "ABSINGLE", "width": 0.06892057293670889}, {"from": "LIBCOM", "to": "SUICIDE1", "width": 0.11546011172263101}, {"from": "LIBCOM", "to": "POLHITOK", "width": 1.1114817869640174}, {"from": "GUNLAW", "to": "NATHEAL", "width": 0.3316268299884995}, {"from": "GUNLAW", "to": "NATEDUC", "width": 0.17295748539157219}, {"from": "GUNLAW", "to": "CONEDUC", "width": 0.0841848308066461}, {"from": "TRUST", "to": "NATCRIME", "width": 0.13881349992693687}, {"from": "TRUST", "to": "LIBHOMO", "width": 0.15770196104904624}, {"from": "TRUST", "to": "HELPFUL", "width": 3.0780480889165878}, {"from": "TRUST", "to": "FAIR", "width": 4.63785065618241}, {"from": "TRUST", "to": "CONFINAN", "width": 0.02504084322648668}, {"from": "TRUST", "to": "CONJUDGE", "width": 0.23349804972275165}, {"from": "TRUST", "to": "CONSCI", "width": 0.33772965576105823}, {"from": "TRUST", "to": "RACDIF4", "width": 0.5138449432071861}, {"from": "TRUST", "to": "VOTELAST", "width": 1.040084328888082}, {"from": "CONJUDGE", "to": "SPKMIL", "width": 0.48589613038111834}, {"from": "CONJUDGE", "to": "LIBMIL", "width": 0.14835843808828997}, {"from": "CONJUDGE", "to": "FAIR", "width": 0.33695920912329236}, {"from": "CONJUDGE", "to": "CONFINAN", "width": 1.3197254667355394}, {"from": "CONJUDGE", "to": "CONCLERG", "width": 0.1513719919347256}, {"from": "CONJUDGE", "to": "CONEDUC", "width": 0.4903710507629009}, {"from": "CONJUDGE", "to": "CONFED", "width": 2.834429656551193}, {"from": "CONJUDGE", "to": "CONMEDIC", "width": 0.7672969869201017}, {"from": "CONJUDGE", "to": "CONSCI", "width": 3.5474323450659413}, {"from": "CONJUDGE", "to": "CONLEGIS", "width": 3.371743907299341}, {"from": "CONJUDGE", "to": "CONARMY", "width": 1.3626153330085298}, {"from": "CONSCI", "to": "SPKHOMO", "width": 0.4224043438425917}, {"from": "CONSCI", "to": "CONFINAN", "width": 1.1510116329822366}, {"from": "CONSCI", "to": "CONMEDIC", "width": 2.9747353527914604}, {"from": "CONSCI", "to": "CONLEGIS", "width": 0.5158702097881115}, {"from": "CONSCI", "to": "CONARMY", "width": 0.6809595865944567}, {"from": "CONSCI", "to": "SUICIDE1", "width": 0.5755576307623438}, {"from": "CONSCI", "to": "POLHITOK", "width": 0.229913123106058}, {"from": "CONSCI", "to": "POLMURDR", "width": 0.1034803693253477}, {"from": "PORNLAW", "to": "SPKATH", "width": 0.50547974534798}, {"from": "PORNLAW", "to": "COLATH", "width": 0.2539119080712409}, {"from": "PORNLAW", "to": "SPKRAC", "width": 0.0282876981581091}, {"from": "PORNLAW", "to": "LIBRAC", "width": 0.3364480427897429}, {"from": "PORNLAW", "to": "SPKMIL", "width": 0.6702101010410166}, {"from": "PORNLAW", "to": "COLMIL", "width": 0.12101620110110631}, {"from": "PORNLAW", "to": "SPKHOMO", "width": 0.21855764683066375}, {"from": "PORNLAW", "to": "COURTS", "width": 0.12271521270510521}, {"from": "PORNLAW", "to": "CONTV", "width": 0.0060470089082679535}, {"from": "PORNLAW", "to": "ABNOMORE", "width": 0.5962748595402803}, {"from": "PORNLAW", "to": "NEWS", "width": 0.23346834525856439}, {"from": "POLHITOK", "to": "NATFARE", "width": 0.5508492806977252}, {"from": "POLHITOK", "to": "SPKATH", "width": 0.15798932461978193}, {"from": "POLHITOK", "to": "SPKMIL", "width": 0.44480649089036045}, {"from": "POLHITOK", "to": "AFFRMACT", "width": 1.0580016647164936}, {"from": "POLHITOK", "to": "FAIR", "width": 0.05817041567417232}, {"from": "POLHITOK", "to": "SUICIDE1", "width": 0.41405763471291646}, {"from": "POLHITOK", "to": "POLATTAK", "width": 2.9397085742717683}, {"from": "POLHITOK", "to": "RACDIF2", "width": 0.22497743461295502}, {"from": "RACDIF4", "to": "COLATH", "width": 0.23685778239519398}, {"from": "RACDIF4", "to": "COLCOM", "width": 0.00282278039792703}, {"from": "RACDIF4", "to": "COLMIL", "width": 0.1898702324328211}, {"from": "RACDIF4", "to": "HELPFUL", "width": 0.6327356583378431}, {"from": "RACDIF4", "to": "FAIR", "width": 0.4348591614944023}, {"from": "RACDIF4", "to": "CONARMY", "width": 0.4569422828045905}, {"from": "RACDIF4", "to": "RACDIF2", "width": 2.624057026844826}, {"from": "RACDIF4", "to": "RACDIF3", "width": 1.2634818239563677}, {"from": "NATHEAL", "to": "NATCRIME", "width": 0.40333374677422507}, {"from": "NATHEAL", "to": "NATDRUG", "width": 0.41853246309077596}, {"from": "NATHEAL", "to": "NATEDUC", "width": 2.129186971184805}, {"from": "NATDRUG", "to": "NATCRIME", "width": 2.9825207675850134}, {"from": "NATDRUG", "to": "NATEDUC", "width": 1.2030423638232675}, {"from": "NATDRUG", "to": "NATFARE", "width": 0.0848184881948264}, {"from": "NATEDUC", "to": "NATCRIME", "width": 0.30811828583815065}, {"from": "NATEDUC", "to": "NATFARE", "width": 0.13945366819768126}, {"from": "NATEDUC", "to": "NATPARK", "width": 0.32134600508579647}, {"from": "NATFARE", "to": "AFFRMACT", "width": 1.2816102928604602}, {"from": "NATMASS", "to": "NATROAD", "width": 0.7323134823550124}, {"from": "NATMASS", "to": "NATPARK", "width": 0.6522129999193582}, {"from": "NATMASS", "to": "ABNOMORE", "width": 0.20930854220619463}, {"from": "FEPOL", "to": "COLATH", "width": 0.22610199371056922}, {"from": "FEPOL", "to": "SPKHOMO", "width": 1.0171056315962743}, {"from": "FEPOL", "to": "RACDIF2", "width": 0.9145618819693895}, {"from": "NATCRIME", "to": "COLATH", "width": 0.13023571945019655}, {"from": "NATCRIME", "to": "COURTS", "width": 1.3439618485272704}, {"from": "NATCRIME", "to": "SUICIDE2", "width": 0.18310672835226338}, {"from": "COLATH", "to": "SPKATH", "width": 3.8332404930632706}, {"from": "COLATH", "to": "COLRAC", "width": 5.590077034467662}, {"from": "COLATH", "to": "COLCOM", "width": 2.0602630153234656}, {"from": "COLATH", "to": "COLMIL", "width": 3.9083549962714894}, {"from": "COLATH", "to": "COLHOMO", "width": 1.3862955833162998}, {"from": "COLATH", "to": "RACDIF2", "width": 0.014400738034930503}, {"from": "SUICIDE2", "to": "COLMIL", "width": 0.0922560223358969}, {"from": "SUICIDE2", "to": "LIBMIL", "width": 0.06981372232562319}, {"from": "SUICIDE2", "to": "POSTLIFE", "width": 0.06631777106303885}, {"from": "SUICIDE2", "to": "ABNOMORE", "width": 1.022844099025623}, {"from": "SUICIDE2", "to": "ABSINGLE", "width": 0.9421092870440448}, {"from": "SUICIDE2", "to": "SUICIDE1", "width": 1.6360768798579555}, {"from": "AFFRMACT", "to": "LIBRAC", "width": 0.33619597154924746}, {"from": "AFFRMACT", "to": "CONEDUC", "width": 0.1255885117261823}, {"from": "AFFRMACT", "to": "CONARMY", "width": 0.22482886673297509}, {"from": "AFFRMACT", "to": "RACDIF3", "width": 0.47690579077497525}, {"from": "RACDIF3", "to": "FAIR", "width": 0.05807622199035175}, {"from": "RACDIF3", "to": "ABSINGLE", "width": 0.41878197624091423}, {"from": "RACDIF3", "to": "VOTELAST", "width": 0.01894674454107255}, {"from": "CONARMY", "to": "CONFINAN", "width": 2.6660982646912905}, {"from": "CONARMY", "to": "CONCLERG", "width": 0.062218783177420606}, {"from": "CONARMY", "to": "CONFED", "width": 2.0699464996215196}, {"from": "CONARMY", "to": "CONMEDIC", "width": 1.8131788985842077}, {"from": "CONARMY", "to": "CONTV", "width": 0.23799484339686855}, {"from": "CONARMY", "to": "CONLEGIS", "width": 1.4201702386034798}, {"from": "CONFED", "to": "CONEDUC", "width": 1.3570649715628467}, {"from": "CONFED", "to": "CONLEGIS", "width": 5.100882685173035}, {"from": "CONFED", "to": "PRESLAST_NONCONFORM", "width": 1.1482012129906076}, {"from": "CONLEGIS", "to": "CONFINAN", "width": 1.8878460877740482}, {"from": "CONLEGIS", "to": "CONCLERG", "width": 1.4692671628099516}, {"from": "CONLEGIS", "to": "CONEDUC", "width": 1.157413976679318}, {"from": "CONLEGIS", "to": "CONMEDIC", "width": 0.2989950451629016}, {"from": "CONLEGIS", "to": "CONTV", "width": 0.9279179971697117}, {"from": "FAIR", "to": "HELPFUL", "width": 5.529876074401807}, {"from": "FAIR", "to": "NEWS", "width": 0.4543988346187784}, {"from": "FAIR", "to": "VOTELAST", "width": 0.364042870802214}, {"from": "CONFINAN", "to": "CONCLERG", "width": 0.7325198772670425}, {"from": "CONFINAN", "to": "CONEDUC", "width": 0.7878445173805826}, {"from": "CONFINAN", "to": "CONMEDIC", "width": 1.8190154314490545}, {"from": "CONFINAN", "to": "CONTV", "width": 0.1488772604995865}, {"from": "ABNOMORE", "to": "POSTLIFE", "width": 0.012483492543921643}, {"from": "ABNOMORE", "to": "CONCLERG", "width": 0.9402445331257654}, {"from": "ABNOMORE", "to": "ABDEFECT", "width": 1.1590141212100207}, {"from": "ABNOMORE", "to": "ABSINGLE", "width": 6.367280991076578}, {"from": "ABNOMORE", "to": "SUICIDE1", "width": 0.5746022002206173}, {"from": "SUICIDE1", "to": "SPKATH", "width": 0.4210859300076348}, {"from": "SUICIDE1", "to": "LIBRAC", "width": 0.0842863092827739}, {"from": "SUICIDE1", "to": "LIBMIL", "width": 0.08747930947030708}, {"from": "SUICIDE1", "to": "LIBHOMO", "width": 0.4341357631958453}, {"from": "SUICIDE1", "to": "ABDEFECT", "width": 0.7131959077046067}, {"from": "SUICIDE1", "to": "ABHLTH", "width": 0.4532620738032123}, {"from": "SUICIDE1", "to": "ABSINGLE", "width": 0.3118584209659598}, {"from": "SUICIDE1", "to": "PRESLAST_NONCONFORM", "width": 0.2750793648274593}, {"from": "SPKRAC", "to": "SPKATH", "width": 3.0522973672497034}, {"from": "SPKRAC", "to": "COLRAC", "width": 6.454731736418072}, {"from": "SPKRAC", "to": "LIBRAC", "width": 3.280179670610934}, {"from": "SPKRAC", "to": "SPKMIL", "width": 2.0488773966874376}, {"from": "SPKRAC", "to": "CONTV", "width": 0.09533094607823964}, {"from": "SPKMIL", "to": "SPKATH", "width": 1.8094428684667836}, {"from": "SPKMIL", "to": "COLMIL", "width": 6.697444944570639}, {"from": "SPKMIL", "to": "LIBMIL", "width": 3.1817272632073945}, {"from": "SPKMIL", "to": "SPKHOMO", "width": 1.1059722218561425}, {"from": "SPKMIL", "to": "RACDIF2", "width": 0.6761952391827579}, {"from": "LIBMIL", "to": "LIBRAC", "width": 2.7673315378569825}, {"from": "LIBMIL", "to": "COLCOM", "width": 0.016750964995071345}, {"from": "LIBMIL", "to": "COLMIL", "width": 2.168964226063486}, {"from": "LIBMIL", "to": "LIBHOMO", "width": 3.1905684685973967}, {"from": "VOTELAST", "to": "HELPFUL", "width": 0.5545721137796059}, {"from": "VOTELAST", "to": "ABSINGLE", "width": 0.016344121669918936}, {"from": "VOTELAST", "to": "NEWS", "width": 2.563870814156278}, {"from": "SPKATH", "to": "SPKHOMO", "width": 2.3952468494008836}, {"from": "SPKATH", "to": "RACDIF2", "width": 0.8215255441385907}, {"from": "SPKHOMO", "to": "COLHOMO", "width": 9.008239747083955}, {"from": "SPKHOMO", "to": "LIBHOMO", "width": 2.963913608892031}, {"from": "RACDIF2", "to": "POLMURDR", "width": 1.3278860567214046}, {"from": "COLRAC", "to": "LIBRAC", "width": 1.577864370357302}, {"from": "COLRAC", "to": "COLMIL", "width": 2.874692403202979}, {"from": "COLRAC", "to": "NEWS", "width": 0.40209960879023077}, {"from": "COLCOM", "to": "COLMIL", "width": 2.3951083776191444}, {"from": "COLCOM", "to": "COLHOMO", "width": 0.07818610578725084}, {"from": "COLMIL", "to": "COLHOMO", "width": 0.7270296784770727}, {"from": "COLHOMO", "to": "LIBHOMO", "width": 3.538554716517363}, {"from": "LIBRAC", "to": "LIBHOMO", "width": 0.45081161706035094}, {"from": "LIBHOMO", "to": "POLMURDR", "width": 0.04761867572014823}, {"from": "CONTV", "to": "CONEDUC", "width": 0.576916038298922}, {"from": "CONTV", "to": "CONMEDIC", "width": 1.1498615300509332}, {"from": "NEWS", "to": "HELPFUL", "width": 1.3044943763812427}, {"from": "NEWS", "to": "ABHLTH", "width": 0.22189432224789213}, {"from": "CONEDUC", "to": "CONCLERG", "width": 1.9259583763309749}, {"from": "CONEDUC", "to": "CONMEDIC", "width": 2.7009196355379594}, {"from": "ABSINGLE", "to": "POSTLIFE", "width": 0.23394613963177519}, {"from": "ABSINGLE", "to": "GETAHEAD", "width": 0.03616036930005927}, {"from": "ABSINGLE", "to": "ABDEFECT", "width": 0.5076056919770209}, {"from": "POLMURDR", "to": "POLABUSE", "width": 3.268153520902606}, {"from": "POLMURDR", "to": "POLATTAK", "width": 0.6719299554595695}, {"from": "CONCLERG", "to": "HELPFUL", "width": 0.043113293529082226}, {"from": "CONCLERG", "to": "CONMEDIC", "width": 0.3604040102524364}, {"from": "CONCLERG", "to": "GETAHEAD", "width": 0.16853616222407927}, {"from": "ABDEFECT", "to": "ABHLTH", "width": 5.970372895119461}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
