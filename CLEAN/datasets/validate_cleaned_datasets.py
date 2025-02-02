@@ -99,7 +99,7 @@ def check_excluded_columns(df: pd.DataFrame, config: DataConfig) -> List[str]:
                 issues.append(f"{col}: Unexpected data type {df[col].dtype}")
             # Check for unexpected modifications
             if col == 'YEAR':
-                if not df[col].between(1900, 2100).all():
+                if not df[col].between(1972, 2024).all():
                     issues.append(f"{col}: Values outside expected range")
     return issues
 

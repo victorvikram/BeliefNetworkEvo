@@ -1,15 +1,54 @@
-# Python cache files
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# Environment
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Data and caches
+datasets/raw_data/
+datasets/cached_data/
+*.pkl
+*.sas7bdat
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
 
 # Distribution / packaging
-dist/
-build/
 *.egg-info/
-
-# Jupyter Notebook
-.ipynb_checkpoints
 
 # Dataset specific
 datasets/cached_data/
@@ -30,13 +69,6 @@ datasets/validation_plots/
 *.tar.gz
 *.tar
 *.rar
-
-# Environment
-.env
-.venv
-env/
-venv/
-ENV/
 
 # IDE specific files
 .idea/
