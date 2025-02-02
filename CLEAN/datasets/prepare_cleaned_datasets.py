@@ -22,8 +22,7 @@ from typing import Dict
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s | %(levelname)-8s | %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
+    format='%(message)s'  # Simplified format to only show the message
 )
 logger = logging.getLogger(__name__)
 
@@ -34,8 +33,14 @@ if project_root not in sys.path:
     logger.info(f"Added {project_root} to Python path")
 
 try:
-    from datasets.explore_gss import load_or_cache_data
-    from datasets.clean_data import clean_datasets, DataConfig
+    # Use absolute imports when running as script
+    if __name__ == '__main__':
+        from import_gss import import_dataset
+        from clean_data import clean_datasets, DataConfig
+    else:
+        # Use relative imports when imported as module
+        from .import_gss import import_dataset
+        from .clean_data import clean_datasets, DataConfig
     logger.info("Successfully imported required modules")
 except Exception as e:
     logger.error(f"Error importing modules: {str(e)}")
@@ -147,13 +152,13 @@ def log_section(title: str) -> None:
 
 def prepare_and_cache_datasets():
     """
-    Load the raw GSS data and create two cleaned versions using different approaches.
-    Cache both versions for future use.
+    Load the raw GSS data and create cleaned versions.
+    Cache the results for future use.
     """
     try:
         log_section("Loading Data")
         logger.info("Loading raw GSS data...")
-        df, meta = load_or_cache_data()
+        df, meta = import_dataset()
         logger.info(f"Raw data loaded successfully")
         logger.info(f"Shape: {df.shape[0]:,} rows × {df.shape[1]:,} columns")
         
@@ -175,24 +180,25 @@ def prepare_and_cache_datasets():
         
         # Cache the cleaned datasets
         log_section("Caching Results")
-        cache_dir = 'datasets/cached_data'
+        cache_dir = 'cached_data'
         os.makedirs(cache_dir, exist_ok=True)
         logger.info("Created cache directory")
         
-        # Cache version 1
-        cache_file_1 = os.path.join(cache_dir, 'gss_cleaned_1.pkl')
-        with open(cache_file_1, 'wb') as f:
-            pickle.dump((df_cleaned_1, meta), f)
-        logger.info(f"Cached regular version to: {cache_file_1}")
-        
-        # Cache version 2
-        cache_file_2 = os.path.join(cache_dir, 'gss_cleaned_2.pkl')
-        with open(cache_file_2, 'wb') as f:
-            pickle.dump((df_cleaned_2, meta), f)
-        logger.info(f"Cached median-centered version to: {cache_file_2}")
+        # Cache both versions in a single file
+        cache_file = os.path.join(cache_dir, 'gss_cache.pkl')
+        cache_data = {
+            'regular': df_cleaned_1,
+            'median_centered': df_cleaned_2,
+            'meta': meta
+        }
+        with open(cache_file, 'wb') as f:
+            pickle.dump(cache_data, f)
+        logger.info(f"Cached datasets to: {cache_file}")
         
         log_section("Complete")
         logger.info("Dataset preparation completed successfully!")
+        
+        return df_cleaned_1, df_cleaned_2, meta
         
     except Exception as e:
         logger.error(f"Error preparing datasets: {str(e)}")
@@ -202,28 +208,32 @@ def load_cleaned_datasets():
     """
     Load the cached cleaned datasets if available.
     """
-    cache_dir = 'datasets/cached_data'  # Changed from cleaned_data to cached_data
-    cache_file_1 = os.path.join(cache_dir, 'gss_cleaned_1.pkl')
-    cache_file_2 = os.path.join(cache_dir, 'gss_cleaned_2.pkl')
+    cache_file = os.path.join('cached_data', 'gss_cache.pkl')
     
-    # Check if cached files exist
-    if not os.path.exists(cache_file_1) or not os.path.exists(cache_file_2):
-        print("Cached cleaned datasets not found. Creating new ones...")
+    # Check if cached file exists
+    if not os.path.exists(cache_file):
+        logger.info("Cached cleaned datasets not found. Creating new ones...")
         return prepare_and_cache_datasets()
     
-    print("Loading cached cleaned datasets...")
+    logger.info("Loading cached cleaned datasets...")
     
-    # Load version 1
-    with open(cache_file_1, 'rb') as f:
-        df_cleaned_1, meta = pickle.load(f)
-    print(f"Loaded cleaned dataset 1: {df_cleaned_1.shape}")
-    
-    # Load version 2
-    with open(cache_file_2, 'rb') as f:
-        df_cleaned_2, _ = pickle.load(f)  # We already have meta from version 1
-    print(f"Loaded cleaned dataset 2: {df_cleaned_2.shape}")
-    
-    return df_cleaned_1, df_cleaned_2, meta
+    try:
+        with open(cache_file, 'rb') as f:
+            cache_data = pickle.load(f)
+            
+        df_cleaned_1 = cache_data['regular']
+        df_cleaned_2 = cache_data['median_centered']
+        meta = cache_data['meta']
+        
+        logger.info(f"Loaded cleaned dataset 1: {df_cleaned_1.shape}")
+        logger.info(f"Loaded cleaned dataset 2: {df_cleaned_2.shape}")
+        
+        return df_cleaned_1, df_cleaned_2, meta
+        
+    except Exception as e:
+        logger.error(f"Error loading cached data: {str(e)}")
+        logger.info("Regenerating datasets...")
+        return prepare_and_cache_datasets()
 
 if __name__ == "__main__":
     try:

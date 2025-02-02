@@ -2,8 +2,7 @@
  "cells": [
   {
    "cell_type": "code",
-   "execution_count": 7,
-   "id": "70cba29d",
+   "execution_count": null,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -16,8 +15,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 8,
-   "id": "91257e01",
+   "execution_count": null,
    "metadata": {},
    "outputs": [
     {
@@ -84,9 +82,16 @@
    ]
   },
   {
+   "cell_type": "markdown",
+   "id": "de2a3f66",
+   "metadata": {},
+   "source": [
+    "<span style=\"color:red\"><b><<<<<<< local</b></span>"
+   ]
+  },
+  {
    "cell_type": "code",
    "execution_count": 9,
-   "id": "6dd95984",
    "metadata": {},
    "outputs": [],
    "source": [
@@ -115,7 +120,6 @@
   {
    "cell_type": "code",
    "execution_count": 12,
-   "id": "e474d485",
    "metadata": {},
    "outputs": [
     {
@@ -136,9 +140,52 @@
    ]
   },
   {
+   "cell_type": "markdown",
+   "id": "6ea1d66e",
+   "metadata": {},
+   "source": [
+    "<span style=\"color:red\"><b>=======</b></span>"
+   ]
+  },
+  {
    "cell_type": "code",
-   "execution_count": 10,
-   "id": "ccade250",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "\"\"\"\n",
+    "try making belief networks using only the variables present in 1974 and 1984, respectively\n",
+    "\"\"\"\n",
+    "\n",
+    "dir_path = f\"../out/belief networks/1974-1978, R=0.2, Condition=None\"\n",
+    "var_names_path = os.path.join(dir_path, \"variables_list.csv\")\n",
+    "with open(var_names_path) as file:\n",
+    "        variables_list_1974 = file.read().splitlines()\n",
+    "\n",
+    "dir_path = f\"../out/belief networks/1984-1988, R=0.2, Condition=None\"\n",
+    "var_names_path = os.path.join(dir_path, \"variables_list.csv\")\n",
+    "with open(var_names_path) as file:\n",
+    "        variables_list_1984 = file.read().splitlines()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "52064ffb",
+   "metadata": {},
+   "source": [
+    "<span style=\"color:red\"><b>>>>>>>> remote</b></span>"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -156,15 +203,18 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 13,
-   "id": "ee9c813b",
+   "execution_count": null,
    "metadata": {},
    "outputs": [],
    "source": [
     "from make_belief_network import make_belief_network\n",
     "\n",
     "bn_dict = {}\n",
+    "<<<<<<< local\n",
     "for year in range(1974, 1994, 2):\n",
+    "=======\n",
+    "for year in range(1974, 2018, 2):\n",
+    ">>>>>>> remote\n",
     "    # Timeframe - specify the start year and duration of the timeframe\n",
     "    start_year = year\n",
     "    duration = 4\n",
@@ -183,10 +233,13 @@
     "    \n",
     "    bn_dict[(year, 1974)] = (BN, variables_list)\n",
     "\n",
+    "<<<<<<< local\n",
     "    BN, variables_list, correlation_matrix_partial = make_belief_network(df, full_variable_list, timeframe, method=method, is_partial=True, threshold=threshold,\n",
     "                                                                         sample_threshold=sample_threshold, regularisation=regularisation)\n",
     "\n",
     "    bn_dict[(year, None)] = (BN, variables_list)\n",
+    "=======\n",
+    ">>>>>>> remote\n",
     "    if year >= 1984:\n",
     "        BN, variables_list, correlation_matrix_partial = make_belief_network(df, variables_list_1984, timeframe, method=method, is_partial=True, threshold=threshold, \n",
     "                                                                     sample_threshold=sample_threshold, regularisation=regularisation)\n",
@@ -196,7 +249,6 @@
   {
    "cell_type": "code",
    "execution_count": null,
-   "id": "8d2254dc",
    "metadata": {},
    "outputs": [],
    "source": []
@@ -222,5 +274,5 @@
   }
  },
  "nbformat": 4,
- "nbformat_minor": 5
+ "nbformat_minor": 2
 }
