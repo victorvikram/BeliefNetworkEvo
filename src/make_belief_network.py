@@ -51,7 +51,7 @@ def convert_graph_to_absolute_value(graph):
 
 # Define a function to create a belief network based on correlation analysis of a given DataFrame.
 def make_belief_network(dataframe, variables_of_interest=None, years_of_interest=None, method="spearman", 
-                        is_partial=True, threshold=None, sample_threshold=0, regularisation=0):
+                        is_partial=True, threshold=0, sample_threshold=0, regularisation=0):
     
     """
     makes a partial correlation network

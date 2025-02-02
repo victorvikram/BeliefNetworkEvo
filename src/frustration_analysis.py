@@ -46,25 +46,6 @@ def merge_two_consistent_nodes(G, G_cons, node1, node2):
 
     return G, G_cons
 
-def reverse_node(G, G_cons, node):
-
-    """
-    This function reverses the sign of a node, so that all positive correlations become
-    negative and vice versa. Therefore all nodes it was positively consistent with become 
-    negatively consistent and vice versa.
-    """
-
-    # reverse all the edge signs in the main graph
-    for u, v in G.edges(node):
-        G[u][v]["weight"] = -G[u][v]["weight"]
-    
-    # reverse all edge signs in the consistency graph
-    for u, v, key, data in G_cons.edges(node, keys=True, data=True)
-        G_cons[u][v][key]["weight"] = -G_cons[u][v][key]["weight"]
-
-    return G, G_cons
-
-
 def update_consistency_graph(G, G_cons, node1, node2, new_node):
 
     """
@@ -120,6 +101,26 @@ def update_consistency_graph(G, G_cons, node1, node2, new_node):
 
     return G_cons
 
+def reverse_node(G, G_cons, node):
+
+    """
+    This function reverses the sign of a node, so that all positive correlations become
+    negative and vice versa. Therefore all nodes it was positively consistent with become 
+    negatively consistent and vice versa.
+
+    **tested**
+
+    MUTATING
+    """
+
+    # reverse all the edge signs in the main graph
+    for u, v in G.edges(node):
+        G[u][v]["weight"] = -G[u][v]["weight"]
+    
+    # reverse all edge signs in the consistency graph
+    for u, v, key, data in G_cons.edges(node, keys=True, data=True):
+        G_cons[u][v][key]["weight"] = -G_cons[u][v][key]["weight"]
+
 def get_consistency_graph(G):
     """
     This iterates trhough all pairs of nodes in `G` and checks if they are consistent by the 
@@ -129,15 +130,17 @@ def get_consistency_graph(G):
 
     It is possible for two nodes to have two edges between each other if they are both negatively
     and positively consistent.
+
+    **tested**
     """
-    G_cons = nx.Multigraph()
+    G_cons = nx.MultiGraph()
 
     nodes = list(G.nodes())
     num_nodes = len(nodes)
 
     for i in range(num_nodes):
         for j in range(i + 1, num_nodes):
-            p_con, n_con = check_for_external_consistency(G, nodes[i], nodes[j])
+            p_con, n_con = check_for_consistency(G, nodes[i], nodes[j])
             
             if p_con:
                 G_cons.add_edge(nodes[i], nodes[j], weight=1)
@@ -151,28 +154,34 @@ def check_for_consistency(G, node1, node2):
 
     """
     Two nodes are 
-    1. positively consistent if, on all neighbors they share, they agree on the sign of the edge
-    2. negatively consistent if, on all neighbors they share, they disagree on the sign of the edge
+    1. positively consistent if they are not negatively connected, and on all neighbors they share, they agree on the sign of the edge
+    2. negatively consistent if they are not positively connected, and on all neighbors they share, they disagree on the sign of the edge
     
     It is possible to be both if you share no neighbors.
 
     This function checks if `node1` and `node2` are positively and/or negatively consistent in 
     the graph `G`
+
+    **tested**
     """
 
     opposite_count = 0
     same_count = 0
+
+    edge = G.get_edge_data(node1, node2)
+    not_neg_connect = (edge is None) or (np.sign(edge["weight"]) >= 0)
+    not_pos_connect = (edge is None) or (np.sign(edge["weight"]) <= 0)
     for u, v, d1 in G.edges(node1, data=True):
         d2 = G.get_edge_data(node2, v)
 
         if d2 is not None:
-            opposite_count = (np.sign(d1["weight"]) != np.sign(d2["weight"]))
-            same_count = (np.sign(d1["weight"]) == np.sign(d2["weight"]))
+            opposite_count += (np.sign(d1["weight"]) != np.sign(d2["weight"]))
+            same_count += (np.sign(d1["weight"]) == np.sign(d2["weight"]))
         
         if opposite_count > 0 and same_count > 0:
             return False, False
     
-    positive_consistent = (opposite_count == 0 and same_count >= 0)
-    negative_consistent = (opposite_count >= 0 and same_count == 0)
+    positive_consistent = (opposite_count == 0 and same_count >= 0) and not_neg_connect
+    negative_consistent = (opposite_count >= 0 and same_count == 0) and not_pos_connect
 
     return positive_consistent, negative_consistent
