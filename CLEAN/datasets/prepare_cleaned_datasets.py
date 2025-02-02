@@ -180,20 +180,19 @@ def prepare_and_cache_datasets():
         
         # Cache the cleaned datasets
         log_section("Caching Results")
-        cache_dir = 'cached_data'
+        cache_dir = os.path.join(project_root, 'datasets', 'cached_data')
         os.makedirs(cache_dir, exist_ok=True)
-        logger.info("Created cache directory")
+        logger.info(f"Created cache directory at: {cache_dir}")
         
-        # Cache both versions in a single file
-        cache_file = os.path.join(cache_dir, 'gss_cache.pkl')
-        cache_data = {
-            'regular': df_cleaned_1,
-            'median_centered': df_cleaned_2,
-            'meta': meta
-        }
-        with open(cache_file, 'wb') as f:
-            pickle.dump(cache_data, f)
-        logger.info(f"Cached datasets to: {cache_file}")
+        # Cache each version separately
+        cache_file_1 = os.path.join(cache_dir, 'cleaned_data_1.pkl')
+        cache_file_2 = os.path.join(cache_dir, 'cleaned_data_2.pkl')
+        
+        # Save the datasets
+        df_cleaned_1.to_pickle(cache_file_1)
+        df_cleaned_2.to_pickle(cache_file_2)
+        logger.info(f"Cached regular dataset to: {cache_file_1}")
+        logger.info(f"Cached median-centered dataset to: {cache_file_2}")
         
         log_section("Complete")
         logger.info("Dataset preparation completed successfully!")
@@ -208,22 +207,19 @@ def load_cleaned_datasets():
     """
     Load the cached cleaned datasets if available.
     """
-    cache_file = os.path.join('cached_data', 'gss_cache.pkl')
+    cache_file_1 = os.path.join(project_root, 'datasets', 'cached_data', 'cleaned_data_1.pkl')
+    cache_file_2 = os.path.join(project_root, 'datasets', 'cached_data', 'cleaned_data_2.pkl')
     
-    # Check if cached file exists
-    if not os.path.exists(cache_file):
+    # Check if cached files exist
+    if not (os.path.exists(cache_file_1) and os.path.exists(cache_file_2)):
         logger.info("Cached cleaned datasets not found. Creating new ones...")
         return prepare_and_cache_datasets()
     
     logger.info("Loading cached cleaned datasets...")
     
     try:
-        with open(cache_file, 'rb') as f:
-            cache_data = pickle.load(f)
-            
-        df_cleaned_1 = cache_data['regular']
-        df_cleaned_2 = cache_data['median_centered']
-        meta = cache_data['meta']
+        df_cleaned_1 = pd.read_pickle(cache_file_1)
+        df_cleaned_2 = pd.read_pickle(cache_file_2)
         
         logger.info(f"Loaded cleaned dataset 1: {df_cleaned_1.shape}")
         logger.info(f"Loaded cleaned dataset 2: {df_cleaned_2.shape}")
