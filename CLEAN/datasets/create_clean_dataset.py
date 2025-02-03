@@ -224,7 +224,7 @@ def load_cleaned_datasets():
         logger.info(f"Loaded cleaned dataset 1: {df_cleaned_1.shape}")
         logger.info(f"Loaded cleaned dataset 2: {df_cleaned_2.shape}")
         
-        return df_cleaned_1, df_cleaned_2, meta
+        return df_cleaned_1, df_cleaned_2
         
     except Exception as e:
         logger.error(f"Error loading cached data: {str(e)}")

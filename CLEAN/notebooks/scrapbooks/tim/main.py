@@ -1,8 +1,8 @@
 import pandas as pd
-from data_loader import load_and_filter_data
-from analyzers.overlap_analyzer import calculate_overlap_matrix, plot_overlap_matrix
-from source_code.corr_make_network import calculate_correlation_matrix
-from visualizers.network_visualizer import create_network_data, generate_html_visualization
+from CLEAN.source_code.data_loader import load_and_filter_data
+from CLEAN.analyzers.overlap_analyzer import calculate_overlap_matrix, plot_overlap_matrix
+from CLEAN.source_code.corr_make_network import calculate_correlation_matrix
+from CLEAN.visualizers.network_visualizer import create_network_data, generate_html_visualization
 from analyzers.centrality_analyzer import calculate_centrality_measures, create_centrality_dataframes
 import matplotlib.pyplot as plt
 from typing import Tuple, List
