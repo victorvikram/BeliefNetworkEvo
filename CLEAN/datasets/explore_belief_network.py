@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from typing import List, Dict, Optional, Tuple
-from datasets.prepare_cleaned_datasets import load_cleaned_datasets
+from CLEAN.datasets.create_clean_dataset import load_cleaned_datasets
 from datasets.explore_gss import (
     analyze_variable_relationships,
     display_variable_info,

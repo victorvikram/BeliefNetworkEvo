@@ -20,12 +20,13 @@ import warnings
 from contextlib import contextmanager
 
 # Add the project root directory to the Python path
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 if project_root not in sys.path:
     sys.path.append(project_root)
 
-from datasets.prepare_cleaned_datasets import load_cleaned_datasets, VARS_TO_KEEP
-from datasets.clean_data import DataConfig
+# Update imports to use absolute paths
+from CLEAN.datasets.create_clean_dataset import load_cleaned_datasets, VARS_TO_KEEP
+from CLEAN.datasets.clean_data import DataConfig
 
 @contextmanager
 def figure_context():

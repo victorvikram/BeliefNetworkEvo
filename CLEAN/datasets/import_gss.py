@@ -4,6 +4,37 @@ import pickle
 import os
 from typing import Tuple, Dict
 import pandas as pd
+import sys
+import time
+
+def cat_loading_animation():
+    """
+    Ignore this.
+    """
+
+    frames = [
+        "🐱  ",
+        "🐾🐱 ",
+        " 🐾🐱",
+        "  🐾🐱",
+        "   🐾🐱",
+        "    🐾🐱",
+        "   🐾🐱",
+        "  🐾🐱",
+        " 🐾🐱",
+        "🐾🐱 "
+    ]
+    
+    for _ in range(3):  # Repeat the animation a few times
+        for frame in frames:
+            sys.stdout.write(f"\rJust a moment... {frame} ")
+            sys.stdout.flush()
+            time.sleep(0.2)
+
+    sys.stdout.write("\rDone! 🐱✨       \n")
+
+# Call the function while your file is "loading"
+
 
 def import_dataset() -> Tuple[pd.DataFrame, Dict]:
     """
@@ -25,7 +56,8 @@ def import_dataset() -> Tuple[pd.DataFrame, Dict]:
         return df, meta
     
     # If no cache, load from source
-    print("Loading from source file (this may take a while)...")
+    cat_loading_animation()
+
     file_path = data_dir / "raw_data" / "gss7222_r4.sas7bdat"
     
     if not file_path.exists():
