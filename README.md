@@ -63,7 +63,7 @@ CLEAN/
 
    # Create and activate conda environment
    conda env create -f pythons_beliefs.yml
-   conda activate clean-gss
+   conda activate pythons_beliefs
    ```
 
 
