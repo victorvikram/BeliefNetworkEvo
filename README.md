@@ -1,4 +1,4 @@
-# CLEAN - GSS Data Analysis Project
+# Belief Networks Evolution
 
 This project analyzes belief networks using data from the General Social Survey (GSS). It processes GSS data to explore correlations between beliefs, attitudes, and social factors, generating network visualizations that reveal how different beliefs and social attitudes interconnect.
 
@@ -24,7 +24,7 @@ The main goal is to analyze and visualize belief networks by:
 
 ```
 CLEAN/
-├── datasets/                           # Data processing pipeline
+├── datasets/                          # Data processing pipeline
 │   ├── raw_data/                      # Original GSS data
 │   ├── cleaned_data/                  # Processed datasets
 │   ├── cached_data/                   # Intermediate processing results
@@ -34,14 +34,15 @@ CLEAN/
 │   ├── clean_data.py                  # Core cleaning functions
 │   └── validate_cleaned_datasets.py   # Validation checks
 │
-├── source_code/                        # Main analysis code
-│   ├── analysis/                       # Analysis scripts
+├── source_code/                       # Main analysis code
+│   ├── analysis/                      # Analysis scripts
 │   │   └── corr_make_network.py       # Main network generation script
-│   ├── visualization/                  # Plotting utilities
-│   └── generators/                     # Data generation tools
+│   ├── visualization/                 # Plotting utilities
+│   └── generators/                    # Data generation tools
 │
-└── notebooks/                          # Analysis notebooks
-    └── network_analysis.ipynb          # Interactive network exploration
+└── notebooks/                         # Analysis notebooks
+    └── network_analysis.ipynb         # Interactive network exploration
+MESSY/                                 # Old codebase
 ```
 
 ## Quick Start
@@ -63,7 +64,7 @@ CLEAN/
 
    # Create and activate conda environment
    conda env create -f pythons_beliefs.yml
-   conda activate clean-gss
+   conda activate pythons_beliefs
    ```
 
 
