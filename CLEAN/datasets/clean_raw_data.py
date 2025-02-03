@@ -42,6 +42,9 @@ from dataclasses import dataclass
 import warnings
 import sys
 from pathlib import Path
+import os
+
+
 
 # Add the parent directory to Python path
 sys.path.append(str(Path(__file__).parent))
@@ -73,14 +76,14 @@ class DataConfig:
                        'POLATTAK', 'FECHLD', 'FEPRESCH', 'FEFAM', 'RACDIF1', 'RACDIF2', 'RACDIF3', 'RACDIF4', 
                        'HELPPOOR', 'HELPNOT', 'HELPBLK', 'MARHOMO']
 
-    asymmetric_questions = ['VOTE68', 'PRES68', 'IF68WHO', 'VOTE72', 'PRES72', 'IF72WHO', 'VOTE76', 'PRES76', 'IF76WHO', 
+    complicated_questions = ['VOTE68', 'PRES68', 'IF68WHO', 'VOTE72', 'PRES72', 'IF72WHO', 'VOTE76', 'PRES76', 'IF76WHO', 
                          'VOTE80', 'PRES80', 'IF80WHO', 'VOTE84', 'PRES84', 'IF84WHO', 'VOTE88', 'PRES88', 'IF88WHO', 
                          'VOTE92', 'PRES92', 'IF92WHO', 'VOTE96', 'PRES96', 'IF96WHO', 'VOTE00', 'PRES00', 'IF00WHO', 
                          'VOTE04', 'PRES04', 'IF04WHO', 'VOTE08', 'PRES08', 'IF08WHO', 'VOTE12', 'PRES12', 'IF12WHO', 
                          'VOTE16', 'PRES16', 'IF16WHO', 'VOTE20', 'PRES20', 'IF20WHO', 'RELIG', 'ATTEND', 'RACOPEN', 
                          'NEWS', 'TVHOURS', 'RELITEN']
     """
-    
+
     # Columns that should not be transformed
     EXCLUDE_COLS = ["YEAR", "BALLOT", "ID"]
     
@@ -105,11 +108,11 @@ class DataConfig:
 
     # Variables mapped from {1, 'D', 2} -> {1, 0, -1}
     ordinal_1_to_2_with_98 = {1: 1, 'D': 0, 2: -1}
-    VARS_E = ['SPKATH', 'LIBATH', 'SPKRAC', 'LIBRAC', 'SPKCOM', 'LIBCOM', 
-              'SPKMIL', 'LIBMIL', 'SPKHOMO', 'LIBHOMO', 'SPKMSLM', 'LIBMSLM',
-              'CAPPUN', 'GUNLAW', 'GRASS', 'POSTLIFE', 'PRAYER', 'FEPOL', 'ABDEFECT', 'ABNOMORE', 'ABHLTH', 'ABPOOR', 'ABRAPE', 
-              'ABSINGLE', 'ABANY', 'LETDIE1', 'SUICIDE1', 'SUICIDE2', 'POLHITOK', 'POLABUSE', 'POLMURDR', 'POLESCAP', 
-              'POLATTAK', 'RACDIF1', 'RACDIF2', 'RACDIF3', 'RACDIF4']
+    VARS_E = ['SPKATH', 'LIBATH', 'SPKRAC', 'LIBRAC', 'SPKCOM', 'LIBCOM', 'SPKMIL', 'LIBMIL', 
+              'SPKHOMO', 'LIBHOMO', 'SPKMSLM', 'LIBMSLM', 'CAPPUN', 'GUNLAW', 'GRASS', 'POSTLIFE', 
+              'PRAYER', 'FEPOL', 'ABDEFECT', 'ABNOMORE', 'ABHLTH', 'ABPOOR', 'ABRAPE', 'ABSINGLE',
+              'ABANY', 'LETDIE1', 'SUICIDE1', 'SUICIDE2', 'POLHITOK', 'POLABUSE', 'POLMURDR', 
+              'POLESCAP', 'POLATTAK', 'RACDIF1', 'RACDIF2', 'RACDIF3', 'RACDIF4']
 
     # Variables mapped from {1, 2, 3} -> {1, -1, 0}
     ordinal_1_to_3_alt_order = {1: 1, 2: -1, 3: 0}
@@ -133,65 +136,66 @@ class DataConfig:
     VARS_J = ['COLATH', 'COLRAC', 'COLCOM', 'COLMIL', 'COLMSLM', 'COLHOMO']
 
     #--------------------------------------------------------------------------
-    # Asymmetric variables Mappings and Categories
+    # Special case variables mappings and categories
     #--------------------------------------------------------------------------
     """
-    asymmetric_questions = ['VOTE68', 'PRES68', 'IF68WHO', 'VOTE72', 'PRES72', 'IF72WHO', 'VOTE76', 'PRES76', 'IF76WHO', 
+    special_questions = ['VOTE68', 'PRES68', 'IF68WHO', 'VOTE72', 'PRES72', 'IF72WHO', 'VOTE76', 'PRES76', 'IF76WHO', 
                          'VOTE80', 'PRES80', 'IF80WHO', 'VOTE84', 'PRES84', 'IF84WHO', 'VOTE88', 'PRES88', 'IF88WHO', 
                          'VOTE92', 'PRES92', 'IF92WHO', 'VOTE96', 'PRES96', 'IF96WHO', 'VOTE00', 'PRES00', 'IF00WHO', 
                          'VOTE04', 'PRES04', 'IF04WHO', 'VOTE08', 'PRES08', 'IF08WHO', 'VOTE12', 'PRES12', 'IF12WHO', 
                          'VOTE16', 'PRES16', 'IF16WHO', 'VOTE20', 'PRES20', 'IF20WHO', 'RELIG', 'ATTEND', 'RACOPEN', 
                          'NEWS', 'TVHOURS', 'RELITEN']
     """
-    
-    # Variables mapped from {1, 2} -> {1, 0} for basic voting participation
-    binary_1_to_2 = {1: 1, 2: 0}
-    VARS_K = ['VOTE68', 'VOTE72', 'VOTE76', 'VOTE80', 'VOTE84', 'VOTE88', 'VOTE92', 
-              'VOTE96', 'VOTE00', 'VOTE04', 'VOTE08', 'VOTE12', 'VOTE16', 'VOTE20']
 
-    # Variables 
-    category_pres_vars_option_A = {1: 1, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 'I': 0, 'D': 0, 'Y': 0, 'N': 0}
-    category_pres_vars_option_B = {1: 0, 2: 1, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 'I': 0, 'D': 0, 'Y': 0, 'N': 0}
-    category_pres_vars_option_C = {1: 1, 2: 0, 3: 1, 4: 0, 5: 0, 6: 0, 7: 0, 'I': 0, 'D': 0, 'Y': 0, 'N': 0}
-    category_pres_vars_option_D = {1: 0, 2: 0, 3: 0, 4: 1, 5: 0, 6: 0, 7: 0, 'I': 0, 'D': 0, 'Y': 0, 'N': 0}
-    category_pres_vars_option_E = {1: 0, 2: 0, 3: 0, 4: 0, 5: 1, 6: 0, 7: 0, 'I': 0, 'D': 0, 'Y': 0, 'N': 0}
-    category_pres_vars_option_F = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 1, 7: 0, 'I': 0, 'D': 0, 'Y': 0, 'N': 0}
-    category_pres_vars_option_G = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 1, 'I': 0, 'D': 0, 'Y': 0, 'N': 0}
+    # Plan is: make the following derived variables: PRESLAST_DEMREP, PRESLAST_NONCONFORM, WOULDVOTELAST_DEMREP, WOULDVOTELAST_NONCONFORM, DIDVOTELAST
+    # and symmetrise all the other variables via various coping strategies.
 
-    derived_pres_vars = ['PRES68_HUMPHREY', 'PRES68_NIXON', 'PRES68_WALLACE', 'PRES68_OTHER', 'PRES68_NOVOTE',
-                         'PRES72_MCGOVERN', 'PRES72_NIXON', 'PRES72_OTHER', 'PRES72_NOVOTE',
-                         'PRES76_CARTER', 'PRES76_FORD', 'PRES76_OTHER', 'PRES76_NOVOTE',
-                         'PRES80_CARTER', 'PRES80_REAGAN', 'PRES80_ANDERSON', 'PRES80_OTHER', 'PRES80_NOVOTE',
-                         'PRES84_MONDALE', 'PRES84_REAGAN', 'PRES84_OTHER', 'PRES84_NOVOTE',
-                         'PRES88_DUKAKIS', 'PRES88_BUSH', 'PRES88_OTHER', 'PRES88_NOVOTE',
-                         'PRES92_CLINTON', 'PRES92_BUSH', 'PRES92_PEROT', 'PRES92_OTHER', 'PRES92_NOVOTE',
-                         'PRES96_CLINTON', 'PRES96_DOLE', 'PRES96_PEROT', 'PRES96_OTHER', 'PRES96_NOVOTE',
-                         'PRES00_GORE', 'PRES00_BUSH', 'PRES00_NADER', 'PRES00_OTHER', 'PRES00_NOVOTE',
-                         'PRES04_KERRY', 'PRES04_BUSH', 'PRES04_NADER', 'PRES04_OTHER', 'PRES04_NOVOTE',
-                         'PRES08_OBAMA', 'PRES08_McCain', 'PRES08_OTHER', 'PRES08_NOVOTE',
-                         'PRES12_OBAMA', 'PRES12_ROMNEY', 'PRES12_OTHER', 'PRES12_NOVOTE',
-                         'PRES16_CLINTON', 'PRES16_TRUMP', 'PRES16_OTHER', 'PRES16_NOVOTE',
-                         'PRES20_BIDEN', 'PRES20_TRUMP', 'PRES20_OTHER', 'PRES20_NOVOTE']
+    # In effect -- all variables will be made symmetric.
+
+    preslast_demrep_map = {1: -1, 2: 1}
+    preslast_nonconform_3_options_map = {1: -1, 2: -1, 3: 1, 4: 1, 5: -1}           # Used for 1968, 1980, 1992, 1996, 2000, 2004.
+    preslast_nonconform_regular_map = {1: -1, 2: -1, 3: 1, 4: -1}                   
+    pres_vars = ['PRES68', 'PRES72', 'PRES76', 'PRES80', 'PRES84', 'PRES88', 'PRES92', 'PRES96', 'PRES00', 'PRES04', 'PRES08', 'PRES12', 'PRES16', 'PRES20']
+    derived_preslast_vars = ['PRESLAST_DEMREP', 'PRESLAST_NONCONFORM']
 
 
-    category_ifwho_vars = {1: 1, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 'I': 0, 'D': 0, 'Y': 0, 'N': 0}
+    wouldvotelast_demrep_map = {1: -1, 2: 1}
+    wouldvotelast_nonconform_3_options_map = {1: -1, 2: -1, 3: 1, 4: 1, 5: -1}      # Used for 1968, 1980, 1992, 1996, 2000, 2004.
+    wouldvotelast_nonconform_regular_map = {1: -1, 2: -1, 3: 1, 4: -1}
+    if_vars = ['IF68WHO', 'IF72WHO', 'IF76WHO', 'IF80WHO', 'IF84WHO', 'IF88WHO', 'IF92WHO', 'IF96WHO', 'IF00WHO', 'IF04WHO', 'IF08WHO', 'IF12WHO', 'IF16WHO', 'IF20WHO']
+    derived_wouldvotelast_vars = ['WOULDVOTELAST_DEMREP', 'WOULDVOTELAST_NONCONFORM']
 
-    derived_ifwho_vars = ['IF68WHO_HUMPHREY', 'IF68WHO_NIXON', 'IF68WHO_OTHER', 
-                          'IF72WHO_MCGOVERN', 'IF72WHO_NIXON', 'IF72WHO_OTHER', 
-                          'IF76WHO_CARTER', 'IF76WHO_FORD', 'IF76WHO_OTHER', 
-                          'IF80WHO_CARTER', 'IF80WHO_REAGAN', 'IF80WHO_ANDERSON', 'IF80WHO_OTHER', 
-                          'IF84WHO_MONDALE', 'IF84WHO_REAGAN', 'IF84WHO_OTHER', 
-                          'IF88WHO_DUKAKIS', 'IF88WHO_BUSH', 'IF88WHO_OTHER', 
-                          'IF92WHO_CLINTON', 'IF92WHO_BUSH', 'IF92WHO_PEROT', 'IF92WHO_OTHER', 
-                          'IF96WHO_CLINTON', 'IF96WHO_DOLE', 'IF96WHO_PEROT', 'IF96WHO_OTHER', 
-                          'IF00WHO_GORE', 'IF00WHO_BUSH', 'IF00WHO_NADER', 'IF00WHO_OTHER', 
-                          'IF04WHO_KERRY', 'IF04WHO_BUSH', 'IF04WHO_NADER', 'IF04WHO_OTHER', 
-                          'IF08WHO_OBAMA', 'IF08WHO_McCain', 'IF08WHO_OTHER', 
-                          'IF12WHO_OBAMA', 'IF12WHO_ROMNEY', 'IF12WHO_OTHER', 
-                          'IF16WHO_CLINTON', 'IF16WHO_TRUMP', 'IF16WHO_OTHER', 
-                          'IF20WHO_BIDEN', 'IF20WHO_TRUMP', 'IF20WHO_OTHER', 'IF20WHO_NOVOTE']
-    
-    
+    didvotelast_map = {1: 1, 2: -1}
+    vote_vars = ['VOTE68', 'VOTE72', 'VOTE76', 'VOTE80', 'VOTE84', 'VOTE88', 'VOTE92', 'VOTE96', 'VOTE00', 'VOTE04', 'VOTE08', 'VOTE12', 'VOTE16', 'VOTE20']
+    derived_didvotelast_vars = ['DIDVOTELAST']
+
+    # Religion maps (1 is "holds religion", -1 is "does not hold religion")
+    relig_map_Protestant                    = {1: 1, 2: -1, 3: -1, 4: -1, 5: -1, 6: -1, 7: -1, 8: -1, 9: -1, 10: -1, 11: -1, 12: -1, 13: -1}
+    relig_map_Catholic                      = {1: -1, 2: 1, 3: -1, 4: -1, 5: -1, 6: -1, 7: -1, 8: -1, 9: -1, 10: -1, 11: -1, 12: -1, 13: -1}
+    relig_map_Jewish                        = {1: -1, 2: -1, 3: 1, 4: -1, 5: -1, 6: -1, 7: -1, 8: -1, 9: -1, 10: -1, 11: -1, 12: -1, 13: -1}
+    relig_map_None                          = {1: -1, 2: -1, 3: -1, 4: 1, 5: -1, 6: -1, 7: -1, 8: -1, 9: -1, 10: -1, 11: -1, 12: -1, 13: -1}
+    relig_map_Other                         = {1: -1, 2: -1, 3: -1, 4: -1, 5: 1, 6: -1, 7: -1, 8: -1, 9: -1, 10: -1, 11: -1, 12: -1, 13: -1}
+    relig_map_Buddhism                      = {1: -1, 2: -1, 3: -1, 4: -1, 5: -1, 6: 1, 7: -1, 8: -1, 9: -1, 10: -1, 11: -1, 12: -1, 13: -1}
+    relig_map_Hinduism                      = {1: -1, 2: -1, 3: -1, 4: -1, 5: -1, 6: -1, 7: 1, 8: -1, 9: -1, 10: -1, 11: -1, 12: -1, 13: -1}
+    relig_map_Other_eastern_religions       = {1: -1, 2: -1, 3: -1, 4: -1, 5: -1, 6: -1, 7: -1, 8: 1, 9: -1, 10: -1, 11: -1, 12: -1, 13: -1}
+    relig_map_Muslim                        = {1: -1, 2: -1, 3: -1, 4: -1, 5: -1, 6: -1, 7: -1, 8: -1, 9: 1, 10: -1, 11: -1, 12: -1, 13: -1}
+    relig_map_Orthodox_christian	        = {1: -1, 2: -1, 3: -1, 4: -1, 5: -1, 6: -1, 7: -1, 8: -1, 9: -1, 10: 1, 11: -1, 12: -1, 13: -1}
+    relig_map_Christian                     = {1: -1, 2: -1, 3: -1, 4: -1, 5: -1, 6: -1, 7: -1, 8: -1, 9: -1, 10: -1, 11: 1, 12: -1, 13: -1}
+    relig_map_Native_american               = {1: -1, 2: -1, 3: -1, 4: -1, 5: -1, 6: -1, 7: -1, 8: -1, 9: -1, 10: -1, 11: -1, 12: 1, 13: -1}
+    relig_map_Inter_nondenominational	    = {1: -1, 2: -1, 3: -1, 4: -1, 5: -1, 6: -1, 7: -1, 8: -1, 9: -1, 10: -1, 11: -1, 12: -1, 13: 1}
+    relig_vars = ['RELIG']
+
+    # RELITEN map: RELITEN will be mapped to a [-1, 0, 1] scale (Not very strong and somewhat strong will be collapsed into 0). The intepretation is that "I believe X things related to religion vs I do not believe in X things related to religion".
+    reliten_map = {1: -1, 2: 0, 3: 0, 4: -1}
+    reliten_vars = ['RELITEN']
+
+    # RACOPEN will be mapped to a [-1, 0, 1] scale (First law is 1, second law is -1, and third law is 0). 
+    racopen_map = {1: 1, 2: -1, 3: 0}
+    racopen_vars = ['RACOPEN']
+
+    # ATTEND, NEWS, and TVHOURS will face the median method
+    # TO BE COMPLETED AT A LATER DATE!!   
+    median_vars = ['ATTEND', 'NEWS', 'TVHOURS']
 
     #--------------------------------------------------------------------------
     # Helper Properties
@@ -263,8 +267,19 @@ def transform_regular() -> pd.DataFrame:
     # Initialize config
     config = DataConfig()
     
-    # Get columns to keep
-    columns_to_keep = config.EXCLUDE_COLS + config.all_questions
+    # Get columns to keep including special case variables
+    columns_to_keep = (
+        config.EXCLUDE_COLS 
+        + config.all_questions 
+        + config.pres_vars 
+        + config.if_vars 
+        + config.vote_vars 
+        + config.relig_vars 
+        + config.reliten_vars 
+        + config.racopen_vars 
+        + config.median_vars
+    )
+    columns_to_keep = list(set(columns_to_keep))  # Remove duplicates
     
     # Filter columns
     df_filtered = df[columns_to_keep].copy()
@@ -275,6 +290,92 @@ def transform_regular() -> pd.DataFrame:
     for col, mapping in mappings.items():
         if col in df_filtered.columns:
             df_filtered[col] = transform_column(df_filtered[col], mapping)
+    
+    # Process PRES variables to create PRESLAST_DEMREP and PRESLAST_NONCONFORM
+    df_filtered['PRESLAST_DEMREP'] = np.nan
+    df_filtered['PRESLAST_NONCONFORM'] = np.nan
+    for pres_var in config.pres_vars:
+        if pres_var not in df_filtered.columns:
+            continue
+        year_str = pres_var.replace('PRES', '')
+        election_year = 1900 + int(year_str) if int(year_str) >= 68 else 2000 + int(year_str)
+        if election_year in [1968, 1980, 1992, 1996, 2000, 2004]:
+            nonconform_map = config.preslast_nonconform_3_options_map
+        else:
+            nonconform_map = config.preslast_nonconform_regular_map
+        
+        demrep_col = df_filtered[pres_var].map(config.preslast_demrep_map)
+        nonconform_col = df_filtered[pres_var].map(nonconform_map)
+        
+        mask = demrep_col.notna()
+        df_filtered.loc[mask, 'PRESLAST_DEMREP'] = demrep_col[mask]
+        mask = nonconform_col.notna()
+        df_filtered.loc[mask, 'PRESLAST_NONCONFORM'] = nonconform_col[mask]
+    
+    # Process IF variables to create WOULDVOTELAST_DEMREP and WOULDVOTELAST_NONCONFORM
+    df_filtered['WOULDVOTELAST_DEMREP'] = np.nan
+    df_filtered['WOULDVOTELAST_NONCONFORM'] = np.nan
+    for if_var in config.if_vars:
+        if if_var not in df_filtered.columns:
+            continue
+        year_str = if_var.replace('IF', '').replace('WHO', '')
+        election_year = 1900 + int(year_str) if int(year_str) >= 68 else 2000 + int(year_str)
+        if election_year in [1968, 1980, 1992, 1996, 2000, 2004]:
+            nonconform_map = config.wouldvotelast_nonconform_3_options_map
+        else:
+            nonconform_map = config.wouldvotelast_nonconform_regular_map
+        
+        demrep_col = df_filtered[if_var].map(config.wouldvotelast_demrep_map)
+        nonconform_col = df_filtered[if_var].map(nonconform_map)
+        
+        mask = demrep_col.notna()
+        df_filtered.loc[mask, 'WOULDVOTELAST_DEMREP'] = demrep_col[mask]
+        mask = nonconform_col.notna()
+        df_filtered.loc[mask, 'WOULDVOTELAST_NONCONFORM'] = nonconform_col[mask]
+    
+    # Process VOTE variables to create DIDVOTELAST
+    df_filtered['DIDVOTELAST'] = np.nan
+    for vote_var in config.vote_vars:
+        if vote_var not in df_filtered.columns:
+            continue
+        vote_col = df_filtered[vote_var].map(config.didvotelast_map)
+        mask = vote_col.notna()
+        df_filtered.loc[mask, 'DIDVOTELAST'] = vote_col[mask]
+    
+    # Process RELIG into binary variables
+    religion_derivations = [
+        ('Protestant', config.relig_map_Protestant),
+        ('Catholic', config.relig_map_Catholic),
+        ('Jewish', config.relig_map_Jewish),
+        ('None', config.relig_map_None),
+        ('Other', config.relig_map_Other),
+        ('Buddhism', config.relig_map_Buddhism),
+        ('Hinduism', config.relig_map_Hinduism),
+        ('Other_eastern_religions', config.relig_map_Other_eastern_religions),
+        ('Muslim', config.relig_map_Muslim),
+        ('Orthodox_christian', config.relig_map_Orthodox_christian),
+        ('Christian', config.relig_map_Christian),
+        ('Native_american', config.relig_map_Native_american),
+        ('Inter_nondenominational', config.relig_map_Inter_nondenominational)
+    ]
+    for suffix, mapping in religion_derivations:
+        new_col = f'RELIG_{suffix}'
+        df_filtered[new_col] = df_filtered['RELIG'].map(mapping)
+    
+    # Process RELITEN
+    df_filtered['RELITEN'] = df_filtered['RELITEN'].map(config.reliten_map)
+    
+    # Process RACOPEN
+    df_filtered['RACOPEN'] = df_filtered['RACOPEN'].map(config.racopen_map)
+    
+    
+    # Drop original special case columns
+    columns_to_drop = (
+        config.pres_vars + config.if_vars + config.vote_vars 
+        + config.relig_vars + config.reliten_vars + config.racopen_vars 
+        + config.median_vars
+    )
+    df_filtered.drop(columns=columns_to_drop, errors='ignore', inplace=True)
     
     return df_filtered
 
@@ -297,3 +398,31 @@ def clean_datasets() -> pd.DataFrame:
     
     return df_regular 
 
+#------------------------------------------------------------------------------
+# For Testing (if run as script)
+#------------------------------------------------------------------------------
+
+if __name__ == '__main__':
+    df_clean = clean_datasets()
+    
+    
+    # Add the project root directory to the Python path
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if project_root not in sys.path:
+        sys.path.append(project_root)
+    
+    
+    # Cache the cleaned datasets
+    cache_dir = os.path.join(project_root, 'datasets', 'cached_data')
+    os.makedirs(cache_dir, exist_ok=True)
+    
+    
+    
+    # Cache each version separately
+    cache_file_1 = os.path.join(cache_dir, 'df_clean.pkl')
+    
+    # Save the datasets
+    df_clean.to_pickle(cache_file_1)
+
+    # Print list of all variables
+    # print(list(df_clean.columns))
