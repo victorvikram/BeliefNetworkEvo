@@ -79,13 +79,16 @@ def import_dataset(columns: Optional[List[str]] = None) -> Tuple[pd.DataFrame, D
             animation_thread.join()
             raise FileNotFoundError(f"Data file not found at: {file_path}")
             
-        raw_df, meta = prs.read_sas7bdat(
-            str(file_path),
-            user_missing=True,
-            disable_datetime_conversion=True,
-            formats_as_category=False,
-            usecols=columns  # Only read specified columns if provided
-        )
+        #raw_df, meta = prs.read_sas7bdat(
+        #    str(file_path),
+        #    user_missing=True,
+        #    disable_datetime_conversion=True,
+        #    formats_as_category=False,
+        #    usecols=columns  # Only read specified columns if provided
+        #)
+
+
+        raw_df, meta = prs.read_sas7bdat(str(file_path), usecols=columns) # Only read specified columns if provided
 
         # Cache the full data
         cache_dir.mkdir(exist_ok=True)

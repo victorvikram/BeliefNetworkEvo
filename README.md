@@ -76,12 +76,12 @@ MESSY/                                 # Old codebase
    ```bash
    # Import and clean data
    python CLEAN/datasets/import_gss.py
-   python CLEAN/datasets/prepare_cleaned_datasets.py
+   python CLEAN/datasets/prepare_clean_datasets.py
    ```
 
 5. **Generate Networks**
    ```bash
-   python CLEAN/source_code/analysis/corr_make_network.py
+   python CLEAN/source_code/generators/corr_make_network.py
    ```
 
 ## Data Cleaning Details

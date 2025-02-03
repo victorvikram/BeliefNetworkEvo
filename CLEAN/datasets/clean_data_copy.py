@@ -231,63 +231,6 @@ class DataConfig:
             
         return mappings
 
-    #--------------------------------------------------------------------------
-    # Presidential Vote Variables and Mappings
-    #--------------------------------------------------------------------------
-    
-    def create_vote_indicators(self, df: pd.DataFrame) -> pd.DataFrame:
-        """
-        Create binary indicator variables for presidential votes.
-        For each PRES* variable, creates separate columns for:
-        - Democratic candidate (1 if voted for, 0 otherwise)
-        - Republican candidate (1 if voted for, 0 otherwise)
-        - Other candidate (1 if voted for third party/other, 0 otherwise)
-        - No vote (1 if didn't vote/refused, 0 otherwise)
-        """
-        df = df.copy()
-        
-        # Get all PRES* columns
-        pres_cols = [col for col in df.columns if col.startswith('PRES') and col.endswith(('68','72','76','80','84','88','92','96','00','04','08','12','16','20'))]
-        
-        for col in pres_cols:
-            year = col[-2:]  # Get year from column name
-            
-            # Create indicator variables
-            df[f'{col}_DEM'] = (df[col] == 1).astype(int)  # Democratic candidate
-            df[f'{col}_REP'] = (df[col] == 2).astype(int)  # Republican candidate
-            df[f'{col}_OTHER'] = (df[col] == 3).astype(int)  # Other/third party
-            df[f'{col}_NOVOTE'] = df[col].isin([4, 5]).astype(int)  # No vote/refused
-            
-            # Handle missing values
-            missing_mask = df[col].isin([-100, -99, -98, -70])
-            new_cols = [f'{col}_{suffix}' for suffix in ['DEM', 'REP', 'OTHER', 'NOVOTE']]
-            df.loc[missing_mask, new_cols] = np.nan
-            
-        return df
-
-    def create_ifwho_indicators(self, df: pd.DataFrame) -> pd.DataFrame:
-        """
-        Create binary indicator variables for hypothetical vote preference.
-        Similar structure to create_vote_indicators but for IF*WHO variables.
-        """
-        df = df.copy()
-        
-        # Get all IF*WHO columns
-        ifwho_cols = [col for col in df.columns if col.startswith('IF') and col.endswith('WHO')]
-        
-        for col in ifwho_cols:
-            # Create indicator variables
-            df[f'{col}_DEM'] = (df[col] == 1).astype(int)  # Democratic candidate
-            df[f'{col}_REP'] = (df[col] == 2).astype(int)  # Republican candidate
-            df[f'{col}_OTHER'] = (df[col] == 3).astype(int)  # Other/third party
-            
-            # Handle missing values
-            missing_mask = df[col].isin([-100, -99, -98, -70])
-            new_cols = [f'{col}_{suffix}' for suffix in ['DEM', 'REP', 'OTHER']]
-            df.loc[missing_mask, new_cols] = np.nan
-            
-        return df
-
 #------------------------------------------------------------------------------
 # Transformation Functions
 #------------------------------------------------------------------------------
@@ -328,13 +271,10 @@ def transform_regular() -> pd.DataFrame:
     
     # Transform each column according to its mapping
     mappings = config.all_mappings
+    
     for col, mapping in mappings.items():
         if col in df_filtered.columns:
             df_filtered[col] = transform_column(df_filtered[col], mapping)
-    
-    # Create binary indicators for presidential votes and hypothetical votes
-    df_filtered = config.create_vote_indicators(df_filtered)
-    df_filtered = config.create_ifwho_indicators(df_filtered)
     
     return df_filtered
 
