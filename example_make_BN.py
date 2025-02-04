@@ -2,6 +2,7 @@
 # CLEAN/source_code/generators/corr_make_network.py
 
 import pickle
+import os
 
 """
 Example script demonstrating how to create a correlation matrix (belief network)
@@ -28,7 +29,7 @@ import seaborn as sns
 
 def main():
     
-    with open('CLEAN\datasets\cached_data\cleaned_data_1.pkl', 'rb') as f:
+    with open(os.path.join('CLEAN', 'datasets', 'cached_data', 'cleaned_data_1.pkl'), 'rb') as f:
             df = pickle.load(f)
 
     start_year = 2000
@@ -46,7 +47,7 @@ def main():
     corr_matrix = calculate_correlation_matrix(
         df,
         method=CorrelationMethod.SPEARMAN,
-        partial=False,
+        partial=True,
         edge_suppression=EdgeSuppressionMethod.SQUARE
     )
     
