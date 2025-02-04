@@ -211,7 +211,8 @@ def suppress_edges(
     elif method == EdgeSuppressionMethod.THRESHOLD:
         raise NotImplementedError("Threshold-based edge suppression not yet implemented")
     elif method == EdgeSuppressionMethod.REGULARIZATION:
-        raise NotImplementedError("Regularization not yet implemented")
+        # regularization happens upstread of this function
+        return correlation_matrix
     elif method == EdgeSuppressionMethod.STATISTICAL:
         raise NotImplementedError("Statistical edge suppression not yet implemented")
 
@@ -357,9 +358,9 @@ def calculate_correlation_matrix(
     if years_of_interest:
         df_subset = df[df["YEAR"].isin(years_of_interest)]
     
-    # Get non-metadata columns for correlation calculation
+    # Get non-metadata columns for correlation calculation, and filter the dataset
+    # also only uses the variables_of_interest columns
     correlation_cols = get_correlation_columns(df, base_variable_list=variables_of_interest)
-
     df_subset = df_subset[correlation_cols]
 
     if len(correlation_cols) < 2:
@@ -375,23 +376,29 @@ def calculate_correlation_matrix(
             clean_matrix, removed_indices = filter_nans(correlation_matrix.values)
             
             # Track remaining variables after NaN removal
-            remaining_cols = [col for i, col in enumerate(correlation_cols) 
+            correlation_cols = [col for i, col in enumerate(correlation_cols) 
                             if i not in removed_indices]
             
-            if len(remaining_cols) < 2:
+            if len(correlation_cols) < 2:
                 raise ValueError(
                     "Too many variables removed due to missing correlations. "
                     "Need at least 2 variables to calculate partial correlations."
                 )
             
             # Calculate partial correlations on the clean matrix
-            partial_correlations = calculate_partial_correlations(clean_matrix)
+            if edge_suppression == EdgeSuppressionMethod.REGULARIZATION:
+                if suppression_params is None or "regularization" not in suppression_params:
+                    raise ValueError("Regularization parameter 'regularization' must be provided in suppression_params")
+                alpha = suppression_params["regularization"]
+                partial_correlations = calculate_regularized_partial_correlations(clean_matrix, alpha=alpha)
+            else:
+                partial_correlations = calculate_partial_correlations(clean_matrix)
             
             # Create new DataFrame with the partial correlations
             correlation_matrix = pd.DataFrame(
                 partial_correlations,
-                index=remaining_cols,
-                columns=remaining_cols
+                index=correlation_cols,
+                columns=correlation_cols
             )
         except ValueError as e:
             raise ValueError(f"Failed to calculate partial correlations: {str(e)}")
