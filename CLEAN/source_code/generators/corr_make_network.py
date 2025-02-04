@@ -122,6 +122,18 @@ def calculate_partial_correlations(correlation_matrix: np.ndarray,
         raise ValueError("Precision matrix contains infinite values")
     
     # Step 2: Convert precision matrix to partial correlations
+    partial_correlations = precision_mat_to_partial_corr(precision_matrix)
+
+    return partial_correlations
+
+def precision_mat_to_partial_corr(precision_matrix):
+    """
+    `precision_matrix` is a numpy array representing the inverse of the correlation matrix
+
+    calculates the partial correlations by correctly scaling the precision matrix
+
+    **tested**
+    """
     diag_precision = np.diag(precision_matrix)
     
     # Debug: Check diagonal elements
@@ -147,6 +159,26 @@ def calculate_partial_correlations(correlation_matrix: np.ndarray,
     
     return partial_correlations
 
+
+def calculate_regularized_partial_correlations(cov_mat, alpha=0.1):
+    """
+    `cov_mat` is a covariance matrix
+    `alpha` is the regularization parameter
+
+    takes a covariance matrix and returns the estimated regularized covariances and partial
+    correlations. 
+    
+    Note that a correlation matrix can also be passed in since the correlation matrix is
+    simply the covariance of the standardized variables, and the partial correlations between
+    the standardized variables should be equal to the partial correlations between the untransformed
+    variables
+
+    **tested**
+    """
+    cov, precision = graphical_lasso(cov_mat, alpha=alpha)
+    partial_cor_mat = precision_mat_to_partial_corr(precision)
+
+    return partial_cor_mat
 
 def suppress_edges(
     correlation_matrix: pd.DataFrame,
@@ -186,18 +218,27 @@ def suppress_edges(
     raise ValueError(f"Unknown edge suppression method: {method}")
 
 
-def get_correlation_columns(df: pd.DataFrame) -> List[str]:
+def get_correlation_columns(df: pd.DataFrame, 
+                            base_variable_list: Optional[List[str]] = None
+                            ) -> List[str]:
     """
     Get columns to include in correlation calculations, excluding metadata.
     
+    If you pass in base_variable_list, it will return those variables 
+    excluding the metadata variables 
+
     Args:
         df: Input DataFrame
         
     Returns:
         List[str]: Column names to use for correlation calculation
     """
+    if not base_variable_list:
+        base_variable_list = df.columns.tolist()
+    
     metadata_vars = {'YEAR', 'BALLOT', 'ID'}  # Using set for O(1) lookup
-    return [col for col in df.columns if col not in metadata_vars]
+
+    return [var for var in base_variable_list if var not in metadata_vars]
 
 
 def filter_nans(correlation_matrix: np.ndarray) -> Tuple[np.ndarray, List[int]]:
@@ -266,6 +307,8 @@ def filter_nans(correlation_matrix: np.ndarray) -> Tuple[np.ndarray, List[int]]:
 
 def calculate_correlation_matrix(
     df: pd.DataFrame,
+    variables_of_interest: Optional[List[str]] = None,
+    years_of_interest: Optional[List[int]] = None,
     method: Union[str, CorrelationMethod] = CorrelationMethod.SPEARMAN,
     partial: bool = False,
     edge_suppression: Union[str, EdgeSuppressionMethod] = EdgeSuppressionMethod.NONE,
@@ -308,13 +351,22 @@ def calculate_correlation_matrix(
     if isinstance(method, str):
         method = CorrelationMethod(method)
     
+    # Start with the full dataframe and filter it according to specified years if provided.
+    df_subset = df
+
+    if years_of_interest:
+        df_subset = df[df["YEAR"].isin(years_of_interest)]
+    
     # Get non-metadata columns for correlation calculation
-    correlation_cols = get_correlation_columns(df)
+    correlation_cols = get_correlation_columns(df, base_variable_list=variables_of_interest)
+
+    df_subset = df_subset[correlation_cols]
+
     if len(correlation_cols) < 2:
         raise ValueError("Need at least 2 non-metadata columns for correlation analysis")
     
     # Calculate base correlations using specified method
-    correlation_matrix = df[correlation_cols].corr(method=method.value)
+    correlation_matrix = df_subset.corr(method=method.value)
     
     # Handle partial correlations if requested
     if partial:
