@@ -40,7 +40,7 @@ def cat_loading_animation(stop_event):
     
     sys.stdout.write("\rDataset loaded! 🐱✨       \n")
 
-def import_dataset(columns: Optional[List[str]] = None) -> Tuple[pd.DataFrame, Dict]:
+def import_dataset() -> Tuple[pd.DataFrame, Dict]:
     """
     Load GSS data from cache if available, otherwise load from source and cache.
     
@@ -50,6 +50,29 @@ def import_dataset(columns: Optional[List[str]] = None) -> Tuple[pd.DataFrame, D
     Returns:
         Tuple of (dataframe, metadata)
     """
+    columns_of_interest = ['PARTYID', 'POLVIEWS', 'NATSPAC', 'NATENVIR', 'NATHEAL', 'NATCITY', 'NATCRIME', 'NATDRUG', 
+                           'NATEDUC', 'NATRACE', 'NATARMS', 'NATAID', 'NATFARE', 'NATROAD', 'NATSOC', 'NATMASS', 'NATPARK', 
+                           'NATCHLD', 'NATSCI', 'NATENRGY', 'NATSPACY', 'NATENVIY', 'NATHEALY', 'NATCITYY', 'NATCRIMY', 
+                           'NATDRUGY', 'NATEDUCY', 'NATRACEY', 'NATARMSY', 'NATAIDY', 'NATFAREY', 'EQWLTH', 'SPKATH', 
+                           'COLATH', 'LIBATH', 'SPKRAC', 'COLRAC', 'LIBRAC', 'SPKCOM', 'COLCOM', 'LIBCOM', 'SPKMIL', 
+                           'COLMIL', 'LIBMIL', 'SPKHOMO', 'COLHOMO', 'LIBHOMO', 'SPKMSLM', 'COLMSLM', 'LIBMSLM', 'CAPPUN', 
+                           'GUNLAW', 'COURTS', 'GRASS', 'POSTLIFE', 'PRAYER', 'AFFRMACT', 'WRKWAYUP', 'HELPFUL', 
+                           'FAIR', 'TRUST', 'CONFINAN', 'CONBUS', 'CONCLERG', 'CONEDUC', 'CONFED', 'CONLABOR', 'CONPRESS', 
+                           'CONMEDIC', 'CONTV', 'CONJUDGE', 'CONSCI', 'CONLEGIS', 'CONARMY', 'OBEY', 'POPULAR', 'THNKSELF', 
+                           'WORKHARD', 'HELPOTH', 'GETAHEAD', 'FEPOL', 'ABDEFECT', 'ABNOMORE', 'ABHLTH', 'ABPOOR', 'ABRAPE', 
+                           'ABSINGLE', 'ABANY', 'SEXEDUC', 'DIVLAW', 'PREMARSX', 'TEENSEX', 'XMARSEX', 'HOMOSEX', 'PORNLAW', 
+                           'SPANKING', 'LETDIE1', 'SUICIDE1', 'SUICIDE2', 'POLHITOK', 'POLABUSE', 'POLMURDR', 'POLESCAP', 
+                           'POLATTAK', 'FECHLD', 'FEPRESCH', 'FEFAM', 'RACDIF1', 'RACDIF2', 'RACDIF3', 'RACDIF4', 
+                           'HELPPOOR', 'HELPNOT', 'HELPBLK', 'MARHOMO','VOTE68', 'PRES68', 'IF68WHO', 'VOTE72', 'PRES72', 
+                           'IF72WHO', 'VOTE76', 'PRES76', 'IF76WHO', 'VOTE80', 'PRES80', 'IF80WHO', 'VOTE84', 'PRES84', 
+                           'IF84WHO', 'VOTE88', 'PRES88', 'IF88WHO', 'VOTE92', 'PRES92', 'IF92WHO', 'VOTE96', 'PRES96', 
+                           'IF96WHO', 'VOTE00', 'PRES00', 'IF00WHO', 'VOTE04', 'PRES04', 'IF04WHO', 'VOTE08', 'PRES08', 
+                           'IF08WHO', 'VOTE12', 'PRES12', 'IF12WHO', 'VOTE16', 'PRES16', 'IF16WHO', 'VOTE20', 'PRES20', 
+                           'IF20WHO', 'RELIG', 'ATTEND', 'RACOPEN', 'NEWS', 'TVHOURS', 'RELITEN']
+    columns = columns_of_interest + ['YEAR', 'ID', 'BALLOT'] 
+
+    #columns = columns + ["SEXFREQ"]
+    
     # Get the current file's directory
     data_dir = Path(__file__).parent
     cache_dir = data_dir / "cached_data"
@@ -108,6 +131,32 @@ def import_dataset(columns: Optional[List[str]] = None) -> Tuple[pd.DataFrame, D
         animation_thread.join()
         raise e
 
+
+columns_of_interest = ['PARTYID', 'POLVIEWS', 'NATSPAC', 'NATENVIR', 'NATHEAL', 'NATCITY', 'NATCRIME', 'NATDRUG', 
+                        'NATEDUC', 'NATRACE', 'NATARMS', 'NATAID', 'NATFARE', 'NATROAD', 'NATSOC', 'NATMASS', 'NATPARK', 
+                        'NATCHLD', 'NATSCI', 'NATENRGY', 'NATSPACY', 'NATENVIY', 'NATHEALY', 'NATCITYY', 'NATCRIMY', 
+                        'NATDRUGY', 'NATEDUCY', 'NATRACEY', 'NATARMSY', 'NATAIDY', 'NATFAREY', 'EQWLTH', 'SPKATH', 
+                        'COLATH', 'LIBATH', 'SPKRAC', 'COLRAC', 'LIBRAC', 'SPKCOM', 'COLCOM', 'LIBCOM', 'SPKMIL', 
+                        'COLMIL', 'LIBMIL', 'SPKHOMO', 'COLHOMO', 'LIBHOMO', 'SPKMSLM', 'COLMSLM', 'LIBMSLM', 'CAPPUN', 
+                        'GUNLAW', 'COURTS', 'GRASS', 'POSTLIFE', 'PRAYER', 'AFFRMACT', 'WRKWAYUP', 'HELPFUL', 
+                        'FAIR', 'TRUST', 'CONFINAN', 'CONBUS', 'CONCLERG', 'CONEDUC', 'CONFED', 'CONLABOR', 'CONPRESS', 
+                        'CONMEDIC', 'CONTV', 'CONJUDGE', 'CONSCI', 'CONLEGIS', 'CONARMY', 'OBEY', 'POPULAR', 'THNKSELF', 
+                        'WORKHARD', 'HELPOTH', 'GETAHEAD', 'FEPOL', 'ABDEFECT', 'ABNOMORE', 'ABHLTH', 'ABPOOR', 'ABRAPE', 
+                        'ABSINGLE', 'ABANY', 'SEXEDUC', 'DIVLAW', 'PREMARSX', 'TEENSEX', 'XMARSEX', 'HOMOSEX', 'PORNLAW', 
+                        'SPANKING', 'LETDIE1', 'SUICIDE1', 'SUICIDE2', 'POLHITOK', 'POLABUSE', 'POLMURDR', 'POLESCAP', 
+                        'POLATTAK', 'FECHLD', 'FEPRESCH', 'FEFAM', 'RACDIF1', 'RACDIF2', 'RACDIF3', 'RACDIF4', 
+                        'HELPPOOR', 'HELPNOT', 'HELPBLK', 'MARHOMO','VOTE68', 'PRES68', 'IF68WHO', 'VOTE72', 'PRES72', 
+                        'IF72WHO', 'VOTE76', 'PRES76', 'IF76WHO', 'VOTE80', 'PRES80', 'IF80WHO', 'VOTE84', 'PRES84', 
+                        'IF84WHO', 'VOTE88', 'PRES88', 'IF88WHO', 'VOTE92', 'PRES92', 'IF92WHO', 'VOTE96', 'PRES96', 
+                        'IF96WHO', 'VOTE00', 'PRES00', 'IF00WHO', 'VOTE04', 'PRES04', 'IF04WHO', 'VOTE08', 'PRES08', 
+                        'IF08WHO', 'VOTE12', 'PRES12', 'IF12WHO', 'VOTE16', 'PRES16', 'IF16WHO', 'VOTE20', 'PRES20', 
+                        'IF20WHO', 'RELIG', 'ATTEND', 'RACOPEN', 'NEWS', 'TVHOURS', 'RELITEN']
+columns_of_interest = columns_of_interest + ['YEAR', 'ID', 'BALLOT']
+
+
+#------------------------------------------------------------------------------
+# FOR TESTING (if run as script)
+#------------------------------------------------------------------------------
 if __name__ == "__main__":
     # Example usage with specific columns
     # These are the standard columns that we will use for the analysis. Adding more columns will slow down the loading process... be careful! 🐱
@@ -132,5 +181,5 @@ if __name__ == "__main__":
                            'IF20WHO', 'RELIG', 'ATTEND', 'RACOPEN', 'NEWS', 'TVHOURS', 'RELITEN']
     columns_of_interest = columns_of_interest + ['YEAR', 'ID', 'BALLOT']
     
-    df, meta = import_dataset(columns=columns_of_interest)
+    df, meta = import_dataset()
     print("Dataset loaded successfully")

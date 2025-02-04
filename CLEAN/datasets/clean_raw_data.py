@@ -44,8 +44,6 @@ import sys
 from pathlib import Path
 import os
 
-
-
 # Add the parent directory to Python path
 sys.path.append(str(Path(__file__).parent))
 
@@ -94,6 +92,7 @@ class DataConfig:
     # Variables mapped from {0, 1, 2, 3, 4, 5, 6} -> {-1, -0.66666667, -0.33333333, 0, 0.33333333, 0.66666667, 1}
     ordinal_0_to_6 = {0: -1, 1: -0.66666667, 2: -0.33333333, 3: 0, 4: 0.33333333, 5: 0.66666667, 6: 1}
     VARS_B = ["PARTYID"]
+    #VARS_B = VARS_B + ["SEXFREQ"]
 
     # Variables mapped from {1, 2, 3, 4, 5, 6 ,7} -> {-1, -0.66666667, -0.33333333, 0, 0.33333333, 0.66666667, 1}
     ordinal_1_to_7 = {1: -1, 2: -0.66666667, 3: -0.33333333, 4: 0, 5: 0.33333333, 6: 0.66666667, 7: 1}
@@ -292,8 +291,16 @@ def transform_regular() -> pd.DataFrame:
             df_filtered[col] = transform_column(df_filtered[col], mapping)
     
     # Process PRES variables to create PRESLAST_DEMREP and PRESLAST_NONCONFORM
-    df_filtered['PRESLAST_DEMREP'] = np.nan
-    df_filtered['PRESLAST_NONCONFORM'] = np.nan
+    #df_filtered['PRESLAST_DEMREP'] = np.nan
+    #df_filtered['PRESLAST_NONCONFORM'] = np.nan
+
+    # Test optimisations
+    preslast_cols = pd.DataFrame({
+        'PRESLAST_DEMREP': np.nan,
+        'PRESLAST_NONCONFORM': np.nan
+    }, index=df_filtered.index)
+    df_filtered = pd.concat([df_filtered, preslast_cols], axis=1)
+
     for pres_var in config.pres_vars:
         if pres_var not in df_filtered.columns:
             continue
@@ -313,8 +320,16 @@ def transform_regular() -> pd.DataFrame:
         df_filtered.loc[mask, 'PRESLAST_NONCONFORM'] = nonconform_col[mask]
     
     # Process IF variables to create WOULDVOTELAST_DEMREP and WOULDVOTELAST_NONCONFORM
-    df_filtered['WOULDVOTELAST_DEMREP'] = np.nan
-    df_filtered['WOULDVOTELAST_NONCONFORM'] = np.nan
+    #df_filtered['WOULDVOTELAST_DEMREP'] = np.nan
+    #df_filtered['WOULDVOTELAST_NONCONFORM'] = np.nan
+    
+    # Test optimisations
+    wouldvote_cols = pd.DataFrame({
+        'WOULDVOTELAST_DEMREP': np.nan,
+        'WOULDVOTELAST_NONCONFORM': np.nan
+    }, index=df_filtered.index)
+    df_filtered = pd.concat([df_filtered, wouldvote_cols], axis=1)
+    
     for if_var in config.if_vars:
         if if_var not in df_filtered.columns:
             continue
@@ -334,7 +349,12 @@ def transform_regular() -> pd.DataFrame:
         df_filtered.loc[mask, 'WOULDVOTELAST_NONCONFORM'] = nonconform_col[mask]
     
     # Process VOTE variables to create DIDVOTELAST
-    df_filtered['DIDVOTELAST'] = np.nan
+    #df_filtered['DIDVOTELAST'] = np.nan
+    
+    # Test optimisations
+    didvote_col = pd.DataFrame({'DIDVOTELAST': np.nan}, index=df_filtered.index)
+    df_filtered = pd.concat([df_filtered, didvote_col], axis=1)
+   
     for vote_var in config.vote_vars:
         if vote_var not in df_filtered.columns:
             continue
@@ -358,10 +378,20 @@ def transform_regular() -> pd.DataFrame:
         ('Native_american', config.relig_map_Native_american),
         ('Inter_nondenominational', config.relig_map_Inter_nondenominational)
     ]
+
+    #for suffix, mapping in religion_derivations:
+    #    new_col = f'RELIG_{suffix}'
+    #    df_filtered[new_col] = df_filtered['RELIG'].map(mapping)
+    
+    # Test optimisations
+    religion_data = {}
     for suffix, mapping in religion_derivations:
         new_col = f'RELIG_{suffix}'
-        df_filtered[new_col] = df_filtered['RELIG'].map(mapping)
-    
+        religion_data[new_col] = df_filtered['RELIG'].map(mapping)
+    religion_df = pd.DataFrame(religion_data)
+    df_filtered = pd.concat([df_filtered, religion_df], axis=1)
+    df_filtered = df_filtered.copy() # Defrag
+
     # Process RELITEN
     df_filtered['RELITEN'] = df_filtered['RELITEN'].map(config.reliten_map)
     
@@ -394,9 +424,20 @@ def clean_datasets() -> pd.DataFrame:
     config = DataConfig()
     
     # Create regular version
-    df_regular = transform_regular()
+    df_clean = transform_regular()
     
-    return df_regular 
+    # Cache the cleaned datasets
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if project_root not in sys.path:
+        sys.path.append(project_root)
+    cache_dir = os.path.join(project_root, 'datasets', 'cached_data')
+    os.makedirs(cache_dir, exist_ok=True)
+    cache_file_1 = os.path.join(cache_dir, 'df_clean.pkl')
+    
+    # Save the dataset as a pickle file
+    df_clean.to_pickle(cache_file_1)
+
+    return df_clean 
 
 #------------------------------------------------------------------------------
 # For Testing (if run as script)
