@@ -29,11 +29,11 @@ import seaborn as sns
 
 def main():
     
-    with open(os.path.join('CLEAN', 'datasets', 'cached_data', 'cleaned_data_1.pkl'), 'rb') as f:
+    with open('CLEAN\datasets\cached_data\df_clean.pkl', 'rb') as f:
             df = pickle.load(f)
 
-    start_year = 2000
-    end_year = 2004
+    start_year = 2014
+    end_year = 2018
 
     print(df)
     # Filter to time window
@@ -46,9 +46,9 @@ def main():
     # 2. Calculate regular Spearman correlation matrix
     corr_matrix = calculate_correlation_matrix(
         df,
-        method=CorrelationMethod.SPEARMAN,
-        partial=True,
-        edge_suppression=EdgeSuppressionMethod.SQUARE
+        method=CorrelationMethod.PEARSON,
+        partial=False,
+        edge_suppression=EdgeSuppressionMethod.NONE
     )
     
 
