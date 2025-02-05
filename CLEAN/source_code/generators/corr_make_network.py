@@ -374,6 +374,19 @@ def calculate_correlation_matrix(
     # Handle partial correlations if requested
     if partial:
         try:
+            relevant_df = correlation_matrix.loc[:, correlation_cols]
+            num_samples = relevant_df.shape[0]
+            num_vars = relevant_df.shape[1]
+            
+            non_nan_mat = ~np.isnan(np.array(relevant_df))
+            sample_count = np.logical_and(non_nan_mat[:, :, np.newaxis], non_nan_mat[:, np.newaxis, :]).sum(axis=0)
+            
+            sample_pct = sample_count / num_samples
+            
+            sample_threshold = 0
+            corr_mat = np.where(sample_pct < sample_threshold, np.nan, corr_mat) # set variables below the threshold to nan
+
+            
             # Remove variables with NaN correlations
             clean_matrix, removed_indices = filter_nans(correlation_matrix.values)
             
@@ -383,7 +396,7 @@ def calculate_correlation_matrix(
             
             if len(correlation_cols) < 2:
                 raise ValueError(
-                    "Too many variables removed due to missing correlations. "
+                    "Too many variables removed due to missing correlations."
                     "Need at least 2 variables to calculate partial correlations."
                 )
             

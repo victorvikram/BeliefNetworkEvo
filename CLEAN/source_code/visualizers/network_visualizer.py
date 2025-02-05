@@ -4,12 +4,13 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 
-def create_network_data(correlation_matrix: pd.DataFrame) -> tuple:
+def create_network_data(correlation_matrix: pd.DataFrame, highlight_nodes: list = None) -> tuple:
     """
-    Create network data from correlation matrix.
+    Create network data from correlation matrix with optional highlighting.
     
     Args:
         correlation_matrix: Correlation matrix DataFrame
+        highlight_nodes: List of node names to highlight (optional)
         
     Returns:
         tuple: (nodes_data, edges_data)
@@ -31,12 +32,21 @@ def create_network_data(correlation_matrix: pd.DataFrame) -> tuple:
     # Prepare nodes for vis.js
     nodes = []
     for node in G.nodes():
-        nodes.append({
+        node_data = {
             'id': node,
             'label': node,
             'value': node_values[node],
             'title': f'Variable: {node}<br>Total Correlation Strength: {node_values[node]:.3f}'
-        })
+        }
+        # Add highlighting if specified
+        if highlight_nodes and node in highlight_nodes:
+            node_data.update({
+                'color': '#FF0000',  # Red color
+                'borderWidth': 3,
+                'borderWidthSelected': 5,
+                'font': {'size': 16, 'face': 'arial', 'bold': True}
+            })
+        nodes.append(node_data)
 
     # Prepare edges for vis.js
     edges = []
@@ -52,15 +62,21 @@ def create_network_data(correlation_matrix: pd.DataFrame) -> tuple:
 
     return nodes, edges
 
-def generate_html_visualization(nodes: list, edges: list, output_path: str = 'correlation_network.html') -> None:
+def generate_html_visualization(
+    correlation_matrix: pd.DataFrame, 
+    output_path: str = 'correlation_network.html',
+    highlight_nodes: list = None
+) -> None:
     """
-    Generate HTML visualization of the network.
+    Generate HTML visualization of the network with optional highlighting.
     
     Args:
-        nodes: List of node dictionaries
-        edges: List of edge dictionaries
-        output_path: Path to save the HTML file
+        correlation_matrix: Input correlation matrix
+        output_path: Path to save the HTML file (default: 'correlation_network.html')
+        highlight_nodes: List of node names to highlight (optional)
     """
+    nodes, edges = create_network_data(correlation_matrix, highlight_nodes)
+    
     html_content = '''
     <!DOCTYPE html>
     <html>
@@ -115,6 +131,7 @@ def generate_html_visualization(nodes: list, edges: list, output_path: str = 'co
             <p><strong>Node Size:</strong> The size of each node (variable) represents the sum of all correlation strengths connected to that variable. 
                Larger nodes indicate variables that have stronger overall correlations with other variables.</p>
             <p><strong>Edge Thickness:</strong> The thickness of connections between nodes represents the strength of correlation between those variables.</p>
+            <p><strong>Highlighting:</strong> Specified nodes are shown in red with bold labels</p>
             <p><strong>Controls:</strong> Use the correlation threshold slider to filter weak correlations, and the node distance slider to adjust the network layout.</p>
         </div>
         <div id="controls">
@@ -276,4 +293,4 @@ def generate_html_visualization(nodes: list, edges: list, output_path: str = 'co
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(html_content)
 
-    print(f"Network visualization has been saved to {output_path.absolute()}") 
+    print(f"Network visualization has been saved to {output_path.absolute()}")
