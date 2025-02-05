@@ -16,20 +16,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 8,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "# Load the autoreload extension\n",
-    "%load_ext autoreload\n",
-    "\n",
-    "# Set autoreload mode to 2\n",
-    "%autoreload 2"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 10,
+   "execution_count": 1,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -124,23 +111,32 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 12,
+   "execution_count": 8,
    "metadata": {},
    "outputs": [],
    "source": [
-    "corr_matrix = calculate_correlation_matrix(cleaned_df, years_of_interest=[2012, 2013, 2014, 2015], method=CorrelationMethod.SPEARMAN, partial=True, edge_suppression=EdgeSuppressionMethod.REGULARIZATION, suppression_params={\"regularization\": 0.2})"
+    "<<<<<<< local\n",
+    "corr_matrix = calculate_correlation_matrix(cleaned_df, years_of_interest=[2012, 2013, 2014, 2015], method=CorrelationMethod.SPEARMAN, partial=True, edge_suppression=EdgeSuppressionMethod.REGULARIZATION, suppression_params={\"alpha\": 0.2})\n",
+    "=======\n",
+    "corr_matrix = calculate_correlation_matrix(\n",
+    "    cleaned_df, \n",
+    "    years_of_interest=[2020],\n",
+    "    method=CorrelationMethod.PEARSON, \n",
+    "    partial=False, \n",
+    "    edge_suppression=EdgeSuppressionMethod.SQUARE)\n",
+    ">>>>>>> remote"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 13,
+   "execution_count": 9,
    "metadata": {},
    "outputs": [
     {
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "Network visualization has been saved to c:\\Users\\vicvi\\BeliefNetworkEvo\\CLEAN\\notebooks\\tutorials\\delete_this_file.html\n"
+      "Network visualization has been saved to c:\\Users\\timbo\\Github\\BeliefNetworkEvo\\CLEAN\\notebooks\\tutorials\\delete_this_file.html\n"
      ]
     }
    ],
@@ -153,18 +149,11 @@
     ")\n",
     "\n"
    ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": []
   }
  ],
  "metadata": {
   "kernelspec": {
-   "display_name": "pythons-beliefs",
+   "display_name": "Python 3",
    "language": "python",
    "name": "python3"
   },
@@ -178,7 +167,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.9.21"
+   "version": "3.12.7"
   }
  },
  "nbformat": 4,
