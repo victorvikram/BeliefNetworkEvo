@@ -385,14 +385,18 @@ def calculate_correlation_matrix(
             num_samples = relevant_df.shape[0]
             num_vars = relevant_df.shape[1]
             
+            """
+            SOMEDAY if I decide to reimplement sample_threshold, fix this
+            then I can uncomment some tests in the test file
+
             non_nan_mat = ~np.isnan(np.array(relevant_df))
             sample_count = np.logical_and(non_nan_mat[:, :, np.newaxis], non_nan_mat[:, np.newaxis, :]).sum(axis=0)
             
             sample_pct = sample_count / num_samples
             
-            #sample_threshold = 0
-            #corr_mat = np.where(sample_pct < sample_threshold, np.nan, corr_mat) # set variables below the threshold to nan
-
+            sample_threshold = 0
+            corr_mat = np.where(sample_pct < sample_threshold, np.nan, corr_mat) # set variables below the threshold to nan
+            """
             
             # Remove variables with NaN correlations
             clean_matrix, removed_indices = filter_nans(correlation_matrix.values)
