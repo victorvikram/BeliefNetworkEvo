@@ -44,6 +44,8 @@ import sys
 from pathlib import Path
 import os
 
+pd.set_option('future.no_silent_downcasting', True) # Should suppress a warning message relating to line 255.
+
 # Add the parent directory to Python path
 sys.path.append(str(Path(__file__).parent))
 
