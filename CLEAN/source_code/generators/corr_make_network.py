@@ -36,6 +36,8 @@ from enum import Enum
 from typing import Optional, Union, Dict, Any, List, Tuple
 import numpy as np
 import pandas as pd
+from pingouin import partial_corr
+
 from sklearn.covariance import graphical_lasso
 
 
@@ -413,3 +415,37 @@ def calculate_correlation_matrix(
         method=edge_suppression,
         params=suppression_params
     )
+
+def alternative_calculate_pairwise_correlations(vars, data, method, partial=True):
+    """
+    `vars` list of variable names 
+    `data` DataFrame with data samples, variable names should be columns in this DataFrame
+    `method` one of "spearman", "pearson", or "polychoric"
+    `partial` boolean value, whether to calculate partial correlations
+  
+    calculates all pairwise correlations between `vars`, using the sample DataFrame `data`, and method either
+    "spearman" or "pearson". Returns the partial correlations if `partial` is true
+    
+    This is for testing purposes to maek sure that the other vectorized function works
+    """
+    corr_dfs = []
+    corr_mat = np.zeros((len(vars), len(vars)))
+
+    for i in range(len(vars)):
+        for j in range(i+1, len(vars)):
+
+            if partial:
+                covar_list = vars[:i] + vars[i+1:j] + vars[j+1:]
+            else:
+                covar_list = None
+            
+            corr_df = partial_corr(data=data, x=vars[i], y=vars[j], covar=covar_list, alternative='two-sided', method=method)
+            corr_df["x"] = i
+            corr_df["y"] = j
+            corr_mat[i, j] = corr_df.loc[method, "r"]
+            corr_mat[j, i] = corr_df.loc[method, "r"]
+            corr_dfs.append(corr_df)
+
+    corr_info = pd.concat(corr_dfs)
+    np.fill_diagonal(corr_mat, 1)
+    return corr_info, corr_mat  
