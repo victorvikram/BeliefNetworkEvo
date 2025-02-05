@@ -351,6 +351,8 @@ def calculate_correlation_matrix(
         ValueError: If fewer than 2 valid variables remain after filtering
                    or if the correlation matrix is singular (for partial correlations)
     """
+
+
     if isinstance(method, str):
         method = CorrelationMethod(method)
     
@@ -360,6 +362,11 @@ def calculate_correlation_matrix(
     if years_of_interest:
         df_subset = df[df["YEAR"].isin(years_of_interest)]
     
+    # Check that the df is not empty (this could be because you've selected a year not in the df)
+    if df_subset.isna().all().all():
+        print("This df is all NaNs. Have you selected a valid year?")
+        return 
+
     # Get non-metadata columns for correlation calculation, and filter the dataset
     # also only uses the variables_of_interest columns
     correlation_cols = get_correlation_columns(df, base_variable_list=variables_of_interest)
@@ -370,7 +377,7 @@ def calculate_correlation_matrix(
     
     # Calculate base correlations using specified method
     correlation_matrix = df_subset.corr(method=method.value)
-    
+
     # Handle partial correlations if requested
     if partial:
         try:
@@ -383,8 +390,8 @@ def calculate_correlation_matrix(
             
             sample_pct = sample_count / num_samples
             
-            sample_threshold = 0
-            corr_mat = np.where(sample_pct < sample_threshold, np.nan, corr_mat) # set variables below the threshold to nan
+            #sample_threshold = 0
+            #corr_mat = np.where(sample_pct < sample_threshold, np.nan, corr_mat) # set variables below the threshold to nan
 
             
             # Remove variables with NaN correlations

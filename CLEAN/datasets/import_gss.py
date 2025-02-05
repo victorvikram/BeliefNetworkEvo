@@ -86,7 +86,9 @@ def import_dataset() -> Tuple[pd.DataFrame, Dict]:
             # Filter columns after loading if specified
             if columns is not None:
                 df = df[columns]
+        print("Done! ✨")
         return df, meta
+        
     
     # If no cache, load from source
     # Start the loading animation in a separate thread
@@ -111,7 +113,7 @@ def import_dataset() -> Tuple[pd.DataFrame, Dict]:
         )
 
 
-        raw_df, meta = prs.read_sas7bdat(str(file_path), usecols=columns) # Only read specified columns if provided
+        #raw_df, meta = prs.read_sas7bdat(str(file_path), usecols=columns) # Only read specified columns if provided
 
         # Cache the full data
         cache_dir.mkdir(exist_ok=True)
