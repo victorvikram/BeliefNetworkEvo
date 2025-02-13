@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 
-def plot_degree_distribution(correlation_matrix, threshold=0):
+def plot_degree_distribution(correlation_matrix, threshold=0, log_scale=False):
     """
     Plot degree distribution of a correlation matrix.
     
@@ -12,6 +12,8 @@ def plot_degree_distribution(correlation_matrix, threshold=0):
         Correlation matrix to analyze
     threshold : float, optional (default=0)
         Absolute correlation threshold for significant connections
+    log_scale : bool, optional (default=False)
+        If True, use logarithmic scale for both axes
     
     Returns:
     --------
@@ -24,6 +26,9 @@ def plot_degree_distribution(correlation_matrix, threshold=0):
     else:
         corr_array = np.array(correlation_matrix)
     
+    # Ensure diagonal is zero
+    np.fill_diagonal(corr_array, 0)
+
     # Calculate degrees (number of significant connections)
     degrees = np.sum(np.abs(corr_array) > threshold, axis=1)    
     # Calculate degree distribution
@@ -46,5 +51,12 @@ def plot_degree_distribution(correlation_matrix, threshold=0):
             'Frequency': 'Count of Nodes'
         }
     )
+    
+    # Apply log scale if requested
+    if log_scale:
+        fig.update_layout(
+            xaxis_type="log",
+            yaxis_type="log"
+        )
     
     return fig
