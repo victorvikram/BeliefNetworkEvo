@@ -8,15 +8,64 @@ def count_triads(
     return_sums: bool = False
 ) -> Union[Tuple[int, int, int], Dict[str, Any]]:
     """
-    Efficiently count and analyze triads in the correlation matrix.
+    Count and analyze triads in a correlation matrix, identifying positive and negative triads.
+    
+    A triad is a set of three nodes and their connecting edges in the correlation network.
+    The sign of a triad is determined by the product of its three edge correlations:
+    - Positive triad: product > 0 (even number of negative edges: 0 or 2)
+    - Negative triad: product < 0 (odd number of negative edges: 1 or 3)
     
     Args:
         correlation_matrix: A square pandas DataFrame representing the correlation matrix.
-        return_names: If True, return triplet names for positive/negative triads.
-        return_sums: If True, return absolute edge sums for triads.
+            Must be symmetric with values between -1 and 1, where the index and columns
+            represent the same nodes.
+        return_names: If True, includes the node names for each triad in the results.
+        return_sums: If True, includes the sum of absolute correlation values for each triad.
         
     Returns:
-        Triad count analysis with optional additional details
+        If return_names=False and return_sums=False:
+            Dict with keys:
+            - 'total_triads': Total number of triads found
+            - 'positive_triads': Number of triads with positive product
+            - 'negative_triads': Number of triads with negative product
+            
+        If return_names=True:
+            Also includes:
+            - 'positive_triad_nodes': List of (node1, node2, node3) tuples for positive triads
+            - 'negative_triad_nodes': List of (node1, node2, node3) tuples for negative triads
+            
+        If return_sums=True:
+            Also includes:
+            - 'positive_triad_sums': List of absolute correlation sums for positive triads
+            - 'negative_triad_sums': List of absolute correlation sums for negative triads
+            
+    Examples:
+        >>> # Create a sample correlation matrix
+        >>> data = [[1.0, 0.5, -0.3],
+        ...        [0.5, 1.0, 0.6],
+        ...        [-0.3, 0.6, 1.0]]
+        >>> corr_matrix = pd.DataFrame(data, 
+        ...                           index=['A', 'B', 'C'],
+        ...                           columns=['A', 'B', 'C'])
+        >>> 
+        >>> # Get basic triad counts
+        >>> result = count_triads(corr_matrix)
+        >>> print(f"Total triads: {result['total_triads']}")
+        >>> print(f"Positive triads: {result['positive_triads']}")
+        >>> print(f"Negative triads: {result['negative_triads']}")
+        >>>
+        >>> # Get detailed triad information
+        >>> detailed = count_triads(corr_matrix, return_names=True, return_sums=True)
+        >>> for nodes, sum_val in zip(detailed['negative_triad_nodes'], 
+        ...                          detailed['negative_triad_sums']):
+        ...     print(f"Negative triad: {nodes}, Sum of correlations: {sum_val:.2f}")
+    
+    Notes:
+        - The function processes the upper triangle of the correlation matrix to avoid
+          counting the same triad multiple times.
+        - Edge correlations are considered in their absolute form when calculating sums.
+        - The function assumes the correlation matrix is symmetric and contains valid
+          correlation values (-1 to 1).
     """
     # Convert to numpy array for faster computations
     corr_array = correlation_matrix.to_numpy()

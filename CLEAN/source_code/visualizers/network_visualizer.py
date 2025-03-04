@@ -3,6 +3,20 @@ import networkx as nx
 from pathlib import Path
 import pandas as pd
 import numpy as np
+from collections import Counter
+import logging
+
+def calculate_network_stats(G) -> dict:
+    """Calculate basic network statistics."""
+    degree_sequence = [d for n, d in G.degree()]
+    return {
+        'avg_degree': np.mean(degree_sequence),
+        'density': nx.density(G),
+        'degree_distribution': dict(Counter(degree_sequence)),
+        'clustering_coefficient': nx.average_clustering(G),
+        'num_nodes': G.number_of_nodes(),
+        'num_edges': G.number_of_edges()
+    }
 
 def create_network_data(correlation_matrix: pd.DataFrame, highlight_nodes: list = None) -> tuple:
     """
@@ -13,7 +27,7 @@ def create_network_data(correlation_matrix: pd.DataFrame, highlight_nodes: list 
         highlight_nodes: List of node names to highlight (optional)
         
     Returns:
-        tuple: (nodes_data, edges_data)
+        tuple: (nodes_data, edges_data, network_stats)
     """
     # Set diagonal to zero to avoid self-links
     correlation_matrix = correlation_matrix.copy()
@@ -60,7 +74,15 @@ def create_network_data(correlation_matrix: pd.DataFrame, highlight_nodes: list 
                 'title': f'Correlation: {correlation:.3f}'
             })
 
-    return nodes, edges
+    # Calculate network statistics
+    network_stats = calculate_network_stats(G)
+    
+    # Log the nodes, edges, and stats
+    logging.info(f"Nodes: {nodes}")
+    logging.info(f"Edges: {edges}")
+    logging.info(f"Network Stats: {network_stats}")
+
+    return nodes, edges, network_stats
 
 def generate_html_visualization(
     correlation_matrix: pd.DataFrame, 
@@ -75,34 +97,90 @@ def generate_html_visualization(
         output_path: Path to save the HTML file (default: 'correlation_network.html')
         highlight_nodes: List of node names to highlight (optional)
     """
-    nodes, edges = create_network_data(correlation_matrix, highlight_nodes)
+    nodes, edges, network_stats = create_network_data(correlation_matrix, highlight_nodes)
     
     html_content = '''
     <!DOCTYPE html>
     <html>
     <head>
-        <title>Correlation Network</title>
+        <title>Correlation Network Analysis</title>
         <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <style type="text/css">
-            #mynetwork {
-                width: 100%;
-                height: 800px;
-                border: 1px solid lightgray;
+            html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                font-family: Arial, sans-serif;
             }
-            #container {
+            .container {
+                display: flex;
                 width: 100%;
                 height: 100%;
+                overflow: hidden;
+            }
+            .network-container {
+                flex: 60%;
+                display: flex;
+                flex-direction: column;
+                min-height: 0; /* Critical for nested flex containers */
+            }
+            .stats-container {
+                flex: 40%;
+                padding: 20px;
+                background-color: #f8f9fa;
+                border-left: 1px solid #dee2e6;
+                overflow-y: auto;
+                height: 100%;
+                box-sizing: border-box;
+            }
+            .explanation {
+                padding: 10px;
+                margin: 10px;
+                background-color: #e9ecef;
+                border-radius: 4px;
+                flex-shrink: 0;
             }
             #controls {
                 padding: 10px;
                 background-color: #f8f9fa;
                 border-bottom: 1px solid #dee2e6;
+                flex-shrink: 0;
             }
-            .explanation {
+            #mynetwork {
+                flex: 1;
+                min-height: 0; /* Critical for flex child */
+                position: relative;
+                border: 1px solid lightgray;
+            }
+            .stats-box {
+                background: white;
+                padding: 15px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                margin-bottom: 20px;
+            }
+            .stat-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                margin-bottom: 20px;
+            }
+            .stat-item {
+                background: #ffffff;
                 padding: 10px;
-                margin: 10px 0;
-                background-color: #e9ecef;
                 border-radius: 4px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+            .stat-value {
+                font-size: 1.2em;
+                font-weight: bold;
+                color: #2c3e50;
+            }
+            .stat-label {
+                color: #7f8c8d;
+                font-size: 0.9em;
             }
             .slider-container {
                 margin: 10px 0;
@@ -126,29 +204,58 @@ def generate_html_visualization(
         </style>
     </head>
     <body>
-        <div class="explanation">
-            <h3>Network Visualization Guide</h3>
-            <p><strong>Node Size:</strong> The size of each node (variable) represents the sum of all correlation strengths connected to that variable. 
-               Larger nodes indicate variables that have stronger overall correlations with other variables.</p>
-            <p><strong>Edge Thickness:</strong> The thickness of connections between nodes represents the strength of correlation between those variables.</p>
-            <p><strong>Highlighting:</strong> Specified nodes are shown in red with bold labels</p>
-            <p><strong>Controls:</strong> Use the correlation threshold slider to filter weak correlations, and the node distance slider to adjust the network layout.</p>
-        </div>
-        <div id="controls">
-            <div class="slider-container">
-                <label for="threshold">Correlation Threshold:</label>
-                <div class="threshold-inputs">
-                    <input type="range" min="0" max="100" value="5" id="threshold" style="width: 300px">
-                    <input type="number" id="threshold-number" min="0" max="1" step="0.01" value="0.05" style="width: 80px">
+        <div class="container">
+            <div class="network-container">
+                <div class="explanation">
+                    <p><strong>Node Size:</strong> Represents total correlation strength - larger nodes have stronger overall correlations.</p>
+                    <p><strong>Edge Thickness:</strong> Shows correlation strength between variables.</p>
+                    <p><strong>Highlighting:</strong> Red nodes with bold labels indicate specified variables.</p>
+                    <p><strong>Controls:</strong> Adjust correlation threshold and node spacing using sliders.</p>
+                </div>
+                <div id="controls">
+                    <div class="slider-container">
+                        <label for="threshold">Correlation Threshold:</label>
+                        <div class="threshold-inputs">
+                            <input type="range" min="0" max="100" value="5" id="threshold" style="width: 300px">
+                            <input type="number" id="threshold-number" min="0" max="1" step="0.01" value="0.05" style="width: 80px">
+                        </div>
+                    </div>
+                    <div class="slider-container">
+                        <label for="node-distance">Node Distance:</label>
+                        <input type="range" min="50" max="500" value="150" id="node-distance" style="width: 300px">
+                        <span id="distance-value">150</span>
+                    </div>
+                </div>
+                <div id="mynetwork"></div>
+            </div>
+            
+            <div class="stats-container">
+                <h2>Network Statistics</h2>
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="num-nodes">''' + str(network_stats['num_nodes']) + '''</div>
+                        <div class="stat-label">Nodes</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="num-edges">''' + str(network_stats['num_edges']) + '''</div>
+                        <div class="stat-label">Edges</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="avg-degree">''' + f"{network_stats['avg_degree']:.2f}" + '''</div>
+                        <div class="stat-label">Average Degree</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="density">''' + f"{network_stats['density']:.3f}" + '''</div>
+                        <div class="stat-label">Network Density</div>
+                    </div>
+                </div>
+
+                <div class="stats-box">
+                    <h3>Degree Distribution</h3>
+                    <canvas id="degreeDistChart"></canvas>
                 </div>
             </div>
-            <div class="slider-container">
-                <label for="node-distance">Node Distance:</label>
-                <input type="range" min="50" max="300" value="150" id="node-distance" style="width: 300px">
-                <span id="distance-value">150</span>
-            </div>
         </div>
-        <div id="mynetwork"></div>
 
         <script type="text/javascript">
             // Network data
@@ -283,6 +390,47 @@ def generate_html_visualization(
                     }
                 });
             };
+
+            // Initialize degree distribution chart
+            const degreeDistData = ''' + json.dumps(network_stats['degree_distribution']) + ''';
+            const degreeCtx = document.getElementById('degreeDistChart').getContext('2d');
+            const degreeChart = new Chart(degreeCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(degreeDistData),
+                    datasets: [{
+                        label: 'Number of Nodes',
+                        data: Object.values(degreeDistData),
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Frequency'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Degree'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Node Degree Distribution'
+                        }
+                    }
+                }
+            });
         </script>
     </body>
     </html>

@@ -80,7 +80,7 @@ def import_dataset() -> Tuple[pd.DataFrame, Dict]:
     
     # Try to load from cache first
     if cache_file.exists():
-        print("Loading from cache...")
+        print("Loading dataset from from cache...")
         with open(cache_file, 'rb') as f:
             df, meta = pickle.load(f)
             # Filter columns after loading if specified

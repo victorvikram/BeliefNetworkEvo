@@ -138,6 +138,8 @@ def precision_mat_to_partial_corr(precision_matrix):
     """
     diag_precision = np.diag(precision_matrix)
     
+    #print(diag_precision)
+
     # Debug: Check diagonal elements
     if np.any(np.isnan(diag_precision)):
         raise ValueError("Diagonal of precision matrix contains NaN values")
@@ -378,6 +380,8 @@ def calculate_correlation_matrix(
     # Calculate base correlations using specified method
     correlation_matrix = df_subset.corr(method=method.value)
 
+    #print(f"Correlation matrix: {correlation_matrix}")
+
     # Handle partial correlations if requested
     if partial:
         relevant_df = correlation_matrix.loc[:, correlation_cols]
@@ -414,6 +418,7 @@ def calculate_correlation_matrix(
         # sometimes the matrix is singular, or there is some other error. And we need to catch that.
         try:
             if edge_suppression == EdgeSuppressionMethod.REGULARIZATION:
+                
                 if suppression_params is None or "regularization" not in suppression_params:
                     raise ValueError("Regularization parameter 'regularization' must be provided in suppression_params")
                 alpha = suppression_params["regularization"]

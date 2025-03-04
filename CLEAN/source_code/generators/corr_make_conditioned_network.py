@@ -14,7 +14,7 @@ from CLEAN.source_code.generators.corr_make_network import CorrelationMethod, Ed
 
 
 def calculate_conditioned_correlation_matrix(
-    df: pd.DataFrame,       # Parameteres for regular correlation matrix
+    df: pd.DataFrame,       # Parameters for regular correlation matrix
     variables_of_interest: Optional[List[str]] = None,
     years_of_interest: Optional[List[int]] = None,
     method: Union[str, CorrelationMethod] = CorrelationMethod.SPEARMAN,
@@ -22,8 +22,8 @@ def calculate_conditioned_correlation_matrix(
     edge_suppression: Union[str, EdgeSuppressionMethod] = EdgeSuppressionMethod.NONE,
     suppression_params: Optional[Dict[str, Any]] = None,     
 
-    variable_to_condition: str = None,     # Parameters for conditioned correlation matrix                            
-    condition: str = None,
+    variable_to_condition: Optional[str] = None,     # Parameters for conditioned correlation matrix                            
+    condition: Optional[str] = None,
     value: Optional[Any] = None,
     return_df: bool = False
 ) -> pd.DataFrame:
@@ -39,7 +39,19 @@ def calculate_conditioned_correlation_matrix(
 
     Returns:
     pd.DataFrame: The filtered DataFrame.
-    """
+    """  
+
+    # If no conditioning variable is specified, calculate regular correlation matrix
+    if variable_to_condition is None:
+        return calculate_correlation_matrix(
+            df,
+            variables_of_interest=variables_of_interest,
+            years_of_interest=years_of_interest,
+            method=method,
+            partial=partial,
+            edge_suppression=edge_suppression,
+            suppression_params=suppression_params
+        )
 
     # Check if the variable to condition is in the DataFrame
     if variable_to_condition not in df.columns:
