@@ -380,38 +380,39 @@ def calculate_correlation_matrix(
 
     # Handle partial correlations if requested
     if partial:
-        try:
-            relevant_df = correlation_matrix.loc[:, correlation_cols]
-            num_samples = relevant_df.shape[0]
-            num_vars = relevant_df.shape[1]
-            
-            """
-            SOMEDAY if I decide to reimplement sample_threshold, fix this
-            then I can uncomment some tests in the test file
+        relevant_df = correlation_matrix.loc[:, correlation_cols]
+        num_samples = relevant_df.shape[0]
+        num_vars = relevant_df.shape[1]
+        
+        """
+        SOMEDAY if I decide to reimplement sample_threshold, fix this
+        then I can uncomment some tests in the test file
 
-            non_nan_mat = ~np.isnan(np.array(relevant_df))
-            sample_count = np.logical_and(non_nan_mat[:, :, np.newaxis], non_nan_mat[:, np.newaxis, :]).sum(axis=0)
-            
-            sample_pct = sample_count / num_samples
-            
-            sample_threshold = 0
-            corr_mat = np.where(sample_pct < sample_threshold, np.nan, corr_mat) # set variables below the threshold to nan
-            """
-            
-            # Remove variables with NaN correlations
-            clean_matrix, removed_indices = filter_nans(correlation_matrix.values)
-            
-            # Track remaining variables after NaN removal
-            correlation_cols = [col for i, col in enumerate(correlation_cols) 
-                            if i not in removed_indices]
-            
-            if len(correlation_cols) < 2:
-                raise ValueError(
-                    "Too many variables removed due to missing correlations."
-                    "Need at least 2 variables to calculate partial correlations."
-                )
-            
-            # Calculate partial correlations on the clean matrix
+        non_nan_mat = ~np.isnan(np.array(relevant_df))
+        sample_count = np.logical_and(non_nan_mat[:, :, np.newaxis], non_nan_mat[:, np.newaxis, :]).sum(axis=0)
+        
+        sample_pct = sample_count / num_samples
+        
+        sample_threshold = 0
+        corr_mat = np.where(sample_pct < sample_threshold, np.nan, corr_mat) # set variables below the threshold to nan
+        """
+        
+        # Remove variables with NaN correlations
+        clean_matrix, removed_indices = filter_nans(correlation_matrix.values)
+        
+        # Track remaining variables after NaN removal
+        correlation_cols = [col for i, col in enumerate(correlation_cols) 
+                        if i not in removed_indices]
+        
+        if len(correlation_cols) < 2:
+            raise ValueError(
+                "Too many variables removed due to missing correlations."
+                "Need at least 2 variables to calculate partial correlations."
+            )
+        
+        # Calculate partial correlations on the clean matrix
+        # sometimes the matrix is singular, or there is some other error. And we need to catch that.
+        try:
             if edge_suppression == EdgeSuppressionMethod.REGULARIZATION:
                 if suppression_params is None or "regularization" not in suppression_params:
                     raise ValueError("Regularization parameter 'regularization' must be provided in suppression_params")
@@ -427,7 +428,8 @@ def calculate_correlation_matrix(
                 columns=correlation_cols
             )
         except ValueError as e:
-            raise ValueError(f"Failed to calculate partial correlations: {str(e)}")
+            print(f"Failed to calculate partial correlations: {str(e)}")
+            return None
     
     # Set diagonal to 0 for network analysis
     # (self-correlations aren't meaningful for network visualization)
