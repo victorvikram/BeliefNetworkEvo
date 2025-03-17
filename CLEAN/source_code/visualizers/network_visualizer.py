@@ -202,6 +202,56 @@ def generate_html_visualization(
                 width: 80px;
                 padding: 5px;
             }
+            .color-controls {
+                margin-top: 15px;
+                padding-top: 10px;
+                border-top: 1px solid #dee2e6;
+            }
+            .color-dropdown {
+                display: none;
+                margin-top: 10px;
+                margin-left: 25px;
+            }
+            select {
+                padding: 5px;
+                border-radius: 4px;
+                border: 1px solid #ced4da;
+                background-color: white;
+                min-width: 200px;
+            }
+            .checkbox-container {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .legend {
+                margin-top: 15px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-size: 0.9em;
+            }
+            .legend-gradient {
+                width: 200px;
+                height: 20px;
+                background: linear-gradient(to right, #0000FF, #00FFFF, #00FF00, #FFFF00, #FF0000);
+                border-radius: 3px;
+            }
+            .legend-labels {
+                display: flex;
+                justify-content: space-between;
+                width: 200px;
+                font-size: 0.8em;
+                color: #666;
+            }
+            .metric-range {
+                margin-top: 5px;
+                font-size: 0.9em;
+                color: #666;
+                display: flex;
+                justify-content: space-between;
+                width: 200px;
+            }
         </style>
     </head>
     <body>
@@ -211,7 +261,7 @@ def generate_html_visualization(
                     <p><strong>Node Size:</strong> Represents total correlation strength - larger nodes have stronger overall correlations.</p>
                     <p><strong>Edge Thickness:</strong> Shows correlation strength between variables.</p>
                     <p><strong>Highlighting:</strong> Red nodes with bold labels indicate specified variables.</p>
-                    <p><strong>Controls:</strong> Adjust correlation threshold and node spacing using sliders.</p>
+                    <p><strong>Controls:</strong> Adjust correlation threshold, node spacing, and node size using sliders.</p>
                 </div>
                 <div id="controls">
                     <div class="slider-container">
@@ -225,6 +275,38 @@ def generate_html_visualization(
                         <label for="node-distance">Node Distance:</label>
                         <input type="range" min="50" max="500" value="150" id="node-distance" style="width: 300px">
                         <span id="distance-value">150</span>
+                    </div>
+                    <div class="slider-container">
+                        <label for="node-size">Node Size:</label>
+                        <input type="range" min="5" max="50" value="10" id="node-size" style="width: 300px">
+                        <span id="size-value">10</span>
+                    </div>
+                    
+                    <div class="color-controls">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="enable-coloring">
+                            <label for="enable-coloring" style="width: auto;">Enable Node Coloring by Metrics</label>
+                        </div>
+                        <div id="color-dropdown" class="color-dropdown">
+                            <select id="centrality-metric">
+                                <option value="summed_weight">Summed Edge Weight</option>
+                                <option value="degree">Degree</option>
+                                <option value="betweenness">Betweenness Centrality</option>
+                                <option value="eigenvector">Eigenvector Centrality</option>
+                            </select>
+                            <div class="legend">
+                                <span>Value:</span>
+                                <div class="legend-gradient"></div>
+                            </div>
+                            <div class="legend-labels">
+                                <span>Low</span>
+                                <span>High</span>
+                            </div>
+                            <div class="metric-range">
+                                <span id="min-value">Min: --</span>
+                                <span id="max-value">Max: --</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div id="mynetwork"></div>
@@ -400,6 +482,39 @@ def generate_html_visualization(
                 });
             };
 
+            // Node size slider functionality
+            const nodeSizeSlider = document.getElementById('node-size');
+            const nodeSizeValue = document.getElementById('size-value');
+            
+            nodeSizeSlider.oninput = function() {
+                const size = parseInt(this.value);
+                nodeSizeValue.textContent = size;
+                
+                // Update all nodes with the new size value
+                const nodeIds = nodes.getIds();
+                const updates = [];
+                
+                for (const id of nodeIds) {
+                    updates.push({
+                        id: id,
+                        size: size
+                    });
+                }
+                
+                nodes.update(updates);
+                
+                // Also update the default size for any new nodes
+                network.setOptions({
+                    nodes: {
+                        size: size,
+                        scaling: {
+                            min: size,
+                            max: size * 3
+                        }
+                    }
+                });
+            };
+
             // Initialize degree distribution chart
             const degreeDistData = ''' + json.dumps(network_stats['degree_distribution']) + ''';
             const degreeCtx = document.getElementById('degreeDistChart').getContext('2d');
@@ -440,6 +555,288 @@ def generate_html_visualization(
                     }
                 }
             });
+
+            // Node coloring checkbox and dropdown functionality
+            const enableColoringCheckbox = document.getElementById('enable-coloring');
+            const colorDropdown = document.getElementById('color-dropdown');
+            const centralityMetricSelect = document.getElementById('centrality-metric');
+            
+            // Show/hide color dropdown based on checkbox
+            enableColoringCheckbox.onchange = function() {
+                if (this.checked) {
+                    colorDropdown.style.display = 'block';
+                    updateNodeColors(centralityMetricSelect.value);
+                } else {
+                    colorDropdown.style.display = 'none';
+                    resetNodeColors();
+                }
+            };
+            
+            // Update colors when metric is changed
+            centralityMetricSelect.onchange = function() {
+                if (enableColoringCheckbox.checked) {
+                    updateNodeColors(this.value);
+                }
+            };
+            
+            // Function to reset node colors
+            function resetNodeColors() {
+                const nodeIds = nodes.getIds();
+                const updates = [];
+                
+                for (const id of nodeIds) {
+                    updates.push({
+                        id: id,
+                        color: undefined
+                    });
+                }
+                
+                nodes.update(updates);
+                
+                // Reset min/max displays
+                document.getElementById('min-value').textContent = 'Min: --';
+                document.getElementById('max-value').textContent = 'Max: --';
+            }
+
+            // Function to update node colors based on selected metric
+            function updateNodeColors(metric) {
+                const nodeIds = nodes.getIds();
+                let values = {};
+                let min = Infinity;
+                let max = -Infinity;
+                
+                // Calculate centrality metrics
+                if (metric === 'summed_weight') {
+                    // Use total edge weight for each node
+                    const currentEdges = edges.get();
+                    nodeIds.forEach(id => {
+                        const nodeEdges = currentEdges.filter(e => e.from === id || e.to === id);
+                        values[id] = nodeEdges.reduce((sum, edge) => sum + edge.value, 0);
+                    });
+                } else if (metric === 'degree') {
+                    // Use degree (number of connections) for each node
+                    const currentEdges = edges.get();
+                    nodeIds.forEach(id => {
+                        const nodeEdges = currentEdges.filter(e => e.from === id || e.to === id);
+                        values[id] = nodeEdges.length;
+                    });
+                } else if (metric === 'betweenness') {
+                    // Calculate betweenness centrality
+                    values = calculateBetweennessCentrality();
+                } else if (metric === 'eigenvector') {
+                    // Calculate eigenvector centrality
+                    values = calculateEigenvectorCentrality();
+                }
+                
+                // Find min and max values
+                Object.values(values).forEach(val => {
+                    if (val < min) min = val;
+                    if (val > max) max = val;
+                });
+                
+                // Update min and max display
+                document.getElementById('min-value').textContent = `Min: ${formatValue(min, metric)}`;
+                document.getElementById('max-value').textContent = `Max: ${formatValue(max, metric)}`;
+                
+                // Normalize range to 0-1 for coloring
+                const normalizedValues = {};
+                Object.keys(values).forEach(id => {
+                    normalizedValues[id] = max > min ? (values[id] - min) / (max - min) : 0.5;
+                });
+                
+                // Apply colors using a blue-to-red color scale
+                const updates = [];
+                nodeIds.forEach(id => {
+                    const value = normalizedValues[id] || 0;
+                    const color = getColorFromScale(value);
+                    updates.push({
+                        id: id,
+                        color: { background: color },
+                        title: `Variable: ${id}<br>${getMetricName(metric)}: ${formatValue(values[id], metric)}`
+                    });
+                });
+                
+                nodes.update(updates);
+            }
+            
+            // Format value based on metric type
+            function formatValue(value, metric) {
+                if (value === Infinity || value === -Infinity) return '--';
+                
+                if (metric === 'degree') {
+                    return value.toFixed(0); // Degree is always an integer
+                } else if (metric === 'betweenness' || metric === 'eigenvector') {
+                    return value.toFixed(4); // More decimal places for centrality measures
+                } else {
+                    return value.toFixed(3); // Default formatting
+                }
+            }
+            
+            // Function to get color from blue-to-red scale
+            function getColorFromScale(value) {
+                // Convert value 0-1 to hue 240 (blue) to 0 (red)
+                const hue = (1 - value) * 240;
+                return `hsl(${hue}, 100%, 50%)`;
+            }
+            
+            // Function to get metric name
+            function getMetricName(metric) {
+                const metricNames = {
+                    'summed_weight': 'Summed Weight',
+                    'degree': 'Degree',
+                    'betweenness': 'Betweenness Centrality',
+                    'eigenvector': 'Eigenvector Centrality'
+                };
+                return metricNames[metric] || metric;
+            }
+
+            // Calculate betweenness centrality
+            function calculateBetweennessCentrality() {
+                const currentNodes = nodes.get();
+                const currentEdges = edges.get();
+                const nodeIds = currentNodes.map(n => n.id);
+                
+                // Simple approximation of betweenness centrality
+                // For small networks, this is a reasonable approximation
+                const centralityValues = {};
+                nodeIds.forEach(id => {
+                    centralityValues[id] = 0;
+                });
+                
+                // Create adjacency list for the network
+                const adjacencyList = {};
+                nodeIds.forEach(id => {
+                    adjacencyList[id] = [];
+                });
+                
+                currentEdges.forEach(edge => {
+                    adjacencyList[edge.from].push(edge.to);
+                    adjacencyList[edge.to].push(edge.from); // Undirected graph
+                });
+                
+                // For each pair of nodes, find shortest paths and count how many go through each node
+                for (let i = 0; i < nodeIds.length; i++) {
+                    const source = nodeIds[i];
+                    
+                    // BFS to find shortest paths from source
+                    const queue = [source];
+                    const distances = {};
+                    const paths = {};
+                    nodeIds.forEach(id => {
+                        distances[id] = id === source ? 0 : Infinity;
+                        paths[id] = [];
+                    });
+                    paths[source] = [[source]];
+                    
+                    while (queue.length > 0) {
+                        const current = queue.shift();
+                        
+                        adjacencyList[current].forEach(neighbor => {
+                            // If this is a shorter path to neighbor
+                            if (distances[neighbor] > distances[current] + 1) {
+                                distances[neighbor] = distances[current] + 1;
+                                paths[neighbor] = paths[current].map(p => [...p, neighbor]);
+                                queue.push(neighbor);
+                            } 
+                            // If this is another path of the same length
+                            else if (distances[neighbor] === distances[current] + 1) {
+                                paths[current].forEach(p => {
+                                    paths[neighbor].push([...p, neighbor]);
+                                });
+                            }
+                        });
+                    }
+                    
+                    // Count betweenness contributions
+                    for (let j = 0; j < nodeIds.length; j++) {
+                        if (i === j) continue; // Skip same node
+                        
+                        const target = nodeIds[j];
+                        if (paths[target].length === 0) continue; // No paths
+                        
+                        // Count nodes on paths
+                        const nodesOnPath = new Set();
+                        paths[target].forEach(path => {
+                            path.slice(1, -1).forEach(node => {
+                                nodesOnPath.add(node);
+                            });
+                        });
+                        
+                        // Add betweenness contribution
+                        nodesOnPath.forEach(node => {
+                            centralityValues[node] += 1;
+                        });
+                    }
+                }
+                
+                // Normalize values
+                const maxValue = Math.max(...Object.values(centralityValues));
+                if (maxValue > 0) {
+                    nodeIds.forEach(id => {
+                        centralityValues[id] = centralityValues[id] / maxValue;
+                    });
+                }
+                
+                return centralityValues;
+            }
+            
+            // Calculate eigenvector centrality (simplified version)
+            function calculateEigenvectorCentrality() {
+                const currentNodes = nodes.get();
+                const currentEdges = edges.get();
+                const nodeIds = currentNodes.map(n => n.id);
+                
+                // Create adjacency matrix
+                const adjacencyMatrix = {};
+                nodeIds.forEach(id => {
+                    adjacencyMatrix[id] = {};
+                    nodeIds.forEach(otherId => {
+                        adjacencyMatrix[id][otherId] = 0;
+                    });
+                });
+                
+                // Fill adjacency matrix with edge weights
+                currentEdges.forEach(edge => {
+                    adjacencyMatrix[edge.from][edge.to] = edge.value;
+                    adjacencyMatrix[edge.to][edge.from] = edge.value; // Undirected graph
+                });
+                
+                // Initialize centrality vector
+                let centrality = {};
+                nodeIds.forEach(id => {
+                    centrality[id] = 1; // Start with equal values
+                });
+                
+                // Power iteration (simplified eigenvector calculation)
+                const iterations = 20; // Usually converges in fewer iterations
+                for (let iter = 0; iter < iterations; iter++) {
+                    // New centrality values for this iteration
+                    const newCentrality = {};
+                    nodeIds.forEach(id => {
+                        newCentrality[id] = 0;
+                    });
+                    
+                    // Matrix-vector multiplication
+                    nodeIds.forEach(id => {
+                        nodeIds.forEach(otherId => {
+                            newCentrality[id] += adjacencyMatrix[id][otherId] * centrality[otherId];
+                        });
+                    });
+                    
+                    // Normalize to prevent values from exploding
+                    const sum = Object.values(newCentrality).reduce((a, b) => a + b, 0);
+                    if (sum > 0) {
+                        nodeIds.forEach(id => {
+                            newCentrality[id] = newCentrality[id] / sum;
+                        });
+                    }
+                    
+                    // Update centrality
+                    centrality = { ...newCentrality };
+                }
+                
+                return centrality;
+            }
         </script>
     </body>
     </html>

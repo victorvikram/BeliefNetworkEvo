@@ -1,0 +1,741 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Correlation Network Analysis</title>
+        <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style type="text/css">
+            html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                font-family: Arial, sans-serif;
+            }
+            .container {
+                display: flex;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+            }
+            .network-container {
+                flex: 60%;
+                display: flex;
+                flex-direction: column;
+                min-height: 0; /* Critical for nested flex containers */
+            }
+            .stats-container {
+                flex: 40%;
+                padding: 20px;
+                background-color: #f8f9fa;
+                border-left: 1px solid #dee2e6;
+                overflow-y: auto;
+                height: 100%;
+                box-sizing: border-box;
+            }
+            .explanation {
+                padding: 10px;
+                margin: 10px;
+                background-color: #e9ecef;
+                border-radius: 4px;
+                flex-shrink: 0;
+            }
+            #controls {
+                padding: 10px;
+                background-color: #f8f9fa;
+                border-bottom: 1px solid #dee2e6;
+                flex-shrink: 0;
+            }
+            #mynetwork {
+                flex: 1;
+                min-height: 0; /* Critical for flex child */
+                position: relative;
+                border: 1px solid lightgray;
+            }
+            .stats-box {
+                background: white;
+                padding: 15px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                margin-bottom: 20px;
+            }
+            .stat-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                margin-bottom: 20px;
+            }
+            .stat-item {
+                background: #ffffff;
+                padding: 10px;
+                border-radius: 4px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+            .stat-value {
+                font-size: 1.2em;
+                font-weight: bold;
+                color: #2c3e50;
+            }
+            .stat-label {
+                color: #7f8c8d;
+                font-size: 0.9em;
+            }
+            .slider-container {
+                margin: 10px 0;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            label {
+                display: inline-block;
+                width: 200px;
+            }
+            .threshold-inputs {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            input[type="number"] {
+                width: 80px;
+                padding: 5px;
+            }
+            .color-controls {
+                margin-top: 15px;
+                padding-top: 10px;
+                border-top: 1px solid #dee2e6;
+            }
+            .color-dropdown {
+                display: none;
+                margin-top: 10px;
+                margin-left: 25px;
+            }
+            select {
+                padding: 5px;
+                border-radius: 4px;
+                border: 1px solid #ced4da;
+                background-color: white;
+                min-width: 200px;
+            }
+            .checkbox-container {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .legend {
+                margin-top: 15px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-size: 0.9em;
+            }
+            .legend-gradient {
+                width: 200px;
+                height: 20px;
+                background: linear-gradient(to right, #0000FF, #00FFFF, #00FF00, #FFFF00, #FF0000);
+                border-radius: 3px;
+            }
+            .legend-labels {
+                display: flex;
+                justify-content: space-between;
+                width: 200px;
+                font-size: 0.8em;
+                color: #666;
+            }
+            .metric-range {
+                margin-top: 5px;
+                font-size: 0.9em;
+                color: #666;
+                display: flex;
+                justify-content: space-between;
+                width: 200px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="network-container">
+                <div class="explanation">
+                    <p><strong>Node Size:</strong> Represents total correlation strength - larger nodes have stronger overall correlations.</p>
+                    <p><strong>Edge Thickness:</strong> Shows correlation strength between variables.</p>
+                    <p><strong>Highlighting:</strong> Red nodes with bold labels indicate specified variables.</p>
+                    <p><strong>Controls:</strong> Adjust correlation threshold, node spacing, and node size using sliders.</p>
+                </div>
+                <div id="controls">
+                    <div class="slider-container">
+                        <label for="threshold">Correlation Threshold:</label>
+                        <div class="threshold-inputs">
+                            <input type="range" min="0" max="100" value="5" id="threshold" style="width: 300px">
+                            <input type="number" id="threshold-number" min="0" max="1" step="0.01" value="0.05" style="width: 80px">
+                        </div>
+                    </div>
+                    <div class="slider-container">
+                        <label for="node-distance">Node Distance:</label>
+                        <input type="range" min="50" max="500" value="150" id="node-distance" style="width: 300px">
+                        <span id="distance-value">150</span>
+                    </div>
+                    <div class="slider-container">
+                        <label for="node-size">Node Size:</label>
+                        <input type="range" min="5" max="50" value="10" id="node-size" style="width: 300px">
+                        <span id="size-value">10</span>
+                    </div>
+                    
+                    <div class="color-controls">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="enable-coloring">
+                            <label for="enable-coloring" style="width: auto;">Enable Node Coloring by Metrics</label>
+                        </div>
+                        <div id="color-dropdown" class="color-dropdown">
+                            <select id="centrality-metric">
+                                <option value="summed_weight">Summed Edge Weight</option>
+                                <option value="degree">Degree</option>
+                                <option value="betweenness">Betweenness Centrality</option>
+                                <option value="eigenvector">Eigenvector Centrality</option>
+                            </select>
+                            <div class="legend">
+                                <span>Value:</span>
+                                <div class="legend-gradient"></div>
+                            </div>
+                            <div class="legend-labels">
+                                <span>Low</span>
+                                <span>High</span>
+                            </div>
+                            <div class="metric-range">
+                                <span id="min-value">Min: --</span>
+                                <span id="max-value">Max: --</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="mynetwork"></div>
+            </div>
+            
+            <div class="stats-container">
+                <h2>Network Statistics</h2>
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="num-nodes">117</div>
+                        <div class="stat-label">Nodes</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="num-edges">669</div>
+                        <div class="stat-label">Edges</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="avg-degree">11.44</div>
+                        <div class="stat-label">Average Degree</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="density">0.099</div>
+                        <div class="stat-label">Network Density</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="avg-clustering">0.324</div>
+                        <div class="stat-label">Average Clustering Coefficient</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="global-clustering">0.290</div>
+                        <div class="stat-label">Global Clustering Coefficient</div>
+                    </div>
+                </div>
+
+                <div class="stats-box">
+                    <h3>Degree Distribution</h3>
+                    <canvas id="degreeDistChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            // Network data
+            const nodes_data = [{"id": "HOMOSEX", "label": "HOMOSEX", "value": 1.2994246938775025, "title": "Variable: HOMOSEX<br>Total Correlation Strength: 1.299"}, {"id": "SPKCOM", "label": "SPKCOM", "value": 1.218221112888684, "title": "Variable: SPKCOM<br>Total Correlation Strength: 1.218"}, {"id": "HELPOTH", "label": "HELPOTH", "value": 0.3634742210214315, "title": "Variable: HELPOTH<br>Total Correlation Strength: 0.363"}, {"id": "RACDIF1", "label": "RACDIF1", "value": 0.6575499777908509, "title": "Variable: RACDIF1<br>Total Correlation Strength: 0.658"}, {"id": "LIBCOM", "label": "LIBCOM", "value": 1.0493354702189523, "title": "Variable: LIBCOM<br>Total Correlation Strength: 1.049"}, {"id": "COURTS", "label": "COURTS", "value": 0.299061542003043, "title": "Variable: COURTS<br>Total Correlation Strength: 0.299"}, {"id": "ABNOMORE", "label": "ABNOMORE", "value": 1.1823694628383037, "title": "Variable: ABNOMORE<br>Total Correlation Strength: 1.182"}, {"id": "NATCHLD", "label": "NATCHLD", "value": 0.5135602504182458, "title": "Variable: NATCHLD<br>Total Correlation Strength: 0.514"}, {"id": "SEXEDUC", "label": "SEXEDUC", "value": 0.5275267413811264, "title": "Variable: SEXEDUC<br>Total Correlation Strength: 0.528"}, {"id": "POLABUSE", "label": "POLABUSE", "value": 0.2791813401479722, "title": "Variable: POLABUSE<br>Total Correlation Strength: 0.279"}, {"id": "FECHLD", "label": "FECHLD", "value": 0.34178582808055075, "title": "Variable: FECHLD<br>Total Correlation Strength: 0.342"}, {"id": "COLCOM", "label": "COLCOM", "value": 0.7264805291287496, "title": "Variable: COLCOM<br>Total Correlation Strength: 0.726"}, {"id": "SPKRAC", "label": "SPKRAC", "value": 0.6904900369936713, "title": "Variable: SPKRAC<br>Total Correlation Strength: 0.690"}, {"id": "NATCRIME", "label": "NATCRIME", "value": 0.1800958760208375, "title": "Variable: NATCRIME<br>Total Correlation Strength: 0.180"}, {"id": "CONJUDGE", "label": "CONJUDGE", "value": 0.5292269920297544, "title": "Variable: CONJUDGE<br>Total Correlation Strength: 0.529"}, {"id": "GUNLAW", "label": "GUNLAW", "value": 0.036686519125836925, "title": "Variable: GUNLAW<br>Total Correlation Strength: 0.037"}, {"id": "NATDRUG", "label": "NATDRUG", "value": 0.22677181304490535, "title": "Variable: NATDRUG<br>Total Correlation Strength: 0.227"}, {"id": "CONPRESS", "label": "CONPRESS", "value": 0.6108904335815053, "title": "Variable: CONPRESS<br>Total Correlation Strength: 0.611"}, {"id": "CONTV", "label": "CONTV", "value": 0.41897668520464604, "title": "Variable: CONTV<br>Total Correlation Strength: 0.419"}, {"id": "POSTLIFE", "label": "POSTLIFE", "value": 0.1907784201507564, "title": "Variable: POSTLIFE<br>Total Correlation Strength: 0.191"}, {"id": "CONSCI", "label": "CONSCI", "value": 0.5931845958851251, "title": "Variable: CONSCI<br>Total Correlation Strength: 0.593"}, {"id": "TEENSEX", "label": "TEENSEX", "value": 0.7120471344509585, "title": "Variable: TEENSEX<br>Total Correlation Strength: 0.712"}, {"id": "LIBHOMO", "label": "LIBHOMO", "value": 1.0121148473521933, "title": "Variable: LIBHOMO<br>Total Correlation Strength: 1.012"}, {"id": "CONCLERG", "label": "CONCLERG", "value": 1.0450906625491478, "title": "Variable: CONCLERG<br>Total Correlation Strength: 1.045"}, {"id": "GRASS", "label": "GRASS", "value": 0.8778124331292282, "title": "Variable: GRASS<br>Total Correlation Strength: 0.878"}, {"id": "CONLEGIS", "label": "CONLEGIS", "value": 0.6969440456434361, "title": "Variable: CONLEGIS<br>Total Correlation Strength: 0.697"}, {"id": "COLATH", "label": "COLATH", "value": 0.7499384287016667, "title": "Variable: COLATH<br>Total Correlation Strength: 0.750"}, {"id": "PRAYER", "label": "PRAYER", "value": 1.1123508662128196, "title": "Variable: PRAYER<br>Total Correlation Strength: 1.112"}, {"id": "LETDIE1", "label": "LETDIE1", "value": 0.5686722729665957, "title": "Variable: LETDIE1<br>Total Correlation Strength: 0.569"}, {"id": "POLESCAP", "label": "POLESCAP", "value": 0.29780781062465567, "title": "Variable: POLESCAP<br>Total Correlation Strength: 0.298"}, {"id": "NATPARK", "label": "NATPARK", "value": 0.18462445157242413, "title": "Variable: NATPARK<br>Total Correlation Strength: 0.185"}, {"id": "SUICIDE2", "label": "SUICIDE2", "value": 0.279427013292797, "title": "Variable: SUICIDE2<br>Total Correlation Strength: 0.279"}, {"id": "COLMIL", "label": "COLMIL", "value": 0.9826816851290469, "title": "Variable: COLMIL<br>Total Correlation Strength: 0.983"}, {"id": "LIBMIL", "label": "LIBMIL", "value": 1.1020134839697149, "title": "Variable: LIBMIL<br>Total Correlation Strength: 1.102"}, {"id": "CONFED", "label": "CONFED", "value": 0.45091382045861395, "title": "Variable: CONFED<br>Total Correlation Strength: 0.451"}, {"id": "CONBUS", "label": "CONBUS", "value": 0.7525155883469011, "title": "Variable: CONBUS<br>Total Correlation Strength: 0.753"}, {"id": "THNKSELF", "label": "THNKSELF", "value": 0.9070110347624317, "title": "Variable: THNKSELF<br>Total Correlation Strength: 0.907"}, {"id": "ABANY", "label": "ABANY", "value": 1.1351295656022662, "title": "Variable: ABANY<br>Total Correlation Strength: 1.135"}, {"id": "SPKHOMO", "label": "SPKHOMO", "value": 1.21407953001381, "title": "Variable: SPKHOMO<br>Total Correlation Strength: 1.214"}, {"id": "COLMSLM", "label": "COLMSLM", "value": 0.7656969966527671, "title": "Variable: COLMSLM<br>Total Correlation Strength: 0.766"}, {"id": "SPANKING", "label": "SPANKING", "value": 0.5471116209176864, "title": "Variable: SPANKING<br>Total Correlation Strength: 0.547"}, {"id": "POLATTAK", "label": "POLATTAK", "value": 0.44433370302519576, "title": "Variable: POLATTAK<br>Total Correlation Strength: 0.444"}, {"id": "COLRAC", "label": "COLRAC", "value": 0.5682448692599598, "title": "Variable: COLRAC<br>Total Correlation Strength: 0.568"}, {"id": "NATFARE", "label": "NATFARE", "value": 0.760438156772999, "title": "Variable: NATFARE<br>Total Correlation Strength: 0.760"}, {"id": "OBEY", "label": "OBEY", "value": 1.3429132575944527, "title": "Variable: OBEY<br>Total Correlation Strength: 1.343"}, {"id": "NATROAD", "label": "NATROAD", "value": 0.1931120948735599, "title": "Variable: NATROAD<br>Total Correlation Strength: 0.193"}, {"id": "NATHEAL", "label": "NATHEAL", "value": 0.520938076915161, "title": "Variable: NATHEAL<br>Total Correlation Strength: 0.521"}, {"id": "SPKATH", "label": "SPKATH", "value": 0.8955506286959503, "title": "Variable: SPKATH<br>Total Correlation Strength: 0.896"}, {"id": "NATSCI", "label": "NATSCI", "value": 0.2954450549598023, "title": "Variable: NATSCI<br>Total Correlation Strength: 0.295"}, {"id": "POLHITOK", "label": "POLHITOK", "value": 0.5072167624423988, "title": "Variable: POLHITOK<br>Total Correlation Strength: 0.507"}, {"id": "NATRACE", "label": "NATRACE", "value": 1.1189799739972146, "title": "Variable: NATRACE<br>Total Correlation Strength: 1.119"}, {"id": "NATEDUC", "label": "NATEDUC", "value": 0.6574735113080614, "title": "Variable: NATEDUC<br>Total Correlation Strength: 0.657"}, {"id": "NATSPAC", "label": "NATSPAC", "value": 0.23400537632357077, "title": "Variable: NATSPAC<br>Total Correlation Strength: 0.234"}, {"id": "RACDIF3", "label": "RACDIF3", "value": 0.6463277271273072, "title": "Variable: RACDIF3<br>Total Correlation Strength: 0.646"}, {"id": "NATARMS", "label": "NATARMS", "value": 0.8938057934745166, "title": "Variable: NATARMS<br>Total Correlation Strength: 0.894"}, {"id": "RACDIF4", "label": "RACDIF4", "value": 0.9864556665489287, "title": "Variable: RACDIF4<br>Total Correlation Strength: 0.986"}, {"id": "COLHOMO", "label": "COLHOMO", "value": 1.1130870159519233, "title": "Variable: COLHOMO<br>Total Correlation Strength: 1.113"}, {"id": "SPKMIL", "label": "SPKMIL", "value": 0.8861332221554687, "title": "Variable: SPKMIL<br>Total Correlation Strength: 0.886"}, {"id": "NATENRGY", "label": "NATENRGY", "value": 0.5477121978239962, "title": "Variable: NATENRGY<br>Total Correlation Strength: 0.548"}, {"id": "POLVIEWS", "label": "POLVIEWS", "value": 0.1857501522998095, "title": "Variable: POLVIEWS<br>Total Correlation Strength: 0.186"}, {"id": "ABPOOR", "label": "ABPOOR", "value": 1.1553568281530224, "title": "Variable: ABPOOR<br>Total Correlation Strength: 1.155"}, {"id": "WRKWAYUP", "label": "WRKWAYUP", "value": 1.7913463049083251, "title": "Variable: WRKWAYUP<br>Total Correlation Strength: 1.791"}, {"id": "TRUST", "label": "TRUST", "value": 0.6100640682600239, "title": "Variable: TRUST<br>Total Correlation Strength: 0.610"}, {"id": "FAIR", "label": "FAIR", "value": 0.5852144848859762, "title": "Variable: FAIR<br>Total Correlation Strength: 0.585"}, {"id": "CONMEDIC", "label": "CONMEDIC", "value": 0.6687125429829823, "title": "Variable: CONMEDIC<br>Total Correlation Strength: 0.669"}, {"id": "XMARSEX", "label": "XMARSEX", "value": 0.40023072184433783, "title": "Variable: XMARSEX<br>Total Correlation Strength: 0.400"}, {"id": "FEPOL", "label": "FEPOL", "value": 0.353554555913504, "title": "Variable: FEPOL<br>Total Correlation Strength: 0.354"}, {"id": "NATAID", "label": "NATAID", "value": 0.05316638417148362, "title": "Variable: NATAID<br>Total Correlation Strength: 0.053"}, {"id": "CONFINAN", "label": "CONFINAN", "value": 0.7452092638518344, "title": "Variable: CONFINAN<br>Total Correlation Strength: 0.745"}, {"id": "NATMASS", "label": "NATMASS", "value": 0.3887725503214404, "title": "Variable: NATMASS<br>Total Correlation Strength: 0.389"}, {"id": "AFFRMACT", "label": "AFFRMACT", "value": 0.6167358770597674, "title": "Variable: AFFRMACT<br>Total Correlation Strength: 0.617"}, {"id": "POPULAR", "label": "POPULAR", "value": 0.2619439391136691, "title": "Variable: POPULAR<br>Total Correlation Strength: 0.262"}, {"id": "CAPPUN", "label": "CAPPUN", "value": 0.3566475810132529, "title": "Variable: CAPPUN<br>Total Correlation Strength: 0.357"}, {"id": "NATSOC", "label": "NATSOC", "value": 0.011957984009025237, "title": "Variable: NATSOC<br>Total Correlation Strength: 0.012"}, {"id": "PORNLAW", "label": "PORNLAW", "value": 0.17594526392457718, "title": "Variable: PORNLAW<br>Total Correlation Strength: 0.176"}, {"id": "NATENVIR", "label": "NATENVIR", "value": 1.0034916084241656, "title": "Variable: NATENVIR<br>Total Correlation Strength: 1.003"}, {"id": "NATCITY", "label": "NATCITY", "value": 0.1241007072009865, "title": "Variable: NATCITY<br>Total Correlation Strength: 0.124"}, {"id": "SPKMSLM", "label": "SPKMSLM", "value": 1.035155324783955, "title": "Variable: SPKMSLM<br>Total Correlation Strength: 1.035"}, {"id": "POLMURDR", "label": "POLMURDR", "value": 0.5746143879954165, "title": "Variable: POLMURDR<br>Total Correlation Strength: 0.575"}, {"id": "DIVLAW", "label": "DIVLAW", "value": 0.10571246199607667, "title": "Variable: DIVLAW<br>Total Correlation Strength: 0.106"}, {"id": "PARTYID", "label": "PARTYID", "value": 0.7478938976637979, "title": "Variable: PARTYID<br>Total Correlation Strength: 0.748"}, {"id": "WORKHARD", "label": "WORKHARD", "value": 0.3660805316024004, "title": "Variable: WORKHARD<br>Total Correlation Strength: 0.366"}, {"id": "FEPRESCH", "label": "FEPRESCH", "value": 0.5766207401238072, "title": "Variable: FEPRESCH<br>Total Correlation Strength: 0.577"}, {"id": "FEFAM", "label": "FEFAM", "value": 1.4385164178970993, "title": "Variable: FEFAM<br>Total Correlation Strength: 1.439"}, {"id": "SUICIDE1", "label": "SUICIDE1", "value": 1.3764385901234544, "title": "Variable: SUICIDE1<br>Total Correlation Strength: 1.376"}, {"id": "HELPBLK", "label": "HELPBLK", "value": 1.0553761243635515, "title": "Variable: HELPBLK<br>Total Correlation Strength: 1.055"}, {"id": "RACDIF2", "label": "RACDIF2", "value": 0.34871663719743007, "title": "Variable: RACDIF2<br>Total Correlation Strength: 0.349"}, {"id": "CONARMY", "label": "CONARMY", "value": 0.6977336810926981, "title": "Variable: CONARMY<br>Total Correlation Strength: 0.698"}, {"id": "ABDEFECT", "label": "ABDEFECT", "value": 0.8278911230887792, "title": "Variable: ABDEFECT<br>Total Correlation Strength: 0.828"}, {"id": "CONLABOR", "label": "CONLABOR", "value": 0.3034106115977766, "title": "Variable: CONLABOR<br>Total Correlation Strength: 0.303"}, {"id": "ABHLTH", "label": "ABHLTH", "value": 0.5944753252924676, "title": "Variable: ABHLTH<br>Total Correlation Strength: 0.594"}, {"id": "LIBRAC", "label": "LIBRAC", "value": 0.6596678375567954, "title": "Variable: LIBRAC<br>Total Correlation Strength: 0.660"}, {"id": "PREMARSX", "label": "PREMARSX", "value": 0.9280295324514608, "title": "Variable: PREMARSX<br>Total Correlation Strength: 0.928"}, {"id": "HELPFUL", "label": "HELPFUL", "value": 0.32790398096638257, "title": "Variable: HELPFUL<br>Total Correlation Strength: 0.328"}, {"id": "LIBMSLM", "label": "LIBMSLM", "value": 1.0346685273820118, "title": "Variable: LIBMSLM<br>Total Correlation Strength: 1.035"}, {"id": "HELPPOOR", "label": "HELPPOOR", "value": 0.9432021499604091, "title": "Variable: HELPPOOR<br>Total Correlation Strength: 0.943"}, {"id": "HELPNOT", "label": "HELPNOT", "value": 0.3896360063277919, "title": "Variable: HELPNOT<br>Total Correlation Strength: 0.390"}, {"id": "CONEDUC", "label": "CONEDUC", "value": 0.5579569913044915, "title": "Variable: CONEDUC<br>Total Correlation Strength: 0.558"}, {"id": "ABRAPE", "label": "ABRAPE", "value": 0.7294339346716767, "title": "Variable: ABRAPE<br>Total Correlation Strength: 0.729"}, {"id": "EQWLTH", "label": "EQWLTH", "value": 0.6259298760532942, "title": "Variable: EQWLTH<br>Total Correlation Strength: 0.626"}, {"id": "LIBATH", "label": "LIBATH", "value": 0.9114217276794185, "title": "Variable: LIBATH<br>Total Correlation Strength: 0.911"}, {"id": "GETAHEAD", "label": "GETAHEAD", "value": 0.15168018231198582, "title": "Variable: GETAHEAD<br>Total Correlation Strength: 0.152"}, {"id": "ABSINGLE", "label": "ABSINGLE", "value": 1.113357199173699, "title": "Variable: ABSINGLE<br>Total Correlation Strength: 1.113"}, {"id": "PRESLAST_DEMREP", "label": "PRESLAST_DEMREP", "value": 0.9629261375695819, "title": "Variable: PRESLAST_DEMREP<br>Total Correlation Strength: 0.963"}, {"id": "PRESLAST_NONCONFORM", "label": "PRESLAST_NONCONFORM", "value": 0.0, "title": "Variable: PRESLAST_NONCONFORM<br>Total Correlation Strength: 0.000"}, {"id": "WOULDVOTELAST_DEMREP", "label": "WOULDVOTELAST_DEMREP", "value": 0.39232717285495344, "title": "Variable: WOULDVOTELAST_DEMREP<br>Total Correlation Strength: 0.392"}, {"id": "WOULDVOTELAST_NONCONFORM", "label": "WOULDVOTELAST_NONCONFORM", "value": 0.0, "title": "Variable: WOULDVOTELAST_NONCONFORM<br>Total Correlation Strength: 0.000"}, {"id": "DIDVOTELAST", "label": "DIDVOTELAST", "value": 0.3554785148649715, "title": "Variable: DIDVOTELAST<br>Total Correlation Strength: 0.355"}, {"id": "RELIG_Protestant", "label": "RELIG_Protestant", "value": 0.7692729061297346, "title": "Variable: RELIG_Protestant<br>Total Correlation Strength: 0.769"}, {"id": "RELIG_Catholic", "label": "RELIG_Catholic", "value": 0.5053129638591011, "title": "Variable: RELIG_Catholic<br>Total Correlation Strength: 0.505"}, {"id": "RELIG_Jewish", "label": "RELIG_Jewish", "value": 0.0, "title": "Variable: RELIG_Jewish<br>Total Correlation Strength: 0.000"}, {"id": "RELIG_None", "label": "RELIG_None", "value": 1.043729152229449, "title": "Variable: RELIG_None<br>Total Correlation Strength: 1.044"}, {"id": "RELIG_Other", "label": "RELIG_Other", "value": 0.0, "title": "Variable: RELIG_Other<br>Total Correlation Strength: 0.000"}, {"id": "RELIG_Buddhism", "label": "RELIG_Buddhism", "value": 0.0, "title": "Variable: RELIG_Buddhism<br>Total Correlation Strength: 0.000"}, {"id": "RELIG_Hinduism", "label": "RELIG_Hinduism", "value": 0.0, "title": "Variable: RELIG_Hinduism<br>Total Correlation Strength: 0.000"}, {"id": "RELIG_Muslim", "label": "RELIG_Muslim", "value": 0.0, "title": "Variable: RELIG_Muslim<br>Total Correlation Strength: 0.000"}, {"id": "RELIG_Christian", "label": "RELIG_Christian", "value": 0.0, "title": "Variable: RELIG_Christian<br>Total Correlation Strength: 0.000"}];
+            const edges_data = [{"from": "HOMOSEX", "to": "TEENSEX", "value": 0.034518436433714446, "title": "Correlation: 0.035"}, {"from": "HOMOSEX", "to": "LIBHOMO", "value": 0.09388835258018183, "title": "Correlation: 0.094"}, {"from": "HOMOSEX", "to": "SPANKING", "value": 0.0407563383195186, "title": "Correlation: 0.041"}, {"from": "HOMOSEX", "to": "RACDIF4", "value": 0.047312626069933174, "title": "Correlation: 0.047"}, {"from": "HOMOSEX", "to": "XMARSEX", "value": 0.009402324023914922, "title": "Correlation: 0.009"}, {"from": "HOMOSEX", "to": "FEPRESCH", "value": 0.009296301223391168, "title": "Correlation: 0.009"}, {"from": "HOMOSEX", "to": "FEFAM", "value": 0.15041273885537973, "title": "Correlation: 0.150"}, {"from": "HOMOSEX", "to": "RACDIF2", "value": 0.045382989341746297, "title": "Correlation: 0.045"}, {"from": "HOMOSEX", "to": "PREMARSX", "value": 0.2658711147364343, "title": "Correlation: 0.266"}, {"from": "HOMOSEX", "to": "LIBATH", "value": 0.021642374336287188, "title": "Correlation: 0.022"}, {"from": "HOMOSEX", "to": "RELIG_Protestant", "value": 0.03460924342176144, "title": "Correlation: 0.035"}, {"from": "SPKCOM", "to": "SPKRAC", "value": 0.03869944994212951, "title": "Correlation: 0.039"}, {"from": "SPKCOM", "to": "CONPRESS", "value": 0.018937757444060455, "title": "Correlation: 0.019"}, {"from": "SPKCOM", "to": "CONSCI", "value": 0.013976765436308408, "title": "Correlation: 0.014"}, {"from": "SPKCOM", "to": "COLATH", "value": 0.08259470176446032, "title": "Correlation: 0.083"}, {"from": "SPKCOM", "to": "LETDIE1", "value": 0.02189492774201211, "title": "Correlation: 0.022"}, {"from": "SPKCOM", "to": "SUICIDE2", "value": 0.008429823185658238, "title": "Correlation: 0.008"}, {"from": "SPKCOM", "to": "ABANY", "value": 0.0007149634620379514, "title": "Correlation: 0.001"}, {"from": "SPKCOM", "to": "SPKHOMO", "value": 0.02018414795507553, "title": "Correlation: 0.020"}, {"from": "SPKCOM", "to": "NATROAD", "value": 0.015134168465999942, "title": "Correlation: 0.015"}, {"from": "SPKCOM", "to": "SPKATH", "value": 0.11637297366941884, "title": "Correlation: 0.116"}, {"from": "SPKCOM", "to": "COLHOMO", "value": 0.032829049712742225, "title": "Correlation: 0.033"}, {"from": "SPKCOM", "to": "SPKMIL", "value": 0.07200942138670029, "title": "Correlation: 0.072"}, {"from": "SPKCOM", "to": "NATENRGY", "value": 0.005506124972860494, "title": "Correlation: 0.006"}, {"from": "SPKCOM", "to": "SPKMSLM", "value": 0.14759260965485002, "title": "Correlation: 0.148"}, {"from": "RACDIF1", "to": "COURTS", "value": 0.0016755511228350305, "title": "Correlation: 0.002"}, {"from": "RACDIF1", "to": "NATFARE", "value": 0.05072878579890214, "title": "Correlation: 0.051"}, {"from": "RACDIF1", "to": "NATRACE", "value": 0.12414942828218993, "title": "Correlation: 0.124"}, {"from": "RACDIF1", "to": "RACDIF3", "value": 0.12274667243851668, "title": "Correlation: 0.123"}, {"from": "RACDIF1", "to": "AFFRMACT", "value": 0.048346772781963754, "title": "Correlation: 0.048"}, {"from": "RACDIF1", "to": "DIVLAW", "value": 0.022474238920007134, "title": "Correlation: 0.022"}, {"from": "RACDIF1", "to": "HELPBLK", "value": 0.0672094097862137, "title": "Correlation: 0.067"}, {"from": "RACDIF1", "to": "HELPPOOR", "value": 0.04225666796931569, "title": "Correlation: 0.042"}, {"from": "RACDIF1", "to": "HELPNOT", "value": 0.015423231783364902, "title": "Correlation: 0.015"}, {"from": "LIBCOM", "to": "COLCOM", "value": 0.14285254589855273, "title": "Correlation: 0.143"}, {"from": "LIBCOM", "to": "NATCRIME", "value": 0.011104428774684141, "title": "Correlation: 0.011"}, {"from": "LIBCOM", "to": "LIBHOMO", "value": 0.14364227193217818, "title": "Correlation: 0.144"}, {"from": "LIBCOM", "to": "LIBMIL", "value": 0.20971496809969875, "title": "Correlation: 0.210"}, {"from": "LIBCOM", "to": "WRKWAYUP", "value": 0.02865811155304256, "title": "Correlation: 0.029"}, {"from": "LIBCOM", "to": "POLMURDR", "value": 0.04596402080941226, "title": "Correlation: 0.046"}, {"from": "LIBCOM", "to": "RACDIF2", "value": 0.007345137508219257, "title": "Correlation: 0.007"}, {"from": "LIBCOM", "to": "LIBRAC", "value": 0.036037379295684645, "title": "Correlation: 0.036"}, {"from": "LIBCOM", "to": "LIBMSLM", "value": 0.11715359468370144, "title": "Correlation: 0.117"}, {"from": "LIBCOM", "to": "LIBATH", "value": 0.04807513051115566, "title": "Correlation: 0.048"}, {"from": "COURTS", "to": "NATFARE", "value": 0.03529329452060449, "title": "Correlation: 0.035"}, {"from": "ABNOMORE", "to": "CONSCI", "value": 0.0015133786654025307, "title": "Correlation: 0.002"}, {"from": "ABNOMORE", "to": "PRAYER", "value": 0.010864255443013983, "title": "Correlation: 0.011"}, {"from": "ABNOMORE", "to": "ABANY", "value": 0.1831059209088049, "title": "Correlation: 0.183"}, {"from": "ABNOMORE", "to": "SPKATH", "value": 0.01104491509144671, "title": "Correlation: 0.011"}, {"from": "ABNOMORE", "to": "NATSPAC", "value": 0.023277272689029765, "title": "Correlation: 0.023"}, {"from": "ABNOMORE", "to": "ABPOOR", "value": 0.24782711775926777, "title": "Correlation: 0.248"}, {"from": "ABNOMORE", "to": "NATENVIR", "value": 0.014979918357575497, "title": "Correlation: 0.015"}, {"from": "ABNOMORE", "to": "DIVLAW", "value": 0.04176981996201867, "title": "Correlation: 0.042"}, {"from": "ABNOMORE", "to": "ABDEFECT", "value": 0.12407967718474441, "title": "Correlation: 0.124"}, {"from": "ABNOMORE", "to": "ABRAPE", "value": 0.08619363368696935, "title": "Correlation: 0.086"}, {"from": "ABNOMORE", "to": "ABSINGLE", "value": 0.24509924702342611, "title": "Correlation: 0.245"}, {"from": "NATCHLD", "to": "NATDRUG", "value": 0.02553632353669141, "title": "Correlation: 0.026"}, {"from": "NATCHLD", "to": "NATPARK", "value": 0.03670757046631124, "title": "Correlation: 0.037"}, {"from": "NATCHLD", "to": "NATFARE", "value": 0.05797983097330493, "title": "Correlation: 0.058"}, {"from": "NATCHLD", "to": "NATHEAL", "value": 0.054550512123840496, "title": "Correlation: 0.055"}, {"from": "NATCHLD", "to": "NATRACE", "value": 0.12716064920921633, "title": "Correlation: 0.127"}, {"from": "NATCHLD", "to": "NATEDUC", "value": 0.043376100647140155, "title": "Correlation: 0.043"}, {"from": "NATCHLD", "to": "NATMASS", "value": 0.02612273516765209, "title": "Correlation: 0.026"}, {"from": "NATCHLD", "to": "NATENVIR", "value": 0.06899118961340095, "title": "Correlation: 0.069"}, {"from": "NATCHLD", "to": "HELPBLK", "value": 0.007611302110720695, "title": "Correlation: 0.008"}, {"from": "NATCHLD", "to": "HELPPOOR", "value": 0.023922937753313927, "title": "Correlation: 0.024"}, {"from": "SEXEDUC", "to": "GRASS", "value": 0.11311645498478362, "title": "Correlation: 0.113"}, {"from": "SEXEDUC", "to": "SPKHOMO", "value": 0.19694297451309073, "title": "Correlation: 0.197"}, {"from": "SEXEDUC", "to": "NATRACE", "value": 0.032894014263598295, "title": "Correlation: 0.033"}, {"from": "SEXEDUC", "to": "NATEDUC", "value": 0.03743049525904286, "title": "Correlation: 0.037"}, {"from": "SEXEDUC", "to": "COLHOMO", "value": 0.08291117043816658, "title": "Correlation: 0.083"}, {"from": "SEXEDUC", "to": "NATENVIR", "value": 0.051624996950047956, "title": "Correlation: 0.052"}, {"from": "POLABUSE", "to": "LIBMIL", "value": 0.017339032626272233, "title": "Correlation: 0.017"}, {"from": "POLABUSE", "to": "SPANKING", "value": 0.0352968786786397, "title": "Correlation: 0.035"}, {"from": "POLABUSE", "to": "POLMURDR", "value": 0.17237183929815628, "title": "Correlation: 0.172"}, {"from": "POLABUSE", "to": "FEFAM", "value": 0.019576095452161515, "title": "Correlation: 0.020"}, {"from": "POLABUSE", "to": "PREMARSX", "value": 0.008971266624704386, "title": "Correlation: 0.009"}, {"from": "FECHLD", "to": "SPKMIL", "value": 0.0209733550417846, "title": "Correlation: 0.021"}, {"from": "COLCOM", "to": "RACDIF4", "value": 0.01861749497468085, "title": "Correlation: 0.019"}, {"from": "COLCOM", "to": "CAPPUN", "value": 0.006021620152395061, "title": "Correlation: 0.006"}, {"from": "COLCOM", "to": "LIBMSLM", "value": 0.016276631592713784, "title": "Correlation: 0.016"}, {"from": "COLCOM", "to": "GETAHEAD", "value": 0.005768885277067635, "title": "Correlation: 0.006"}, {"from": "SPKRAC", "to": "COLRAC", "value": 0.2629855136128592, "title": "Correlation: 0.263"}, {"from": "SPKRAC", "to": "SPKMIL", "value": 0.07748421586512928, "title": "Correlation: 0.077"}, {"from": "SPKRAC", "to": "SPKMSLM", "value": 0.1651149661032492, "title": "Correlation: 0.165"}, {"from": "NATCRIME", "to": "NATDRUG", "value": 0.040396742479103, "title": "Correlation: 0.040"}, {"from": "NATCRIME", "to": "NATARMS", "value": 0.0450566950375249, "title": "Correlation: 0.045"}, {"from": "NATCRIME", "to": "CAPPUN", "value": 0.0017092944969215342, "title": "Correlation: 0.002"}, {"from": "NATCRIME", "to": "GETAHEAD", "value": 0.01748699831290046, "title": "Correlation: 0.017"}, {"from": "CONJUDGE", "to": "CONPRESS", "value": 0.035918390818706215, "title": "Correlation: 0.036"}, {"from": "CONJUDGE", "to": "CONCLERG", "value": 0.069986301498111, "title": "Correlation: 0.070"}, {"from": "CONJUDGE", "to": "CONLEGIS", "value": 0.1292060800535794, "title": "Correlation: 0.129"}, {"from": "CONJUDGE", "to": "CONBUS", "value": 0.0694281705381794, "title": "Correlation: 0.069"}, {"from": "CONJUDGE", "to": "WRKWAYUP", "value": 0.009469030239249316, "title": "Correlation: 0.009"}, {"from": "CONJUDGE", "to": "CONFINAN", "value": 0.0029484580120024712, "title": "Correlation: 0.003"}, {"from": "CONJUDGE", "to": "FEFAM", "value": 0.023493804237288217, "title": "Correlation: 0.023"}, {"from": "CONJUDGE", "to": "CONARMY", "value": 0.0887597458038216, "title": "Correlation: 0.089"}, {"from": "CONJUDGE", "to": "CONEDUC", "value": 0.005861849105363857, "title": "Correlation: 0.006"}, {"from": "CONJUDGE", "to": "EQWLTH", "value": 0.004586329458039216, "title": "Correlation: 0.005"}, {"from": "NATDRUG", "to": "NATFARE", "value": 0.03401925030206351, "title": "Correlation: 0.034"}, {"from": "NATDRUG", "to": "NATHEAL", "value": 0.024130637557009036, "title": "Correlation: 0.024"}, {"from": "NATDRUG", "to": "NATRACE", "value": 0.1026888591700384, "title": "Correlation: 0.103"}, {"from": "CONPRESS", "to": "CONTV", "value": 0.1565974032899609, "title": "Correlation: 0.157"}, {"from": "CONPRESS", "to": "CONSCI", "value": 0.05930124641896375, "title": "Correlation: 0.059"}, {"from": "CONPRESS", "to": "SPKHOMO", "value": 0.018323799595111125, "title": "Correlation: 0.018"}, {"from": "CONPRESS", "to": "COLHOMO", "value": 0.0007701902602252536, "title": "Correlation: 0.001"}, {"from": "CONPRESS", "to": "TRUST", "value": 0.03488604187291679, "title": "Correlation: 0.035"}, {"from": "CONPRESS", "to": "CONMEDIC", "value": 0.09218475344130389, "title": "Correlation: 0.092"}, {"from": "CONPRESS", "to": "CONARMY", "value": 0.005417304663958526, "title": "Correlation: 0.005"}, {"from": "CONPRESS", "to": "CONLABOR", "value": 0.08937503350770491, "title": "Correlation: 0.089"}, {"from": "CONPRESS", "to": "CONEDUC", "value": 0.02602005577922415, "title": "Correlation: 0.026"}, {"from": "CONPRESS", "to": "ABSINGLE", "value": 0.02838281599199106, "title": "Correlation: 0.028"}, {"from": "CONTV", "to": "CONCLERG", "value": 0.03001260232210581, "title": "Correlation: 0.030"}, {"from": "CONTV", "to": "CONLEGIS", "value": 0.0033332138902051243, "title": "Correlation: 0.003"}, {"from": "CONTV", "to": "CONFED", "value": 0.012373109506585241, "title": "Correlation: 0.012"}, {"from": "CONTV", "to": "CONBUS", "value": 0.05824090708337192, "title": "Correlation: 0.058"}, {"from": "CONTV", "to": "CONMEDIC", "value": 0.031731791100807975, "title": "Correlation: 0.032"}, {"from": "CONTV", "to": "CONFINAN", "value": 0.04283368579837048, "title": "Correlation: 0.043"}, {"from": "CONTV", "to": "RACDIF2", "value": 0.02573729427598859, "title": "Correlation: 0.026"}, {"from": "CONTV", "to": "CONARMY", "value": 0.019950734177229392, "title": "Correlation: 0.020"}, {"from": "CONTV", "to": "CONEDUC", "value": 0.02063235127489249, "title": "Correlation: 0.021"}, {"from": "POSTLIFE", "to": "XMARSEX", "value": 0.04974840372961534, "title": "Correlation: 0.050"}, {"from": "POSTLIFE", "to": "RELIG_Protestant", "value": 0.004751691661393528, "title": "Correlation: 0.005"}, {"from": "CONSCI", "to": "PRAYER", "value": 0.05799641631254219, "title": "Correlation: 0.058"}, {"from": "CONSCI", "to": "LETDIE1", "value": 0.02656687960765911, "title": "Correlation: 0.027"}, {"from": "CONSCI", "to": "ABANY", "value": 0.0015470867028607616, "title": "Correlation: 0.002"}, {"from": "CONSCI", "to": "SPKHOMO", "value": 0.07676049390979778, "title": "Correlation: 0.077"}, {"from": "CONSCI", "to": "NATSCI", "value": 0.03630425951354011, "title": "Correlation: 0.036"}, {"from": "CONSCI", "to": "COLHOMO", "value": 0.008416280316908607, "title": "Correlation: 0.008"}, {"from": "CONSCI", "to": "NATENRGY", "value": 0.021666798946057886, "title": "Correlation: 0.022"}, {"from": "CONSCI", "to": "TRUST", "value": 0.0022770770171710824, "title": "Correlation: 0.002"}, {"from": "CONSCI", "to": "CONMEDIC", "value": 0.17865794005607225, "title": "Correlation: 0.179"}, {"from": "CONSCI", "to": "SUICIDE1", "value": 0.01156903458711748, "title": "Correlation: 0.012"}, {"from": "CONSCI", "to": "ABDEFECT", "value": 0.015091953128261884, "title": "Correlation: 0.015"}, {"from": "CONSCI", "to": "CONLABOR", "value": 0.024358760771666696, "title": "Correlation: 0.024"}, {"from": "CONSCI", "to": "ABSINGLE", "value": 0.016249234452144795, "title": "Correlation: 0.016"}, {"from": "TEENSEX", "to": "CONCLERG", "value": 0.038788760148100065, "title": "Correlation: 0.039"}, {"from": "TEENSEX", "to": "SPANKING", "value": 0.004522271233877877, "title": "Correlation: 0.005"}, {"from": "TEENSEX", "to": "OBEY", "value": 0.09804654237683472, "title": "Correlation: 0.098"}, {"from": "TEENSEX", "to": "XMARSEX", "value": 0.1985171548275825, "title": "Correlation: 0.199"}, {"from": "TEENSEX", "to": "PORNLAW", "value": 0.01526561021591886, "title": "Correlation: 0.015"}, {"from": "TEENSEX", "to": "CONARMY", "value": 0.04002469253074432, "title": "Correlation: 0.040"}, {"from": "TEENSEX", "to": "PREMARSX", "value": 0.10000504222752898, "title": "Correlation: 0.100"}, {"from": "LIBHOMO", "to": "LIBMIL", "value": 0.02684092106010991, "title": "Correlation: 0.027"}, {"from": "LIBHOMO", "to": "WRKWAYUP", "value": 0.012411117928109514, "title": "Correlation: 0.012"}, {"from": "LIBHOMO", "to": "AFFRMACT", "value": 0.0018130693239516518, "title": "Correlation: 0.002"}, {"from": "LIBHOMO", "to": "POPULAR", "value": 0.04765854148740223, "title": "Correlation: 0.048"}, {"from": "LIBHOMO", "to": "FEFAM", "value": 0.04223912076870621, "title": "Correlation: 0.042"}, {"from": "LIBHOMO", "to": "LIBMSLM", "value": 0.02278235801460408, "title": "Correlation: 0.023"}, {"from": "LIBHOMO", "to": "LIBATH", "value": 0.08602007816671824, "title": "Correlation: 0.086"}, {"from": "LIBHOMO", "to": "WOULDVOTELAST_DEMREP", "value": 0.030421186365280135, "title": "Correlation: 0.030"}, {"from": "CONCLERG", "to": "CONLEGIS", "value": 0.007062836382797215, "title": "Correlation: 0.007"}, {"from": "CONCLERG", "to": "CONBUS", "value": 0.12837228443689178, "title": "Correlation: 0.128"}, {"from": "CONCLERG", "to": "SPANKING", "value": 0.06621835529921792, "title": "Correlation: 0.066"}, {"from": "CONCLERG", "to": "OBEY", "value": 0.02914510476095948, "title": "Correlation: 0.029"}, {"from": "CONCLERG", "to": "NATARMS", "value": 0.05164448538921899, "title": "Correlation: 0.052"}, {"from": "CONCLERG", "to": "WRKWAYUP", "value": 0.04015892815070193, "title": "Correlation: 0.040"}, {"from": "CONCLERG", "to": "XMARSEX", "value": 0.04725305801745213, "title": "Correlation: 0.047"}, {"from": "CONCLERG", "to": "FEPOL", "value": 0.010426000085684528, "title": "Correlation: 0.010"}, {"from": "CONCLERG", "to": "CONFINAN", "value": 0.06521692155946668, "title": "Correlation: 0.065"}, {"from": "CONCLERG", "to": "FEFAM", "value": 0.03456631689736929, "title": "Correlation: 0.035"}, {"from": "CONCLERG", "to": "CONARMY", "value": 0.022088354373146143, "title": "Correlation: 0.022"}, {"from": "CONCLERG", "to": "PREMARSX", "value": 0.07578652909278924, "title": "Correlation: 0.076"}, {"from": "CONCLERG", "to": "CONEDUC", "value": 0.06528932267860277, "title": "Correlation: 0.065"}, {"from": "CONCLERG", "to": "RELIG_Protestant", "value": 0.04155254938179843, "title": "Correlation: 0.042"}, {"from": "GRASS", "to": "PRAYER", "value": 0.07459114970553173, "title": "Correlation: 0.075"}, {"from": "GRASS", "to": "LETDIE1", "value": 0.0037264517510166967, "title": "Correlation: 0.004"}, {"from": "GRASS", "to": "THNKSELF", "value": 0.020499513094470078, "title": "Correlation: 0.020"}, {"from": "GRASS", "to": "ABANY", "value": 0.01875629386116665, "title": "Correlation: 0.019"}, {"from": "GRASS", "to": "NATFARE", "value": 0.016239845444643873, "title": "Correlation: 0.016"}, {"from": "GRASS", "to": "NATHEAL", "value": 0.013913539144581776, "title": "Correlation: 0.014"}, {"from": "GRASS", "to": "RACDIF3", "value": 0.08266742174570252, "title": "Correlation: 0.083"}, {"from": "GRASS", "to": "SUICIDE1", "value": 0.17942889826899314, "title": "Correlation: 0.179"}, {"from": "CONLEGIS", "to": "CONFED", "value": 0.24874248651788453, "title": "Correlation: 0.249"}, {"from": "CONLEGIS", "to": "CONBUS", "value": 0.039325030843246664, "title": "Correlation: 0.039"}, {"from": "CONLEGIS", "to": "CONFINAN", "value": 0.11793431542864899, "title": "Correlation: 0.118"}, {"from": "CONLEGIS", "to": "FEFAM", "value": 0.010987737649231194, "title": "Correlation: 0.011"}, {"from": "CONLEGIS", "to": "CONARMY", "value": 0.011820606860064267, "title": "Correlation: 0.012"}, {"from": "CONLEGIS", "to": "CONLABOR", "value": 0.0121766310035057, "title": "Correlation: 0.012"}, {"from": "CONLEGIS", "to": "CONEDUC", "value": 0.07042058550277219, "title": "Correlation: 0.070"}, {"from": "COLATH", "to": "COLMIL", "value": 0.20600475505423643, "title": "Correlation: 0.206"}, {"from": "COLATH", "to": "COLMSLM", "value": 0.05473570744621037, "title": "Correlation: 0.055"}, {"from": "COLATH", "to": "SPKATH", "value": 0.16972211508667284, "title": "Correlation: 0.170"}, {"from": "COLATH", "to": "COLHOMO", "value": 0.035250317287583786, "title": "Correlation: 0.035"}, {"from": "PRAYER", "to": "LETDIE1", "value": 0.004829420885306173, "title": "Correlation: 0.005"}, {"from": "PRAYER", "to": "COLMIL", "value": 0.03830806745171036, "title": "Correlation: 0.038"}, {"from": "PRAYER", "to": "THNKSELF", "value": 0.02581053988859883, "title": "Correlation: 0.026"}, {"from": "PRAYER", "to": "POLHITOK", "value": 0.012444477620883, "title": "Correlation: 0.012"}, {"from": "PRAYER", "to": "RACDIF3", "value": 0.05006765595947928, "title": "Correlation: 0.050"}, {"from": "PRAYER", "to": "TRUST", "value": 0.06683755285191192, "title": "Correlation: 0.067"}, {"from": "PRAYER", "to": "RELIG_None", "value": 0.001954550330966335, "title": "Correlation: 0.002"}, {"from": "LETDIE1", "to": "SUICIDE2", "value": 0.005385562821994059, "title": "Correlation: 0.005"}, {"from": "LETDIE1", "to": "ABPOOR", "value": 0.04180402988022292, "title": "Correlation: 0.042"}, {"from": "LETDIE1", "to": "TRUST", "value": 0.014162616773154064, "title": "Correlation: 0.014"}, {"from": "LETDIE1", "to": "SUICIDE1", "value": 0.2832662048018578, "title": "Correlation: 0.283"}, {"from": "LETDIE1", "to": "ABHLTH", "value": 0.0872860198605515, "title": "Correlation: 0.087"}, {"from": "POLESCAP", "to": "POLATTAK", "value": 0.22209055809709585, "title": "Correlation: 0.222"}, {"from": "POLESCAP", "to": "POLHITOK", "value": 0.07571725252755983, "title": "Correlation: 0.076"}, {"from": "NATPARK", "to": "NATFARE", "value": 0.024826361260706777, "title": "Correlation: 0.025"}, {"from": "NATPARK", "to": "NATSCI", "value": 0.015448357421945079, "title": "Correlation: 0.015"}, {"from": "NATPARK", "to": "NATRACE", "value": 0.0007808840771314977, "title": "Correlation: 0.001"}, {"from": "NATPARK", "to": "NATMASS", "value": 0.10686127834632952, "title": "Correlation: 0.107"}, {"from": "SUICIDE2", "to": "COLMIL", "value": 0.005413133048437631, "title": "Correlation: 0.005"}, {"from": "SUICIDE2", "to": "ABANY", "value": 0.013466969903003953, "title": "Correlation: 0.013"}, {"from": "SUICIDE2", "to": "ABPOOR", "value": 0.02281295755568779, "title": "Correlation: 0.023"}, {"from": "SUICIDE2", "to": "SPKMSLM", "value": 0.026143252070866103, "title": "Correlation: 0.026"}, {"from": "SUICIDE2", "to": "SUICIDE1", "value": 0.05749368217556299, "title": "Correlation: 0.057"}, {"from": "COLMIL", "to": "COLMSLM", "value": 0.14877968081001988, "title": "Correlation: 0.149"}, {"from": "COLMIL", "to": "COLRAC", "value": 0.1025926490739262, "title": "Correlation: 0.103"}, {"from": "COLMIL", "to": "POLHITOK", "value": 0.016676605266032037, "title": "Correlation: 0.017"}, {"from": "COLMIL", "to": "SPKMIL", "value": 0.27843590723871325, "title": "Correlation: 0.278"}, {"from": "LIBMIL", "to": "CONFED", "value": 0.0017279285071052778, "title": "Correlation: 0.002"}, {"from": "LIBMIL", "to": "WRKWAYUP", "value": 0.010534466307605584, "title": "Correlation: 0.011"}, {"from": "LIBMIL", "to": "LIBRAC", "value": 0.1440895046519805, "title": "Correlation: 0.144"}, {"from": "LIBMIL", "to": "LIBMSLM", "value": 0.06581446910678963, "title": "Correlation: 0.066"}, {"from": "LIBMIL", "to": "LIBATH", "value": 0.22147030747500512, "title": "Correlation: 0.221"}, {"from": "CONFED", "to": "CONBUS", "value": 0.004438623738274196, "title": "Correlation: 0.004"}, {"from": "CONFED", "to": "CONMEDIC", "value": 0.02401507763966243, "title": "Correlation: 0.024"}, {"from": "CONFED", "to": "CONFINAN", "value": 0.04011411236378517, "title": "Correlation: 0.040"}, {"from": "CONFED", "to": "CONLABOR", "value": 0.07730295945146252, "title": "Correlation: 0.077"}, {"from": "CONFED", "to": "CONEDUC", "value": 0.03900429399459056, "title": "Correlation: 0.039"}, {"from": "CONBUS", "to": "NATARMS", "value": 0.00686590953652694, "title": "Correlation: 0.007"}, {"from": "CONBUS", "to": "CONMEDIC", "value": 0.07801313228712495, "title": "Correlation: 0.078"}, {"from": "CONBUS", "to": "CONFINAN", "value": 0.15833335580314475, "title": "Correlation: 0.158"}, {"from": "CONBUS", "to": "CONARMY", "value": 0.1116007272423487, "title": "Correlation: 0.112"}, {"from": "CONBUS", "to": "CONEDUC", "value": 0.0320813473989298, "title": "Correlation: 0.032"}, {"from": "CONBUS", "to": "EQWLTH", "value": 0.03719964742142819, "title": "Correlation: 0.037"}, {"from": "THNKSELF", "to": "ABANY", "value": 0.06043930664584298, "title": "Correlation: 0.060"}, {"from": "THNKSELF", "to": "SPKATH", "value": 0.080987063175081, "title": "Correlation: 0.081"}, {"from": "THNKSELF", "to": "COLHOMO", "value": 0.011617751042886669, "title": "Correlation: 0.012"}, {"from": "THNKSELF", "to": "ABPOOR", "value": 0.0021371289230200457, "title": "Correlation: 0.002"}, {"from": "ABANY", "to": "POLATTAK", "value": 0.00126661650264767, "title": "Correlation: 0.001"}, {"from": "ABANY", "to": "NATHEAL", "value": 0.012430725182561931, "title": "Correlation: 0.012"}, {"from": "ABANY", "to": "NATENRGY", "value": 0.0005995281753891674, "title": "Correlation: 0.001"}, {"from": "ABANY", "to": "ABPOOR", "value": 0.19594945860498297, "title": "Correlation: 0.196"}, {"from": "ABANY", "to": "NATENVIR", "value": 0.0760309952769712, "title": "Correlation: 0.076"}, {"from": "ABANY", "to": "DIVLAW", "value": 0.03498459470441428, "title": "Correlation: 0.035"}, {"from": "ABANY", "to": "SUICIDE1", "value": 0.02263661446153516, "title": "Correlation: 0.023"}, {"from": "ABANY", "to": "ABDEFECT", "value": 0.024476138907993224, "title": "Correlation: 0.024"}, {"from": "ABANY", "to": "ABHLTH", "value": 0.010985921931131985, "title": "Correlation: 0.011"}, {"from": "ABANY", "to": "ABRAPE", "value": 0.04921562862746741, "title": "Correlation: 0.049"}, {"from": "ABANY", "to": "ABSINGLE", "value": 0.2413734678144335, "title": "Correlation: 0.241"}, {"from": "SPKHOMO", "to": "SPKATH", "value": 0.0862472005023042, "title": "Correlation: 0.086"}, {"from": "SPKHOMO", "to": "NATEDUC", "value": 0.023286391179344234, "title": "Correlation: 0.023"}, {"from": "SPKHOMO", "to": "COLHOMO", "value": 0.39112734380870595, "title": "Correlation: 0.391"}, {"from": "SPKHOMO", "to": "ABDEFECT", "value": 0.07608834810077816, "title": "Correlation: 0.076"}, {"from": "COLMSLM", "to": "COLRAC", "value": 0.15477609764702607, "title": "Correlation: 0.155"}, {"from": "COLMSLM", "to": "SPKMSLM", "value": 0.2321136237047935, "title": "Correlation: 0.232"}, {"from": "SPANKING", "to": "OBEY", "value": 0.06852350183471376, "title": "Correlation: 0.069"}, {"from": "SPANKING", "to": "NATARMS", "value": 0.008421418075896456, "title": "Correlation: 0.008"}, {"from": "SPANKING", "to": "WRKWAYUP", "value": 0.06415117904793144, "title": "Correlation: 0.064"}, {"from": "SPANKING", "to": "CAPPUN", "value": 0.07044898921183596, "title": "Correlation: 0.070"}, {"from": "SPANKING", "to": "POLMURDR", "value": 0.006207134340329071, "title": "Correlation: 0.006"}, {"from": "SPANKING", "to": "CONARMY", "value": 0.014673898211473684, "title": "Correlation: 0.015"}, {"from": "POLATTAK", "to": "POLHITOK", "value": 0.1368587667360628, "title": "Correlation: 0.137"}, {"from": "NATFARE", "to": "NATRACE", "value": 0.023053539094169694, "title": "Correlation: 0.023"}, {"from": "NATFARE", "to": "NATAID", "value": 0.002590921384915758, "title": "Correlation: 0.003"}, {"from": "NATFARE", "to": "NATMASS", "value": 0.037801646443007035, "title": "Correlation: 0.038"}, {"from": "NATFARE", "to": "AFFRMACT", "value": 0.11626749056184461, "title": "Correlation: 0.116"}, {"from": "NATFARE", "to": "HELPPOOR", "value": 0.09985311881888227, "title": "Correlation: 0.100"}, {"from": "NATFARE", "to": "HELPNOT", "value": 0.05634489658475509, "title": "Correlation: 0.056"}, {"from": "OBEY", "to": "RACDIF4", "value": 0.11382294318617389, "title": "Correlation: 0.114"}, {"from": "OBEY", "to": "WRKWAYUP", "value": 0.04923262889352114, "title": "Correlation: 0.049"}, {"from": "OBEY", "to": "FAIR", "value": 0.004765702145955764, "title": "Correlation: 0.005"}, {"from": "OBEY", "to": "FEFAM", "value": 0.11993859950739286, "title": "Correlation: 0.120"}, {"from": "OBEY", "to": "PREMARSX", "value": 0.05160962359434194, "title": "Correlation: 0.052"}, {"from": "NATROAD", "to": "NATSCI", "value": 0.04102522117181634, "title": "Correlation: 0.041"}, {"from": "NATROAD", "to": "NATSPAC", "value": 0.003292419461945789, "title": "Correlation: 0.003"}, {"from": "NATROAD", "to": "NATENRGY", "value": 0.0643956022155944, "title": "Correlation: 0.064"}, {"from": "NATROAD", "to": "NATMASS", "value": 0.020426247518102403, "title": "Correlation: 0.020"}, {"from": "NATROAD", "to": "NATSOC", "value": 0.011170744456925523, "title": "Correlation: 0.011"}, {"from": "NATROAD", "to": "DIDVOTELAST", "value": 0.0376676915831755, "title": "Correlation: 0.038"}, {"from": "NATHEAL", "to": "NATRACE", "value": 0.0032767018188416897, "title": "Correlation: 0.003"}, {"from": "NATHEAL", "to": "NATEDUC", "value": 0.07334149036618189, "title": "Correlation: 0.073"}, {"from": "NATHEAL", "to": "NATMASS", "value": 0.0070229019268935, "title": "Correlation: 0.007"}, {"from": "NATHEAL", "to": "NATENVIR", "value": 0.09212211395504671, "title": "Correlation: 0.092"}, {"from": "NATHEAL", "to": "SUICIDE1", "value": 0.03513626510525712, "title": "Correlation: 0.035"}, {"from": "SPKATH", "to": "COLHOMO", "value": 0.0003870603035982632, "title": "Correlation: 0.000"}, {"from": "SPKATH", "to": "SPKMIL", "value": 0.1160755239597262, "title": "Correlation: 0.116"}, {"from": "SPKATH", "to": "SPKMSLM", "value": 0.04271848998873475, "title": "Correlation: 0.043"}, {"from": "SPKATH", "to": "SUICIDE1", "value": 0.0922718408827186, "title": "Correlation: 0.092"}, {"from": "NATSCI", "to": "NATSPAC", "value": 0.10265122144436939, "title": "Correlation: 0.103"}, {"from": "NATSCI", "to": "NATENRGY", "value": 0.09822462302863887, "title": "Correlation: 0.098"}, {"from": "NATSCI", "to": "HELPNOT", "value": 0.0017913723794924887, "title": "Correlation: 0.002"}, {"from": "POLHITOK", "to": "COLHOMO", "value": 0.01962569736398167, "title": "Correlation: 0.020"}, {"from": "POLHITOK", "to": "SPKMIL", "value": 0.036929162572630674, "title": "Correlation: 0.037"}, {"from": "POLHITOK", "to": "SUICIDE1", "value": 0.13627225770054577, "title": "Correlation: 0.136"}, {"from": "NATRACE", "to": "NATEDUC", "value": 0.10276363340072435, "title": "Correlation: 0.103"}, {"from": "NATRACE", "to": "RACDIF3", "value": 0.10908527323245572, "title": "Correlation: 0.109"}, {"from": "NATRACE", "to": "NATENRGY", "value": 0.03047976509357475, "title": "Correlation: 0.030"}, {"from": "NATRACE", "to": "AFFRMACT", "value": 0.006084861748853446, "title": "Correlation: 0.006"}, {"from": "NATRACE", "to": "NATENVIR", "value": 0.030602294309092323, "title": "Correlation: 0.031"}, {"from": "NATRACE", "to": "NATCITY", "value": 0.0053611421765780605, "title": "Correlation: 0.005"}, {"from": "NATRACE", "to": "HELPBLK", "value": 0.16128113335076807, "title": "Correlation: 0.161"}, {"from": "NATEDUC", "to": "NATENRGY", "value": 0.05642885383461148, "title": "Correlation: 0.056"}, {"from": "NATEDUC", "to": "NATMASS", "value": 0.004152911855693821, "title": "Correlation: 0.004"}, {"from": "NATEDUC", "to": "NATSOC", "value": 0.0007872395520997126, "title": "Correlation: 0.001"}, {"from": "NATEDUC", "to": "NATENVIR", "value": 0.10512246930954057, "title": "Correlation: 0.105"}, {"from": "NATSPAC", "to": "COLHOMO", "value": 0.050499312091060844, "title": "Correlation: 0.050"}, {"from": "NATSPAC", "to": "SUICIDE1", "value": 0.054285150637165, "title": "Correlation: 0.054"}, {"from": "RACDIF3", "to": "ABPOOR", "value": 0.02314829323383114, "title": "Correlation: 0.023"}, {"from": "RACDIF3", "to": "TRUST", "value": 0.051949576565734006, "title": "Correlation: 0.052"}, {"from": "RACDIF3", "to": "AFFRMACT", "value": 0.0032355195687348067, "title": "Correlation: 0.003"}, {"from": "RACDIF3", "to": "NATENVIR", "value": 0.06184382828112569, "title": "Correlation: 0.062"}, {"from": "RACDIF3", "to": "HELPPOOR", "value": 0.039184709341978916, "title": "Correlation: 0.039"}, {"from": "NATARMS", "to": "POLVIEWS", "value": 0.0015149580001038953, "title": "Correlation: 0.002"}, {"from": "NATARMS", "to": "WRKWAYUP", "value": 0.13075558670527074, "title": "Correlation: 0.131"}, {"from": "NATARMS", "to": "XMARSEX", "value": 0.024318680969636103, "title": "Correlation: 0.024"}, {"from": "NATARMS", "to": "CONFINAN", "value": 0.024505887589224385, "title": "Correlation: 0.025"}, {"from": "NATARMS", "to": "CAPPUN", "value": 0.002685914224523728, "title": "Correlation: 0.003"}, {"from": "NATARMS", "to": "FEFAM", "value": 0.006606269180676868, "title": "Correlation: 0.007"}, {"from": "NATARMS", "to": "CONARMY", "value": 0.06263071640751315, "title": "Correlation: 0.063"}, {"from": "NATARMS", "to": "EQWLTH", "value": 0.05940413156970233, "title": "Correlation: 0.059"}, {"from": "NATARMS", "to": "GETAHEAD", "value": 0.014296807714669792, "title": "Correlation: 0.014"}, {"from": "NATARMS", "to": "PRESLAST_DEMREP", "value": 0.10867243004971301, "title": "Correlation: 0.109"}, {"from": "RACDIF4", "to": "WRKWAYUP", "value": 0.13872279092660805, "title": "Correlation: 0.139"}, {"from": "RACDIF4", "to": "FEPOL", "value": 0.017407288351925097, "title": "Correlation: 0.017"}, {"from": "RACDIF4", "to": "PORNLAW", "value": 0.006042550691333035, "title": "Correlation: 0.006"}, {"from": "RACDIF4", "to": "PARTYID", "value": 0.0009861815810598682, "title": "Correlation: 0.001"}, {"from": "RACDIF4", "to": "FEFAM", "value": 0.002504511484391138, "title": "Correlation: 0.003"}, {"from": "RACDIF4", "to": "RACDIF2", "value": 0.15443257804454766, "title": "Correlation: 0.154"}, {"from": "RACDIF4", "to": "PRESLAST_DEMREP", "value": 0.0223913076535186, "title": "Correlation: 0.022"}, {"from": "SPKMIL", "to": "SPKMSLM", "value": 0.06559740514821247, "title": "Correlation: 0.066"}, {"from": "NATENRGY", "to": "ABPOOR", "value": 0.030124560847285632, "title": "Correlation: 0.030"}, {"from": "NATENRGY", "to": "NATMASS", "value": 0.03911381253311075, "title": "Correlation: 0.039"}, {"from": "NATENRGY", "to": "NATENVIR", "value": 0.16883790516636543, "title": "Correlation: 0.169"}, {"from": "NATENRGY", "to": "ABDEFECT", "value": 0.003958002081550085, "title": "Correlation: 0.004"}, {"from": "POLVIEWS", "to": "XMARSEX", "value": 0.015585245161280455, "title": "Correlation: 0.016"}, {"from": "POLVIEWS", "to": "EQWLTH", "value": 0.024609143002362884, "title": "Correlation: 0.025"}, {"from": "ABPOOR", "to": "ABDEFECT", "value": 0.05323053540943706, "title": "Correlation: 0.053"}, {"from": "ABPOOR", "to": "ABRAPE", "value": 0.06026981193678085, "title": "Correlation: 0.060"}, {"from": "ABPOOR", "to": "ABSINGLE", "value": 0.33302520449602047, "title": "Correlation: 0.333"}, {"from": "WRKWAYUP", "to": "CONFINAN", "value": 0.025451314514559103, "title": "Correlation: 0.025"}, {"from": "WRKWAYUP", "to": "CAPPUN", "value": 0.09280510849259335, "title": "Correlation: 0.093"}, {"from": "WRKWAYUP", "to": "POLMURDR", "value": 0.013167829626305314, "title": "Correlation: 0.013"}, {"from": "WRKWAYUP", "to": "PARTYID", "value": 0.052035188412527814, "title": "Correlation: 0.052"}, {"from": "WRKWAYUP", "to": "FEPRESCH", "value": 0.0017763349655670173, "title": "Correlation: 0.002"}, {"from": "WRKWAYUP", "to": "FEFAM", "value": 0.07104034465184213, "title": "Correlation: 0.071"}, {"from": "WRKWAYUP", "to": "LIBMSLM", "value": 0.008812892379192971, "title": "Correlation: 0.009"}, {"from": "WRKWAYUP", "to": "GETAHEAD", "value": 0.037173253663937506, "title": "Correlation: 0.037"}, {"from": "TRUST", "to": "SUICIDE1", "value": 0.01030842487312996, "title": "Correlation: 0.010"}, {"from": "TRUST", "to": "HELPFUL", "value": 0.07229899879086876, "title": "Correlation: 0.072"}, {"from": "TRUST", "to": "ABSINGLE", "value": 0.021479003628928045, "title": "Correlation: 0.021"}, {"from": "TRUST", "to": "DIDVOTELAST", "value": 0.0058910624023066705, "title": "Correlation: 0.006"}, {"from": "FAIR", "to": "FEFAM", "value": 0.0003249499192769221, "title": "Correlation: 0.000"}, {"from": "FAIR", "to": "RACDIF2", "value": 0.026598775231083192, "title": "Correlation: 0.027"}, {"from": "FAIR", "to": "LIBRAC", "value": 0.042906303974887906, "title": "Correlation: 0.043"}, {"from": "CONMEDIC", "to": "CONFINAN", "value": 0.03965765717281356, "title": "Correlation: 0.040"}, {"from": "CONMEDIC", "to": "CONARMY", "value": 0.05404121910599758, "title": "Correlation: 0.054"}, {"from": "CONMEDIC", "to": "CONLABOR", "value": 0.019690232762372643, "title": "Correlation: 0.020"}, {"from": "CONMEDIC", "to": "CONEDUC", "value": 0.150720739416827, "title": "Correlation: 0.151"}, {"from": "XMARSEX", "to": "PORNLAW", "value": 0.01477893386219255, "title": "Correlation: 0.015"}, {"from": "XMARSEX", "to": "LIBMSLM", "value": 0.01348418969050054, "title": "Correlation: 0.013"}, {"from": "FEPOL", "to": "POLMURDR", "value": 0.005185147358585977, "title": "Correlation: 0.005"}, {"from": "FEPOL", "to": "FEPRESCH", "value": 0.03558998880273334, "title": "Correlation: 0.036"}, {"from": "FEPOL", "to": "FEFAM", "value": 0.1595407969810005, "title": "Correlation: 0.160"}, {"from": "NATAID", "to": "AFFRMACT", "value": 0.0027910530108896585, "title": "Correlation: 0.003"}, {"from": "NATAID", "to": "HELPBLK", "value": 0.03243293643549755, "title": "Correlation: 0.032"}, {"from": "CONFINAN", "to": "CONARMY", "value": 0.16771936783773597, "title": "Correlation: 0.168"}, {"from": "CONFINAN", "to": "CONEDUC", "value": 0.015655799457962142, "title": "Correlation: 0.016"}, {"from": "CONFINAN", "to": "EQWLTH", "value": 0.007031672796859572, "title": "Correlation: 0.007"}, {"from": "CONFINAN", "to": "GETAHEAD", "value": 0.01844759757801289, "title": "Correlation: 0.018"}, {"from": "NATMASS", "to": "NATENVIR", "value": 0.05267938708683436, "title": "Correlation: 0.053"}, {"from": "NATMASS", "to": "NATCITY", "value": 0.0027272540574543643, "title": "Correlation: 0.003"}, {"from": "NATMASS", "to": "SUICIDE1", "value": 0.004737200171162213, "title": "Correlation: 0.005"}, {"from": "NATMASS", "to": "DIDVOTELAST", "value": 0.029940138188433506, "title": "Correlation: 0.030"}, {"from": "AFFRMACT", "to": "HELPBLK", "value": 0.16601223239761806, "title": "Correlation: 0.166"}, {"from": "AFFRMACT", "to": "HELPPOOR", "value": 0.0612371941946685, "title": "Correlation: 0.061"}, {"from": "AFFRMACT", "to": "HELPNOT", "value": 0.031369164640165585, "title": "Correlation: 0.031"}, {"from": "CAPPUN", "to": "PARTYID", "value": 0.0050324666092130856, "title": "Correlation: 0.005"}, {"from": "CAPPUN", "to": "LIBMSLM", "value": 0.012934834314156629, "title": "Correlation: 0.013"}, {"from": "PORNLAW", "to": "PREMARSX", "value": 0.0645546211015783, "title": "Correlation: 0.065"}, {"from": "NATENVIR", "to": "NATCITY", "value": 0.019464266372920744, "title": "Correlation: 0.019"}, {"from": "NATENVIR", "to": "SUICIDE1", "value": 0.031192065975868873, "title": "Correlation: 0.031"}, {"from": "NATENVIR", "to": "ABRAPE", "value": 0.03526751241766782, "title": "Correlation: 0.035"}, {"from": "NATCITY", "to": "SUICIDE1", "value": 0.006029378688423927, "title": "Correlation: 0.006"}, {"from": "NATCITY", "to": "HELPBLK", "value": 0.029539376952257265, "title": "Correlation: 0.030"}, {"from": "NATCITY", "to": "HELPPOOR", "value": 0.003221820119413324, "title": "Correlation: 0.003"}, {"from": "POLMURDR", "to": "FEFAM", "value": 0.07841067728489887, "title": "Correlation: 0.078"}, {"from": "POLMURDR", "to": "PREMARSX", "value": 0.07939826614907661, "title": "Correlation: 0.079"}, {"from": "POLMURDR", "to": "LIBMSLM", "value": 0.011051050732254047, "title": "Correlation: 0.011"}, {"from": "PARTYID", "to": "EQWLTH", "value": 0.033885488072664706, "title": "Correlation: 0.034"}, {"from": "PARTYID", "to": "PRESLAST_DEMREP", "value": 0.28747465397516014, "title": "Correlation: 0.287"}, {"from": "PARTYID", "to": "WOULDVOTELAST_DEMREP", "value": 0.07683326711638402, "title": "Correlation: 0.077"}, {"from": "FEPRESCH", "to": "FEFAM", "value": 0.17896333287826055, "title": "Correlation: 0.179"}, {"from": "FEFAM", "to": "RACDIF2", "value": 0.02274830225491898, "title": "Correlation: 0.023"}, {"from": "FEFAM", "to": "LIBATH", "value": 0.0533667382817229, "title": "Correlation: 0.053"}, {"from": "SUICIDE1", "to": "ABDEFECT", "value": 0.037304536130608114, "title": "Correlation: 0.037"}, {"from": "SUICIDE1", "to": "ABHLTH", "value": 0.03373618477839911, "title": "Correlation: 0.034"}, {"from": "SUICIDE1", "to": "ABRAPE", "value": 0.05009309226863299, "title": "Correlation: 0.050"}, {"from": "SUICIDE1", "to": "ABSINGLE", "value": 0.0408940331521396, "title": "Correlation: 0.041"}, {"from": "SUICIDE1", "to": "DIDVOTELAST", "value": 0.0003993774056908623, "title": "Correlation: 0.000"}, {"from": "HELPBLK", "to": "HELPPOOR", "value": 0.1674754575981805, "title": "Correlation: 0.167"}, {"from": "HELPBLK", "to": "HELPNOT", "value": 0.04119563419947227, "title": "Correlation: 0.041"}, {"from": "CONARMY", "to": "CONEDUC", "value": 0.05176365259426231, "title": "Correlation: 0.052"}, {"from": "ABDEFECT", "to": "ABHLTH", "value": 0.25303348570186596, "title": "Correlation: 0.253"}, {"from": "ABDEFECT", "to": "ABRAPE", "value": 0.15636627676176276, "title": "Correlation: 0.156"}, {"from": "ABDEFECT", "to": "ABSINGLE", "value": 0.07338923594524001, "title": "Correlation: 0.073"}, {"from": "CONLABOR", "to": "CONEDUC", "value": 0.08050699410106417, "title": "Correlation: 0.081"}, {"from": "ABHLTH", "to": "ABRAPE", "value": 0.1558166710429903, "title": "Correlation: 0.156"}, {"from": "LIBRAC", "to": "LIBMSLM", "value": 0.2141572304270142, "title": "Correlation: 0.214"}, {"from": "LIBRAC", "to": "LIBATH", "value": 0.02488194477080462, "title": "Correlation: 0.025"}, {"from": "LIBMSLM", "to": "LIBATH", "value": 0.04283145510460535, "title": "Correlation: 0.043"}, {"from": "HELPPOOR", "to": "HELPNOT", "value": 0.16018596076562278, "title": "Correlation: 0.160"}, {"from": "ABRAPE", "to": "ABSINGLE", "value": 0.04291701412259039, "title": "Correlation: 0.043"}, {"from": "EQWLTH", "to": "PRESLAST_DEMREP", "value": 0.04909056107168981, "title": "Correlation: 0.049"}, {"from": "LIBATH", "to": "WOULDVOTELAST_DEMREP", "value": 0.009426196025728556, "title": "Correlation: 0.009"}, {"from": "ABSINGLE", "to": "DIDVOTELAST", "value": 0.010710720451412078, "title": "Correlation: 0.011"}, {"from": "PRESLAST_DEMREP", "to": "WOULDVOTELAST_DEMREP", "value": 0.16061981590801394, "title": "Correlation: 0.161"}];
+            
+            // Create a DataSet for nodes and edges
+            const nodes = new vis.DataSet(nodes_data);
+            const edges = new vis.DataSet(edges_data);
+            
+            // Create network data
+            const data = {
+                nodes: nodes,
+                edges: edges
+            };
+            
+            // Network options
+            const options = {
+                nodes: {
+                    shape: 'dot',
+                    scaling: {
+                        min: 10,
+                        max: 30,
+                        label: {
+                            enabled: true,
+                            min: 14,
+                            max: 30,
+                            maxVisible: 30,
+                            drawThreshold: 5
+                        }
+                    },
+                    font: {
+                        size: 12,
+                        face: 'Arial'
+                    }
+                },
+                edges: {
+                    width: 0.15,
+                    color: { inherit: 'both' },
+                    smooth: {
+                        type: 'continuous'
+                    },
+                    scaling: {
+                        min: 1,
+                        max: 5
+                    }
+                },
+                physics: {
+                    barnesHut: {
+                        gravitationalConstant: -80000,
+                        centralGravity: 0.3,
+                        springLength: 150,
+                        springConstant: 0.04,
+                        damping: 0.09,
+                        avoidOverlap: 0.1
+                    },
+                    maxVelocity: 50,
+                    minVelocity: 0.1,
+                    solver: 'barnesHut',
+                    stabilization: {
+                        enabled: true,
+                        iterations: 1000,
+                        updateInterval: 100
+                    },
+                    timestep: 0.5,
+                    adaptiveTimestep: true
+                }
+            };
+            
+            // Create network
+            const container = document.getElementById('mynetwork');
+            const network = new vis.Network(container, data, options);
+            
+            // Initialize network with default threshold of 0.05
+            updateNetwork(0.05);
+            
+            // Threshold controls
+            const thresholdSlider = document.getElementById('threshold');
+            const thresholdNumber = document.getElementById('threshold-number');
+            
+            function updateNetwork(threshold) {
+                // Filter edges based on threshold
+                const filteredEdges = edges_data.filter(edge => edge.value >= threshold);
+                edges.clear();
+                edges.add(filteredEdges);
+                
+                // Update node values based on visible connections
+                const nodeConnections = {};
+                filteredEdges.forEach(edge => {
+                    nodeConnections[edge.from] = (nodeConnections[edge.from] || 0) + 1;
+                    nodeConnections[edge.to] = (nodeConnections[edge.to] || 0) + 1;
+                });
+                
+                const updatedNodes = nodes_data.map(node => ({
+                    ...node,
+                    value: nodeConnections[node.id] || 0,
+                    title: `Variable: ${node.id}<br>Connections: ${nodeConnections[node.id] || 0}`
+                }));
+                
+                nodes.clear();
+                nodes.add(updatedNodes);
+            }
+            
+            // Sync slider and number input
+            thresholdSlider.oninput = function() {
+                const threshold = this.value / 100;
+                thresholdNumber.value = threshold.toFixed(2);
+                updateNetwork(threshold);
+            };
+            
+            thresholdNumber.oninput = function() {
+                const threshold = parseFloat(this.value);
+                if (!isNaN(threshold) && threshold >= 0 && threshold <= 1) {
+                    thresholdSlider.value = threshold * 100;
+                    updateNetwork(threshold);
+                }
+            };
+            
+            // Node distance slider functionality
+            const distanceSlider = document.getElementById('node-distance');
+            const distanceValue = document.getElementById('distance-value');
+            
+            distanceSlider.oninput = function() {
+                const distance = parseInt(this.value);
+                distanceValue.textContent = distance;
+                
+                network.setOptions({
+                    physics: {
+                        barnesHut: {
+                            springLength: distance
+                        }
+                    }
+                });
+            };
+
+            // Node size slider functionality
+            const nodeSizeSlider = document.getElementById('node-size');
+            const nodeSizeValue = document.getElementById('size-value');
+            
+            nodeSizeSlider.oninput = function() {
+                const size = parseInt(this.value);
+                nodeSizeValue.textContent = size;
+                
+                // Update all nodes with the new size value
+                const nodeIds = nodes.getIds();
+                const updates = [];
+                
+                for (const id of nodeIds) {
+                    updates.push({
+                        id: id,
+                        size: size
+                    });
+                }
+                
+                nodes.update(updates);
+                
+                // Also update the default size for any new nodes
+                network.setOptions({
+                    nodes: {
+                        size: size,
+                        scaling: {
+                            min: size,
+                            max: size * 3
+                        }
+                    }
+                });
+            };
+
+            // Initialize degree distribution chart
+            const degreeDistData = {"26": 3, "25": 4, "3": 3, "13": 15, "16": 5, "8": 7, "19": 5, "7": 6, "5": 9, "2": 4, "15": 4, "11": 8, "4": 1, "18": 4, "14": 6, "12": 3, "9": 4, "17": 3, "6": 6, "20": 2, "10": 4, "24": 1, "31": 1, "28": 1, "0": 8};
+            const degreeCtx = document.getElementById('degreeDistChart').getContext('2d');
+            const degreeChart = new Chart(degreeCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(degreeDistData),
+                    datasets: [{
+                        label: 'Number of Nodes',
+                        data: Object.values(degreeDistData),
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Frequency'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Degree'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Node Degree Distribution'
+                        }
+                    }
+                }
+            });
+
+            // Node coloring checkbox and dropdown functionality
+            const enableColoringCheckbox = document.getElementById('enable-coloring');
+            const colorDropdown = document.getElementById('color-dropdown');
+            const centralityMetricSelect = document.getElementById('centrality-metric');
+            
+            // Show/hide color dropdown based on checkbox
+            enableColoringCheckbox.onchange = function() {
+                if (this.checked) {
+                    colorDropdown.style.display = 'block';
+                    updateNodeColors(centralityMetricSelect.value);
+                } else {
+                    colorDropdown.style.display = 'none';
+                    resetNodeColors();
+                }
+            };
+            
+            // Update colors when metric is changed
+            centralityMetricSelect.onchange = function() {
+                if (enableColoringCheckbox.checked) {
+                    updateNodeColors(this.value);
+                }
+            };
+            
+            // Function to reset node colors
+            function resetNodeColors() {
+                const nodeIds = nodes.getIds();
+                const updates = [];
+                
+                for (const id of nodeIds) {
+                    updates.push({
+                        id: id,
+                        color: undefined
+                    });
+                }
+                
+                nodes.update(updates);
+                
+                // Reset min/max displays
+                document.getElementById('min-value').textContent = 'Min: --';
+                document.getElementById('max-value').textContent = 'Max: --';
+            }
+
+            // Function to update node colors based on selected metric
+            function updateNodeColors(metric) {
+                const nodeIds = nodes.getIds();
+                let values = {};
+                let min = Infinity;
+                let max = -Infinity;
+                
+                // Calculate centrality metrics
+                if (metric === 'summed_weight') {
+                    // Use total edge weight for each node
+                    const currentEdges = edges.get();
+                    nodeIds.forEach(id => {
+                        const nodeEdges = currentEdges.filter(e => e.from === id || e.to === id);
+                        values[id] = nodeEdges.reduce((sum, edge) => sum + edge.value, 0);
+                    });
+                } else if (metric === 'degree') {
+                    // Use degree (number of connections) for each node
+                    const currentEdges = edges.get();
+                    nodeIds.forEach(id => {
+                        const nodeEdges = currentEdges.filter(e => e.from === id || e.to === id);
+                        values[id] = nodeEdges.length;
+                    });
+                } else if (metric === 'betweenness') {
+                    // Calculate betweenness centrality
+                    values = calculateBetweennessCentrality();
+                } else if (metric === 'eigenvector') {
+                    // Calculate eigenvector centrality
+                    values = calculateEigenvectorCentrality();
+                }
+                
+                // Find min and max values
+                Object.values(values).forEach(val => {
+                    if (val < min) min = val;
+                    if (val > max) max = val;
+                });
+                
+                // Update min and max display
+                document.getElementById('min-value').textContent = `Min: ${formatValue(min, metric)}`;
+                document.getElementById('max-value').textContent = `Max: ${formatValue(max, metric)}`;
+                
+                // Normalize range to 0-1 for coloring
+                const normalizedValues = {};
+                Object.keys(values).forEach(id => {
+                    normalizedValues[id] = max > min ? (values[id] - min) / (max - min) : 0.5;
+                });
+                
+                // Apply colors using a blue-to-red color scale
+                const updates = [];
+                nodeIds.forEach(id => {
+                    const value = normalizedValues[id] || 0;
+                    const color = getColorFromScale(value);
+                    updates.push({
+                        id: id,
+                        color: { background: color },
+                        title: `Variable: ${id}<br>${getMetricName(metric)}: ${formatValue(values[id], metric)}`
+                    });
+                });
+                
+                nodes.update(updates);
+            }
+            
+            // Format value based on metric type
+            function formatValue(value, metric) {
+                if (value === Infinity || value === -Infinity) return '--';
+                
+                if (metric === 'degree') {
+                    return value.toFixed(0); // Degree is always an integer
+                } else if (metric === 'betweenness' || metric === 'eigenvector') {
+                    return value.toFixed(4); // More decimal places for centrality measures
+                } else {
+                    return value.toFixed(3); // Default formatting
+                }
+            }
+            
+            // Function to get color from blue-to-red scale
+            function getColorFromScale(value) {
+                // Convert value 0-1 to hue 240 (blue) to 0 (red)
+                const hue = (1 - value) * 240;
+                return `hsl(${hue}, 100%, 50%)`;
+            }
+            
+            // Function to get metric name
+            function getMetricName(metric) {
+                const metricNames = {
+                    'summed_weight': 'Summed Weight',
+                    'degree': 'Degree',
+                    'betweenness': 'Betweenness Centrality',
+                    'eigenvector': 'Eigenvector Centrality'
+                };
+                return metricNames[metric] || metric;
+            }
+
+            // Calculate betweenness centrality
+            function calculateBetweennessCentrality() {
+                const currentNodes = nodes.get();
+                const currentEdges = edges.get();
+                const nodeIds = currentNodes.map(n => n.id);
+                
+                // Simple approximation of betweenness centrality
+                // For small networks, this is a reasonable approximation
+                const centralityValues = {};
+                nodeIds.forEach(id => {
+                    centralityValues[id] = 0;
+                });
+                
+                // Create adjacency list for the network
+                const adjacencyList = {};
+                nodeIds.forEach(id => {
+                    adjacencyList[id] = [];
+                });
+                
+                currentEdges.forEach(edge => {
+                    adjacencyList[edge.from].push(edge.to);
+                    adjacencyList[edge.to].push(edge.from); // Undirected graph
+                });
+                
+                // For each pair of nodes, find shortest paths and count how many go through each node
+                for (let i = 0; i < nodeIds.length; i++) {
+                    const source = nodeIds[i];
+                    
+                    // BFS to find shortest paths from source
+                    const queue = [source];
+                    const distances = {};
+                    const paths = {};
+                    nodeIds.forEach(id => {
+                        distances[id] = id === source ? 0 : Infinity;
+                        paths[id] = [];
+                    });
+                    paths[source] = [[source]];
+                    
+                    while (queue.length > 0) {
+                        const current = queue.shift();
+                        
+                        adjacencyList[current].forEach(neighbor => {
+                            // If this is a shorter path to neighbor
+                            if (distances[neighbor] > distances[current] + 1) {
+                                distances[neighbor] = distances[current] + 1;
+                                paths[neighbor] = paths[current].map(p => [...p, neighbor]);
+                                queue.push(neighbor);
+                            } 
+                            // If this is another path of the same length
+                            else if (distances[neighbor] === distances[current] + 1) {
+                                paths[current].forEach(p => {
+                                    paths[neighbor].push([...p, neighbor]);
+                                });
+                            }
+                        });
+                    }
+                    
+                    // Count betweenness contributions
+                    for (let j = 0; j < nodeIds.length; j++) {
+                        if (i === j) continue; // Skip same node
+                        
+                        const target = nodeIds[j];
+                        if (paths[target].length === 0) continue; // No paths
+                        
+                        // Count nodes on paths
+                        const nodesOnPath = new Set();
+                        paths[target].forEach(path => {
+                            path.slice(1, -1).forEach(node => {
+                                nodesOnPath.add(node);
+                            });
+                        });
+                        
+                        // Add betweenness contribution
+                        nodesOnPath.forEach(node => {
+                            centralityValues[node] += 1;
+                        });
+                    }
+                }
+                
+                // Normalize values
+                const maxValue = Math.max(...Object.values(centralityValues));
+                if (maxValue > 0) {
+                    nodeIds.forEach(id => {
+                        centralityValues[id] = centralityValues[id] / maxValue;
+                    });
+                }
+                
+                return centralityValues;
+            }
+            
+            // Calculate eigenvector centrality (simplified version)
+            function calculateEigenvectorCentrality() {
+                const currentNodes = nodes.get();
+                const currentEdges = edges.get();
+                const nodeIds = currentNodes.map(n => n.id);
+                
+                // Create adjacency matrix
+                const adjacencyMatrix = {};
+                nodeIds.forEach(id => {
+                    adjacencyMatrix[id] = {};
+                    nodeIds.forEach(otherId => {
+                        adjacencyMatrix[id][otherId] = 0;
+                    });
+                });
+                
+                // Fill adjacency matrix with edge weights
+                currentEdges.forEach(edge => {
+                    adjacencyMatrix[edge.from][edge.to] = edge.value;
+                    adjacencyMatrix[edge.to][edge.from] = edge.value; // Undirected graph
+                });
+                
+                // Initialize centrality vector
+                let centrality = {};
+                nodeIds.forEach(id => {
+                    centrality[id] = 1; // Start with equal values
+                });
+                
+                // Power iteration (simplified eigenvector calculation)
+                const iterations = 20; // Usually converges in fewer iterations
+                for (let iter = 0; iter < iterations; iter++) {
+                    // New centrality values for this iteration
+                    const newCentrality = {};
+                    nodeIds.forEach(id => {
+                        newCentrality[id] = 0;
+                    });
+                    
+                    // Matrix-vector multiplication
+                    nodeIds.forEach(id => {
+                        nodeIds.forEach(otherId => {
+                            newCentrality[id] += adjacencyMatrix[id][otherId] * centrality[otherId];
+                        });
+                    });
+                    
+                    // Normalize to prevent values from exploding
+                    const sum = Object.values(newCentrality).reduce((a, b) => a + b, 0);
+                    if (sum > 0) {
+                        nodeIds.forEach(id => {
+                            newCentrality[id] = newCentrality[id] / sum;
+                        });
+                    }
+                    
+                    // Update centrality
+                    centrality = { ...newCentrality };
+                }
+                
+                return centrality;
+            }
+        </script>
+    </body>
+    </html>
+    
