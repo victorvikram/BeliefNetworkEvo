@@ -9,7 +9,7 @@ from typing import Optional, Union, Dict, Any, List, Tuple
 project_root = os.path.dirname(os.path.dirname(os.path.abspath("..")))
 if project_root not in sys.path:
     sys.path.append(project_root)
-from CLEAN.source_code.generators.corr_make_network import CorrelationMethod, EdgeSuppressionMethod, calculate_correlation_matrix
+from source_code.generators.corr_make_network import CorrelationMethod, EdgeSuppressionMethod, calculate_correlation_matrix
 
 
 

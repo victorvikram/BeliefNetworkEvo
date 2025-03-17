@@ -624,6 +624,10 @@ def generate_temporal_network_visualization(
                 }
 
                 function updateVisualization(timeIndex, threshold = currentThreshold) {
+                    // Store camera state before updating
+                    const cameraPosition = network.getViewPosition();
+                    const cameraScale = network.getScale();
+                    
                     // Store positions of current nodes
                     const positions = {};
                     nodes.get().forEach(node => {
@@ -689,6 +693,13 @@ def generate_temporal_network_visualization(
 
                     // Light stabilization
                     network.stabilize(1);
+
+                    // Restore camera position and zoom immediately
+                    network.moveTo({
+                        position: cameraPosition,
+                        scale: cameraScale,
+                        animation: false
+                    });
                 }
 
                 // Initialize sliders

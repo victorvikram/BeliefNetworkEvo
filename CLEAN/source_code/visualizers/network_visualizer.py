@@ -14,6 +14,7 @@ def calculate_network_stats(G) -> dict:
         'density': nx.density(G),
         'degree_distribution': dict(Counter(degree_sequence)),
         'clustering_coefficient': nx.average_clustering(G),
+        'global_clustering_coefficient': nx.transitivity(G),
         'num_nodes': G.number_of_nodes(),
         'num_edges': G.number_of_edges()
     }
@@ -247,6 +248,14 @@ def generate_html_visualization(
                     <div class="stat-item">
                         <div class="stat-value" id="density">''' + f"{network_stats['density']:.3f}" + '''</div>
                         <div class="stat-label">Network Density</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="avg-clustering">''' + f"{network_stats['clustering_coefficient']:.3f}" + '''</div>
+                        <div class="stat-label">Average Clustering Coefficient</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="global-clustering">''' + f"{network_stats['global_clustering_coefficient']:.3f}" + '''</div>
+                        <div class="stat-label">Global Clustering Coefficient</div>
                     </div>
                 </div>
 

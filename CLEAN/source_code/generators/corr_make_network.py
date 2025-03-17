@@ -37,7 +37,7 @@ from typing import Optional, Union, Dict, Any, List, Tuple
 import numpy as np
 import pandas as pd
 from pingouin import partial_corr
-
+import warnings
 from sklearn.covariance import graphical_lasso
 
 
@@ -179,7 +179,9 @@ def calculate_regularized_partial_correlations(cov_mat, alpha=0.1):
 
     **tested**
     """
-    cov, precision = graphical_lasso(cov_mat, alpha=alpha)
+    with warnings.catch_warnings():
+        #warnings.simplefilter("ignore", message="Failed to calculate partial correlations")
+        cov, precision = graphical_lasso(cov_mat, alpha=alpha)
     partial_cor_mat = precision_mat_to_partial_corr(precision)
 
     return partial_cor_mat
@@ -409,16 +411,16 @@ def calculate_correlation_matrix(
                         if i not in removed_indices]
         
         if len(correlation_cols) < 2:
-            raise ValueError(
+            print(
                 "Too many variables removed due to missing correlations."
                 "Need at least 2 variables to calculate partial correlations."
             )
+            return None
         
         # Calculate partial correlations on the clean matrix
         # sometimes the matrix is singular, or there is some other error. And we need to catch that.
         try:
             if edge_suppression == EdgeSuppressionMethod.REGULARIZATION:
-                
                 if suppression_params is None or "regularization" not in suppression_params:
                     raise ValueError("Regularization parameter 'regularization' must be provided in suppression_params")
                 alpha = suppression_params["regularization"]
@@ -432,7 +434,7 @@ def calculate_correlation_matrix(
                 index=correlation_cols,
                 columns=correlation_cols
             )
-        except ValueError as e:
+        except Exception as e:
             print(f"Failed to calculate partial correlations: {str(e)}")
             return None
     
