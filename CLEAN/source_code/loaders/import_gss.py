@@ -74,7 +74,7 @@ def import_dataset() -> Tuple[pd.DataFrame, Dict]:
     #columns = columns + ["SEXFREQ"]
     
     # Get the current file's directory
-    data_dir = Path(__file__).parent
+    data_dir = Path(__file__).parent.parent.parent / "datasets"
     cache_dir = data_dir / "cached_data"
     cache_file = cache_dir / "gss_cache.pkl"
     

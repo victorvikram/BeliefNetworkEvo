@@ -63,24 +63,7 @@ def combine_variable_matrix_stacks(var_list_1, var_list_2, var_mat_1, var_mat_2)
 
     return var_list, new_var_mat
 
-def csv_to_sorted_list(path):
-    # Initialize an empty list to store the strings
-    lines = []
 
-    # Open the CSV file and read it
-    with open(path, mode='r') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            # Join the row into a single string separated by commas
-            line = ','.join(row)
-            lines.append(line)
-    
-    indexed_list = list(enumerate(lines))
-    sorted_indexed_list = sorted(indexed_list, key=lambda x: x[1]) # sort based on the value
-    index_list = [ind for ind, val in sorted_indexed_list]
-    value_list = [val for ind, val in sorted_indexed_list]
-
-    return index_list, value_list
 
 def make_edge_time_series_from_graph(start_year, end_year, interval, overlap, node1, node2):
     curr_year = start_year
@@ -108,13 +91,7 @@ def make_edge_time_series_from_graph(start_year, end_year, interval, overlap, no
 
     return edge_weights, years
 
-def get_sorted_adj_mat_and_var_list(path):
-    ind_list, var_list = csv_to_sorted_list(os.path.join(path, "variables_list.csv"))
-    l = len(var_list)
-    adj_mat = np.genfromtxt(os.path.join(path, "correlation_matrix_partial.csv"), delimiter=',')
-    adj_mat = adj_mat[ind_list, :][:, ind_list] - np.identity(l)
-    
-    return adj_mat, var_list
+
 
 def make_edge_time_series(start_year, end_year, interval, overlap):
     curr_year = start_year

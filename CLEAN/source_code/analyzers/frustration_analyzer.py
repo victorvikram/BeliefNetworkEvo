@@ -3,6 +3,7 @@ This file contains functions to find edges that are frustrated in the network
 """
 
 import numpy as np
+import networkx as nx
 
 def get_satisfaction_mats(adj_mat, vectors):
     """ 

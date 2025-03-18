@@ -35,7 +35,7 @@ if project_root not in sys.path:
 try:
     # Use absolute imports when running as script
     if __name__ == '__main__':
-        from import_gss import import_dataset
+        from CLEAN.source_code.loaders.import_gss import import_dataset
         from clean_data import clean_datasets, DataConfig
     else:
         # Use relative imports when imported as module

@@ -2,10 +2,12 @@ import sys
 import os
 from pathlib import Path
 # Get the project root directory by going up 2 levels from this file
+
 project_root = Path(__file__).resolve().parent.parent.parent
 if str(project_root) not in sys.path:
     sys.path.append(str(project_root))
-from datasets.clean_raw_data import clean_datasets
+
+from source_code.loaders.clean_raw_data import clean_datasets
 
 import pandas as pd
 import numpy as np

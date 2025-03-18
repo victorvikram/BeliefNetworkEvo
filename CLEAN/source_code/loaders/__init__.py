@@ -1,7 +1,11 @@
 """
-GSS Dataset Analysis Package
+Dataset Loading Package
 --------------------------
-This package contains tools for loading, cleaning, and analyzing GSS survey data.
+This package contains tools for loading, cleaning, and analyzing two kinds of data:
+- GSS raw data
+- cleaned datasets
+- outputed data usually correlation matrices
+
 """
 
 import os
