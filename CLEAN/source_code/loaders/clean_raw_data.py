@@ -433,7 +433,7 @@ def clean_datasets() -> pd.DataFrame:
     df_clean = transform_regular()
     
     # Cache the cleaned datasets
-    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    project_root = Path(__file__).resolve().parent.parent.parent
     if project_root not in sys.path:
         sys.path.append(project_root)
     cache_dir = os.path.join(project_root, 'datasets', 'cached_data')

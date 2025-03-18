@@ -317,7 +317,8 @@ def calculate_correlation_matrix(
     method: Union[str, CorrelationMethod] = CorrelationMethod.SPEARMAN,
     partial: bool = False,
     edge_suppression: Union[str, EdgeSuppressionMethod] = EdgeSuppressionMethod.NONE,
-    suppression_params: Optional[Dict[str, Any]] = None
+    suppression_params: Optional[Dict[str, Any]] = None,
+    sample_threshold: float = 0.0
 ) -> pd.DataFrame:
     """
     Calculate correlation matrix for network analysis with optional edge suppression.
@@ -358,6 +359,9 @@ def calculate_correlation_matrix(
     if isinstance(method, str):
         method = CorrelationMethod(method)
     
+    if isinstance(edge_suppression, str):
+        edge_suppression = EdgeSuppressionMethod(edge_suppression)
+    
     # Start with the full dataframe and filter it according to specified years if provided.
     df_subset = df
 
@@ -388,19 +392,16 @@ def calculate_correlation_matrix(
         num_samples = relevant_df.shape[0]
         num_vars = relevant_df.shape[1]
         
-        """
-        SOMEDAY if I decide to reimplement sample_threshold, fix this
-        then I can uncomment some tests in the test file
+        # SOMEDAY if I decide to reimplement sample_threshold, fix this
+        # then I can uncomment some tests in the test file
 
         non_nan_mat = ~np.isnan(np.array(relevant_df))
         sample_count = np.logical_and(non_nan_mat[:, :, np.newaxis], non_nan_mat[:, np.newaxis, :]).sum(axis=0)
         
         sample_pct = sample_count / num_samples
         
-        sample_threshold = 0
         corr_mat = np.where(sample_pct < sample_threshold, np.nan, corr_mat) # set variables below the threshold to nan
-        """
-        
+ 
         # Remove variables with NaN correlations
         clean_matrix, removed_indices = filter_nans(correlation_matrix.values)
         
@@ -432,7 +433,7 @@ def calculate_correlation_matrix(
                 index=correlation_cols,
                 columns=correlation_cols
             )
-        except ValueError as e:
+        except Exception as e:
             print(f"Failed to calculate partial correlations: {str(e)}")
             return None
     

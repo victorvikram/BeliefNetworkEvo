@@ -1,5 +1,5 @@
 import pandas as pd
-from CLEAN.source_code.data_loader import load_and_filter_data
+from CLEAN.source_code.loaders.data_loader import load_and_filter_data
 from CLEAN.analyzers.overlap_analyzer import calculate_overlap_matrix, plot_overlap_matrix
 from CLEAN.source_code.corr_make_network import calculate_correlation_matrix
 from CLEAN.visualizers.network_visualizer import create_network_data, generate_html_visualization

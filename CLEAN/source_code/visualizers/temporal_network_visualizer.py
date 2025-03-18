@@ -2,10 +2,12 @@ import sys
 import os
 from pathlib import Path
 # Get the project root directory by going up 2 levels from this file
+
 project_root = Path(__file__).resolve().parent.parent.parent
 if str(project_root) not in sys.path:
     sys.path.append(str(project_root))
-from datasets.clean_raw_data import clean_datasets
+
+from source_code.loaders.clean_raw_data import clean_datasets
 
 import pandas as pd
 import numpy as np
@@ -16,12 +18,12 @@ import logging
 import networkx as nx
 from operator import itemgetter
 
-from CLEAN.source_code.generators.corr_make_network import (
+from source_code.generators.corr_make_network import (
     calculate_correlation_matrix,
     CorrelationMethod,
     EdgeSuppressionMethod
 )
-from CLEAN.source_code.visualizers.network_visualizer import create_network_data
+from source_code.visualizers.network_visualizer import create_network_data
 
 def generate_temporal_correlation_matrix(
     df: pd.DataFrame,

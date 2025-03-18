@@ -6,7 +6,7 @@ project_root = Path(__file__).resolve().parent.parent.parent
 if str(project_root) not in sys.path:
     sys.path.append(str(project_root))
 
-from datasets.clean_raw_data import clean_datasets
+from CLEAN.source_code.loaders.clean_raw_data import clean_datasets
 from source_code.generators.corr_make_network import CorrelationMethod, EdgeSuppressionMethod
 from source_code.visualizers.temporal_network_visualizer import (
     generate_temporal_html_visualization,

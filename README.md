@@ -29,9 +29,6 @@ CLEAN/
 │   ├── cleaned_data/                  # Processed datasets
 │   ├── cached_data/                   # Intermediate processing results
 │   ├── validation_plots/              # Data quality visualizations
-│   ├── import_gss.py                  # Initial data import
-│   ├── prepare_cleaned_datasets.py    # Data cleaning orchestration
-│   ├── clean_data.py                  # Core cleaning functions
 │   └── validate_cleaned_datasets.py   # Validation checks
 │
 ├── source_code/                       # Main analysis code
@@ -39,6 +36,9 @@ CLEAN/
 │   │   └── corr_make_network.py       # Main network generation script
 │   ├── visualization/                 # Plotting utilities
 │   └── generators/                    # Data generation tools
+│   └── loaders/       
+|       ├── import_gss.py                  # Initial data import
+|       └── clean_data.py                  # Core cleaning functions
 │
 └── notebooks/                         # Analysis notebooks
     └── network_analysis.ipynb         # Interactive network exploration
