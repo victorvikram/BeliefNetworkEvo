@@ -319,10 +319,11 @@ def calculate_correlation_matrix(
     method: Union[str, CorrelationMethod] = CorrelationMethod.SPEARMAN,
     partial: bool = False,
     edge_suppression: Union[str, EdgeSuppressionMethod] = EdgeSuppressionMethod.NONE,
-    suppression_params: Optional[Dict[str, Any]] = None
+    suppression_params: Optional[Dict[str, Any]] = None,
+    verbose: bool = True
 ) -> pd.DataFrame:
     """
-    Calculate correlation matrix for network analysis with optional edge suppression.
+    Calculate correlation matrix with optional sample size information.
     
     This function calculates correlations between variables using either Pearson or
     Spearman methods, with the option to compute partial correlations. It automatically
@@ -341,15 +342,16 @@ def calculate_correlation_matrix(
     
     Args:
         df: Input DataFrame containing the variables to analyze
+        variables_of_interest: List of specific variables to include (optional)
+        years_of_interest: List of years to filter the data by (optional)
         method: Base correlation method ('spearman' for non-linear or 'pearson' for linear)
         partial: Whether to compute partial correlations (default: False)
         edge_suppression: Method to reduce weak or spurious edges
         suppression_params: Additional parameters for edge suppression
+        verbose: Whether to print information about filtered variables and sample sizes
         
     Returns:
-        DataFrame: Processed correlation matrix. If partial=True, this will be a partial
-                 correlation matrix potentially containing fewer variables than the input
-                 if some had to be removed due to missing correlations.
+        pd.DataFrame: The correlation matrix
         
     Raises:
         ValueError: If fewer than 2 valid variables remain after filtering
@@ -373,8 +375,20 @@ def calculate_correlation_matrix(
 
     # Get non-metadata columns for correlation calculation, and filter the dataset
     # also only uses the variables_of_interest columns
+    all_columns = df.columns.tolist()
     correlation_cols = get_correlation_columns(df, base_variable_list=variables_of_interest)
     df_subset = df_subset[correlation_cols]
+
+    # logging section that can be easily commented out if u dont like
+    if verbose:
+        print("\n" + "="*50)
+        print("CORRELATION NETWORK STATISTICS")
+        print("="*50)
+        num_filtered = len(all_columns) - len(correlation_cols)
+        print(f"Variables filtered out (metadata): {num_filtered}")
+        print(f"Variables included in analysis: {len(correlation_cols)}")
+        print(f"Total number of samples: {len(df_subset)}")
+        print("-"*50)
 
     if len(correlation_cols) < 2:
         raise ValueError("Need at least 2 non-metadata columns for correlation analysis")
@@ -407,8 +421,20 @@ def calculate_correlation_matrix(
         clean_matrix, removed_indices = filter_nans(correlation_matrix.values)
         
         # Track remaining variables after NaN removal
+        original_var_count = len(correlation_cols)
         correlation_cols = [col for i, col in enumerate(correlation_cols) 
                         if i not in removed_indices]
+        
+        # Log variables lost during partial correlation
+        if verbose and len(removed_indices) > 0:
+            removed_vars = [col for i, col in enumerate(correlation_matrix.columns) if i in removed_indices]
+            print(f"Variables removed due to NaN correlations: {len(removed_indices)}")
+            print(f"Remaining variables after NaN filtering: {len(correlation_cols)}")
+            if len(removed_vars) <= 10:
+                print(f"Removed variables: {', '.join(removed_vars)}")
+            else:
+                print(f"Removed variables (first 10): {', '.join(removed_vars[:10])}...")
+            print("-"*50)
         
         if len(correlation_cols) < 2:
             print(
@@ -443,11 +469,32 @@ def calculate_correlation_matrix(
     np.fill_diagonal(correlation_matrix.values, 0)
     
     # Apply any requested edge suppression
-    return suppress_edges(
+    correlation_matrix = suppress_edges(
         correlation_matrix,
         method=edge_suppression,
         params=suppression_params
     )
+
+    # Calculate sample sizes for verbose output
+    if verbose:
+        sample_sizes = pd.DataFrame(index=correlation_cols, columns=correlation_cols)
+        
+        for i in correlation_cols:
+            for j in correlation_cols:
+                # Count the number of rows where both variables have non-missing values
+                sample_sizes.loc[i, j] = df[[i, j]].dropna().shape[0]
+        
+        # Display sample size summary
+        mean_samples = sample_sizes.values.mean()
+        min_samples = sample_sizes.values.min()
+        max_samples = sample_sizes.values.max()
+        print(f"Sample size statistics for correlations:")
+        print(f"  Mean: {mean_samples:.1f}")
+        print(f"  Min: {min_samples:.0f}")
+        print(f"  Max: {max_samples:.0f}")
+        print("="*50)
+    
+    return correlation_matrix
 
 def alternative_calculate_pairwise_correlations(vars, data, method, partial=True):
     """
