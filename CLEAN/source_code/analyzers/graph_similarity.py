@@ -13,16 +13,20 @@ class SimilarityResult:
         score (float): The computed similarity/distance score
         method (str): Name of the method used
         metadata (Dict): Additional information about the computation
+        normalized_score (float, optional): Score normalized by theoretical maximum
     """
     score: float
     method: str
     metadata: Dict = None
+    normalized_score: Optional[float] = None
 
     def __repr__(self) -> str:
         """Custom string representation for better readability."""
         metadata_str = ', '.join(f"{key}: {value}" for key, value in (self.metadata or {}).items())
+        normalized_str = f"  Normalized_score: {self.normalized_score:.4f},\n" if self.normalized_score is not None else ""
         return (f"SimilarityResult(\n"
                 f"  Score: {self.score:.4f},\n"
+                f"{normalized_str}"
                 f"  Method: '{self.method}',\n"
                 f"  Metadata: {{{metadata_str}}}\n"
                 f")")
@@ -60,8 +64,13 @@ class GraphSimilarityBase(ABC):
     def compute(self, 
                 matrix1: pd.DataFrame, 
                 matrix2: pd.DataFrame, 
-                **kwargs) -> float:
-        """Compute similarity between two correlation matrices."""
+                **kwargs) -> Union[float, Tuple[float, Optional[float]]]:
+        """
+        Compute similarity between two correlation matrices.
+        
+        Returns:
+            Either a float score or a tuple of (score, normalized_score)
+        """
         pass
     
     def _validate_input(self, 
@@ -123,7 +132,7 @@ class GraphEditDistance(GraphSimilarityBase):
     def compute(self, 
                 matrix1: pd.DataFrame, 
                 matrix2: pd.DataFrame,
-                **kwargs) -> float:
+                **kwargs) -> Tuple[float, Optional[float]]:
         """
         Compute Graph Edit Distance between two correlation matrices.
         
@@ -131,7 +140,7 @@ class GraphEditDistance(GraphSimilarityBase):
             matrix1, matrix2: Correlation matrices to compare
             edge_threshold: Threshold for considering an edge present
         Returns:
-            float: GED score (higher means more different)
+            Tuple[float, float]: GED score and normalized score
         """
         self.validate_parameters(kwargs)
         edge_threshold = kwargs['edge_threshold']
@@ -145,10 +154,11 @@ class GraphEditDistance(GraphSimilarityBase):
         # Compute normalized edge differences
         edge_diff = np.sum(np.abs(adj1 - adj2)) / 2
         
-        #max_possible_diff = m1.shape[0] * (m1.shape[0] - 1) / 2
-        #normalized_edge_diff = edge_diff / max_possible_diff
+        # Calculate theoretical maximum difference (total possible edges in a graph)
+        max_possible_diff = m1.shape[0] * (m1.shape[0] - 1) / 2
+        normalized_edge_diff = edge_diff / max_possible_diff if max_possible_diff > 0 else 0
 
-        return edge_diff
+        return edge_diff, normalized_edge_diff
 
 
 
@@ -179,6 +189,9 @@ class SpectralSimilarity(GraphSimilarityBase):
             matrix1, matrix2: Correlation matrices to compare
             num_eigenvalues: Number of eigenvalues to compare
             abs_values: Whether to use absolute eigenvalues (default: True)
+            
+        Returns:
+            float: Spectral similarity score
         """
         self.validate_parameters(kwargs)
         n = kwargs['num_eigenvalues']
@@ -244,13 +257,22 @@ def graph_similarity(matrix1: pd.DataFrame,
                         f"Available methods: {list(SIMILARITY_METHODS.keys())}")
     
     method = SIMILARITY_METHODS[similarity_method]
-    score = method.compute(matrix1, matrix2, **kwargs)
     
-    return SimilarityResult(
-        score=score,
-        method=similarity_method,
-        metadata={'parameters': kwargs}
-    )
+    if similarity_method == "graph_edit_distance":
+        score, normalized_score = method.compute(matrix1, matrix2, **kwargs)
+        return SimilarityResult(
+            score=score,
+            method=similarity_method,
+            metadata={'parameters': kwargs},
+            normalized_score=normalized_score
+        )
+    else:
+        score = method.compute(matrix1, matrix2, **kwargs)
+        return SimilarityResult(
+            score=score,
+            method=similarity_method,
+            metadata={'parameters': kwargs}
+        )
 
 # Example usage:
 if __name__ == "__main__":
