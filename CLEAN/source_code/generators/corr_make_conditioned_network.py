@@ -26,7 +26,7 @@ def calculate_conditioned_correlation_matrix(
     condition: Optional[str] = None,
     value: Optional[Any] = None,
     return_df: bool = False,
-    verbose: bool = True
+    verbose: bool = False
 ) -> Union[pd.DataFrame, Tuple[pd.DataFrame, pd.DataFrame]]:
     """
     Filter a DataFrame based on a condition applied to a specified column and calculate correlation matrix.

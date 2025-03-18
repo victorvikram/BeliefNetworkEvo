@@ -16,12 +16,12 @@ import logging
 import networkx as nx
 from operator import itemgetter
 
-from CLEAN.source_code.generators.corr_make_network import (
+from source_code.generators.corr_make_network import (
     calculate_correlation_matrix,
     CorrelationMethod,
     EdgeSuppressionMethod
 )
-from CLEAN.source_code.visualizers.network_visualizer import create_network_data
+from source_code.visualizers.network_visualizer import create_network_data
 
 def generate_temporal_correlation_matrix(
     df: pd.DataFrame,

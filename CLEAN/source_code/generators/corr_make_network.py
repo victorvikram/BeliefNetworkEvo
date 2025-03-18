@@ -18,7 +18,7 @@ Each method can be used with partial correlations to control for other variables
 Edge suppression techniques:
 - Square values: Emphasize stronger relationships
 - (Future) Threshold-based: Remove edges below certain values
-- (Future) Regularization: L1/L2 penalties on edge weights
+- Regularization: L1/L2 penalties on edge weights
 - (Future) Statistical significance: Filter by p-values
 
 Example:
@@ -320,7 +320,7 @@ def calculate_correlation_matrix(
     partial: bool = False,
     edge_suppression: Union[str, EdgeSuppressionMethod] = EdgeSuppressionMethod.NONE,
     suppression_params: Optional[Dict[str, Any]] = None,
-    verbose: bool = True
+    verbose: bool = False
 ) -> pd.DataFrame:
     """
     Calculate correlation matrix with optional sample size information.
