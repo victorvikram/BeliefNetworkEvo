@@ -320,6 +320,7 @@ def calculate_correlation_matrix(
     partial: bool = False,
     edge_suppression: Union[str, EdgeSuppressionMethod] = EdgeSuppressionMethod.NONE,
     suppression_params: Optional[Dict[str, Any]] = None,
+    sample_threshold: float = 0.0,  # Minimum sample proportion for correlation
     verbose: bool = False
 ) -> pd.DataFrame:
     """
