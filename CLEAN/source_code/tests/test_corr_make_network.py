@@ -21,7 +21,7 @@ class TestModuleFunctions(unittest.TestCase):
         mean = np.zeros((dim,))  # Mean vector
 
         # Generate random samples from the multivariate normal distribution
-        num_samples = 120000
+        num_samples = 300000
         samples = np.random.multivariate_normal(mean, random_cov_mat, size=num_samples)
 
         sample_df = pd.DataFrame(samples)
@@ -68,8 +68,8 @@ class TestModuleFunctions(unittest.TestCase):
         self.assertGreater((np.abs(random_cor_mat) - np.abs(corr_mat)).sum(), 0)
 
         non_overlapping_df = sample_df.copy()
-        non_overlapping_df.loc[0:50000,[4, 5]] = np.nan
-        non_overlapping_df.loc[50000:,[0, 1, 2, 3]] = np.nan
+        non_overlapping_df.loc[0:num_samples//2,[4, 5]] = np.nan
+        non_overlapping_df.loc[num_samples//2:,[0, 1, 2, 3]] = np.nan
 
         corr_df = calculate_correlation_matrix(non_overlapping_df, 
                                            variables_of_interest=[0, 1, 2, 3, 4, 5],
@@ -97,8 +97,8 @@ class TestModuleFunctions(unittest.TestCase):
         self.assertEqual(vars, [0, 1, 2, 3, 4, 5])
 
         non_overlapping_df = sample_df.copy()
-        non_overlapping_df.loc[0:60000,[2, 4]] = np.nan
-        non_overlapping_df.loc[60000:,[1]] = np.nan
+        non_overlapping_df.loc[0:num_samples//2,[2, 4]] = np.nan
+        non_overlapping_df.loc[num_samples//2:,[1]] = np.nan
 
         corr_df = calculate_correlation_matrix(non_overlapping_df, 
                                                  variables_of_interest=[0, 1, 2, 3, 4, 5],
@@ -113,13 +113,10 @@ class TestModuleFunctions(unittest.TestCase):
         assert_almost_equal(corr_mat, truncated_partial_corr, decimal=2)
         
         fade_out_df = sample_df.copy()
-        fade_out_df.loc[:40000,[2, 4]] = np.nan
-        fade_out_df.loc[:80000,[3, 5]] = np.nan 
+        fade_out_df.loc[:num_samples//3,[2, 4]] = np.nan
+        fade_out_df.loc[:2*(num_samples//3),[3, 5]] = np.nan 
 
-        """
-        # SOMEDAY can uncomment this if I implement sample_threshold
-
-        corr_dff = calculate_correlation_matrix(fade_out_df,
+        corr_df = calculate_correlation_matrix(fade_out_df,
                                                         variables_of_interest=[0, 1, 2, 3, 4, 5], 
                                                         method=CorrelationMethod.PEARSON, 
                                                         partial=True, 
@@ -128,10 +125,9 @@ class TestModuleFunctions(unittest.TestCase):
         corr_mat = corr_df.values
         vars = list(corr_df.columns)
         
-        truncated_partial_corr = calculate_partial_correlations(random_cor_mat[[[0], [1], [2], [4]], [[0, 1, 2, 4]]])
+        truncated_partial_corr = calculate_partial_correlations(random_cov_mat[[[0], [1], [2], [4]], [[0, 1, 2, 4]]]) - np.identity(4)
         self.assertEqual(vars, [0, 1, 2, 4])
         assert_almost_equal(truncated_partial_corr, corr_mat, decimal=2)
-        """
 
         corr_df = calculate_correlation_matrix(sample_df,
                                             [0, 1, 2, 3, 4, 5],
@@ -286,5 +282,5 @@ class TestModuleFunctions(unittest.TestCase):
 
     """
 
-if _name_ == '_main_':
+if __name__ == '__main__':
     unittest.main()
