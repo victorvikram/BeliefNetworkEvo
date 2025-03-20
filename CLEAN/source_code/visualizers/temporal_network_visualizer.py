@@ -63,7 +63,6 @@ def generate_temporal_correlation_matrix(
     for window_start in range(start_year, end_year - time_window_length + 1, step_size):
         window_end = window_start + time_window_length
         years_of_interest = list(range(window_start, window_end))
-
         corr_matrix = calculate_correlation_matrix(
             df=df,
             variables_of_interest=variables_of_interest,
