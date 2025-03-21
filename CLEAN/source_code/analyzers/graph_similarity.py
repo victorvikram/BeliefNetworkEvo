@@ -113,7 +113,44 @@ class GraphSimilarityBase(ABC):
             raise ValueError("Matrices must have the same dimensions")
         
         # Check for symmetry, treating np.nan as equal
-        if not (np.allclose(m1, m1.T, equal_nan=True) and np.allclose(m2, m2.T, equal_nan=True)):
+        def is_symmetric_with_nan(mat):
+            """
+            Check if a matrix is symmetric while properly handling NaN values.
+            
+            This function verifies matrix symmetry by examining each pair of 
+            corresponding elements across the diagonal. It considers a matrix 
+            symmetric if:
+            1. For each pair of elements (i,j) and (j,i), either both are equal
+               numeric values, or
+            2. Both elements are NaN, or
+            3. One element is NaN and the other is zero.
+            
+            The function only checks the upper triangle of the matrix since
+            symmetry is a reciprocal property.
+            
+            Args:
+                mat (numpy.ndarray): The matrix to check for symmetry
+                
+            Returns:
+                bool: True if the matrix is symmetric, False otherwise
+            """
+            # Create masks for non-NaN values
+            mask = ~np.isnan(mat)
+            # For each non-NaN value, check if it matches its transpose position
+            # or if both positions are NaN or if one is NaN and other is zero
+            for i in range(mat.shape[0]):
+                for j in range(i+1, mat.shape[1]):  # Only check upper triangle
+                    if mask[i, j] and mask[j, i]:  # Both values are not NaN
+                        if mat[i, j] != mat[j, i]:
+                            return False
+                    elif mask[i, j] != mask[j, i]:  # One is NaN, one is not
+                        # Special case: If one is NaN and the other is zero, consider symmetric
+                        if (mask[i, j] and mat[i, j] == 0) or (mask[j, i] and mat[j, i] == 0):
+                            continue
+                        return False
+            return True
+        
+        if not (is_symmetric_with_nan(m1) and is_symmetric_with_nan(m2)):
             raise ValueError("Matrices must be symmetric")
         return m1, m2
     

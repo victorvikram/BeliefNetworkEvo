@@ -146,6 +146,8 @@ def precision_mat_to_partial_corr(precision_matrix):
     if np.any(np.isinf(diag_precision)):
         raise ValueError("Diagonal of precision matrix contains infinite values")
     if np.any(diag_precision <= 0):
+        # Print the first non-positive value
+        #print(f"First non-positive value: {diag_precision[diag_precision <= 0][0]}")
         raise ValueError("Diagonal of precision matrix contains non-positive values")
     
     outer_product = np.outer(diag_precision, diag_precision)
