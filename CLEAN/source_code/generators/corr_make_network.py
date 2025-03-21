@@ -321,7 +321,8 @@ def calculate_correlation_matrix(
     edge_suppression: Union[str, EdgeSuppressionMethod] = EdgeSuppressionMethod.NONE,
     suppression_params: Optional[Dict[str, Any]] = None,
     sample_threshold: float = 0.0,  # Minimum sample proportion for correlation
-    verbose: bool = False
+    verbose: bool = False,
+    return_sample_sizes: bool = False
 ) -> pd.DataFrame:
     """
     Calculate correlation matrix with optional sample size information.
@@ -493,7 +494,10 @@ def calculate_correlation_matrix(
         print(f"  Max: {max_samples:.0f}")
         print("="*50)
     
-    return correlation_matrix
+    if not return_sample_sizes:
+        return correlation_matrix
+    else:
+        return correlation_matrix, sample_count
 
 def alternative_calculate_pairwise_correlations(vars, data, method, partial=True):
     """

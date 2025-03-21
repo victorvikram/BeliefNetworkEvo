@@ -3,7 +3,46 @@ This file contains functions to find edges that are frustrated in the network
 """
 
 import numpy as np
+import pandas as pd
 import networkx as nx
+import sys
+
+sys.path.append("..")  # Adjust the path as necessary
+
+from analyzers.optimization_analyzer import multi_pass_optimize, simulated_annealing, hamiltonian_objective_function, flip_step_function
+
+def calculate_frustration(adj_mat, optimizer="multi_pass"):
+    """
+    `adj_mat` is the usual dataframe with column and row names
+
+    calculates the frustration of edges in the network. the procedure is as follows
+    1. first, optimize the belief vector, which is to say, find the assignments of edges that locally minimize the 
+        the number of unsatisfied edges. Do this many times to get many optimal belief vectors
+    2. second, calculate the percentage of the time that the edge is frustrated
+    3. put that in a matrix `frust_percentage` and return it
+
+    there are different optimization methods to use. "multi_pass" is fast and works well. "simulated annealing" is a more standard 
+    method which takes more time. They produce similar results. 
+    """
+    var_list = adj_mat.index.tolist()
+    np_adj_mat = adj_mat.values
+    n_vars = adj_mat.shape[0]
+    if optimizer == "multi_pass":
+        initial_vectors = np.random.choice([-1, 0, 1], size=(1000, n_vars))
+        minima, _ = multi_pass_optimize(initial_vectors, np_adj_mat, max_iterations=int(1e4))
+    elif optimizer == "simulated_annealing":
+        initial_vectors = np.random.choice([-1, 0, 1], size=(1000, n_vars))
+        minima, _ = simulated_annealing(initial_vectors, 100, 0.99, int(1e5), 
+                              lambda vecs: hamiltonian_objective_function(vecs, np_adj_mat),
+                              lambda vecs: flip_step_function(vecs, num_flips=1))
+    
+    satisfaction_mats = get_satisfaction_mats(np_adj_mat, minima)
+    frust_percentage = get_frust_percentage(satisfaction_mats)
+
+    # convert the result back to a dataframe with the same index and columns as the original adj_mat
+    frust_percentage = pd.DataFrame(frust_percentage, index=var_list, columns=var_list)
+
+    return frust_percentage
 
 def get_satisfaction_mats(adj_mat, vectors):
     """ 
