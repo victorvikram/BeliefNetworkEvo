@@ -422,6 +422,12 @@ def calculate_correlation_matrix(
         # Remove variables with NaN correlations
         clean_matrix, removed_indices = filter_nans(corr_mat)
         
+        if clean_matrix is None or clean_matrix.size == 0:
+            print("Clean matrix is empty after NaN filtering. Check your data or year selection.")
+            if return_sample_sizes:
+                return None, sample_count
+            return None
+
         # Track remaining variables after NaN removal
         original_var_count = len(correlation_cols)
         correlation_cols = [col for i, col in enumerate(correlation_cols) 
@@ -464,7 +470,10 @@ def calculate_correlation_matrix(
             )
         except Exception as e:
             print(f"Failed to calculate partial correlations: {str(e)}")
-            return None
+            if return_sample_sizes:
+                return None, sample_count
+            else:
+                return None
     
     # Set diagonal to 0 for network analysis
     # (self-correlations aren't meaningful for network visualization)

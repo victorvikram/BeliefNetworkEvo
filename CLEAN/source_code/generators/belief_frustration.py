@@ -60,7 +60,7 @@ def get_belief_variables(df: pd.DataFrame, meta, min_responses: int = 1000) -> L
             
             if any(keyword in label for keyword in belief_keywords):
                 belief_vars.append(col)
-        except:
+        except Exception:
             continue
     
     return belief_vars
@@ -72,7 +72,7 @@ def calculate_average_beliefs(df: pd.DataFrame,
     """
     Calculate average belief vector for a specific group in a given year.
     """
-    group_data = df[df['YEAR'] == year & df[group_col]]
+    group_data = df[(df['YEAR'] == year) & (df[group_col])]
     return group_data[belief_vars].mean()
 
 def calculate_frustration_delta(dem_beliefs: pd.Series, 

@@ -73,34 +73,38 @@ class GraphSimilarityBase(ABC):
         """
         pass
     
-    def _validate_input(self, 
-                       matrix1: pd.DataFrame, 
+    def _validate_input(self,
+                       matrix1: pd.DataFrame,
                        matrix2: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
         """Validate and preprocess input matrices."""
+        # Work on copies to avoid mutating the caller's data
+        matrix1 = matrix1.copy()
+        matrix2 = matrix2.copy()
+
         # Ensure both matrices have the same columns
         cols1 = set(matrix1.columns)
         cols2 = set(matrix2.columns)
-        
+
         # Find missing columns in matrix1 and add NaN columns
         for col in cols2 - cols1:
             matrix1[col] = np.nan
-        
+
         # Find missing columns in matrix2 and add NaN columns
         for col in cols1 - cols2:
             matrix2[col] = np.nan
-        
+
         # Ensure both matrices have the same rows
         index1 = set(matrix1.index)
         index2 = set(matrix2.index)
-        
+
         # Find missing rows in matrix1 and add NaN rows
         for idx in index2 - index1:
             matrix1.loc[idx] = np.nan
-        
+
         # Find missing rows in matrix2 and add NaN rows
         for idx in index1 - index2:
             matrix2.loc[idx] = np.nan
-        
+
         # Reorder both matrices to match the same row and column order
         matrix1 = matrix1.reindex(index=matrix2.index, columns=matrix2.columns)
         matrix2 = matrix2.reindex(index=matrix1.index, columns=matrix1.columns)

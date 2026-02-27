@@ -14,8 +14,10 @@ setup(
         "matplotlib>=3.7.0",
         "seaborn>=0.12.0",
         "scipy>=1.9.0",
-        "scikit-learn>=1.3.0",  # Required for partial correlations
-        "sas7bdat>=2.2.3",
+        "scikit-learn>=1.3.0",
+        "pyreadstat>=1.2.0",
+        "pingouin>=0.5.3",
+        "pyvis>=0.3.0",
     ],
     extras_require={
         "dev": [
@@ -27,4 +29,4 @@ setup(
         ],
     },
     python_requires=">=3.9",
-) 
+)

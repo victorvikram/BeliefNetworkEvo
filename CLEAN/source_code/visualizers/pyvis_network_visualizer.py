@@ -29,12 +29,8 @@ def recenter_ranks(ranks, values):
     naive_vmax = len(ranks)
     naive_midpoint = np.ceil(len(ranks) / 2) + 1
 
-    print("old", naive_vmin, actual_midpoint, naive_vmax)
-
     vmin = naive_vmin if actual_midpoint >= naive_midpoint else 2*(actual_midpoint - 1) - naive_vmax
     vmax = naive_vmax if actual_midpoint < naive_midpoint else 2*(actual_midpoint - 2) + 1
-
-    print("adjusted", vmin, actual_midpoint, vmax)
     return vmin, vmax, actual_midpoint
 
 def display_graph_pyvis(adj_mat, edge_type_matrix=None, abs_val_edges=True, include_physics_buttons=True, 
@@ -66,7 +62,6 @@ def display_graph_pyvis(adj_mat, edge_type_matrix=None, abs_val_edges=True, incl
     G = create_graph_from_adj_mat(adj_mat, edge_type_matrix=edge_type_matrix, variables_list=var_list, threshold=0)
 
     
-    print("number of edges", len(G.edges(data=True)))
     # pos = nx.spring_layout(G, scale=1000)
     net = Network('1000px', '1000px', notebook=True, cdn_resources='remote')
     net.from_nx(G)
@@ -82,10 +77,6 @@ def display_graph_pyvis(adj_mat, edge_type_matrix=None, abs_val_edges=True, incl
             vmin, vmax, actual_midpoint = recenter_ranks(edge_rank_values, edge_color_values)
             edge_norm = mcolors.Normalize(vmin=vmin, vmax=vmax)
             
-            print("min", edge_norm(vmin))
-            print("zero", edge_norm(0))
-            print("first pos", edge_norm(actual_midpoint))
-            print("max", edge_norm(vmax))
         else:
             edge_norm = mcolors.Normalize(vmin=0, vmax=len(edge_rank_values))
         

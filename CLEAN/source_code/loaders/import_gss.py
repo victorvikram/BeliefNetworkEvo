@@ -99,11 +99,14 @@ def import_dataset() -> Tuple[pd.DataFrame, Dict]:
     try:
         file_path = data_dir / "raw_data" / "gss7222_r4.sas7bdat"
         
-        #if not file_path.exists():
-        #    stop_animation.set()
-        #    animation_thread.join()
-        #    raise FileNotFoundError(f"Data file not found at: {file_path}")
-            
+        if not file_path.exists():
+            stop_animation.set()
+            animation_thread.join()
+            raise FileNotFoundError(
+                f"Data file not found at: {file_path}\n"
+                f"Please download the GSS data file (gss7222_r4.sas7bdat) and place it in: {data_dir / 'raw_data'}"
+            )
+
         raw_df, meta = prs.read_sas7bdat(
             str(file_path),
             user_missing=True,
@@ -134,54 +137,10 @@ def import_dataset() -> Tuple[pd.DataFrame, Dict]:
         raise e
 
 
-columns_of_interest = ['PARTYID', 'POLVIEWS', 'NATSPAC', 'NATENVIR', 'NATHEAL', 'NATCITY', 'NATCRIME', 'NATDRUG', 
-                        'NATEDUC', 'NATRACE', 'NATARMS', 'NATAID', 'NATFARE', 'NATROAD', 'NATSOC', 'NATMASS', 'NATPARK', 
-                        'NATCHLD', 'NATSCI', 'NATENRGY', 'NATSPACY', 'NATENVIY', 'NATHEALY', 'NATCITYY', 'NATCRIMY', 
-                        'NATDRUGY', 'NATEDUCY', 'NATRACEY', 'NATARMSY', 'NATAIDY', 'NATFAREY', 'EQWLTH', 'SPKATH', 
-                        'COLATH', 'LIBATH', 'SPKRAC', 'COLRAC', 'LIBRAC', 'SPKCOM', 'COLCOM', 'LIBCOM', 'SPKMIL', 
-                        'COLMIL', 'LIBMIL', 'SPKHOMO', 'COLHOMO', 'LIBHOMO', 'SPKMSLM', 'COLMSLM', 'LIBMSLM', 'CAPPUN', 
-                        'GUNLAW', 'COURTS', 'GRASS', 'POSTLIFE', 'PRAYER', 'AFFRMACT', 'WRKWAYUP', 'HELPFUL', 
-                        'FAIR', 'TRUST', 'CONFINAN', 'CONBUS', 'CONCLERG', 'CONEDUC', 'CONFED', 'CONLABOR', 'CONPRESS', 
-                        'CONMEDIC', 'CONTV', 'CONJUDGE', 'CONSCI', 'CONLEGIS', 'CONARMY', 'OBEY', 'POPULAR', 'THNKSELF', 
-                        'WORKHARD', 'HELPOTH', 'GETAHEAD', 'FEPOL', 'ABDEFECT', 'ABNOMORE', 'ABHLTH', 'ABPOOR', 'ABRAPE', 
-                        'ABSINGLE', 'ABANY', 'SEXEDUC', 'DIVLAW', 'PREMARSX', 'TEENSEX', 'XMARSEX', 'HOMOSEX', 'PORNLAW', 
-                        'SPANKING', 'LETDIE1', 'SUICIDE1', 'SUICIDE2', 'POLHITOK', 'POLABUSE', 'POLMURDR', 'POLESCAP', 
-                        'POLATTAK', 'FECHLD', 'FEPRESCH', 'FEFAM', 'RACDIF1', 'RACDIF2', 'RACDIF3', 'RACDIF4', 
-                        'HELPPOOR', 'HELPNOT', 'HELPBLK', 'MARHOMO','VOTE68', 'PRES68', 'IF68WHO', 'VOTE72', 'PRES72', 
-                        'IF72WHO', 'VOTE76', 'PRES76', 'IF76WHO', 'VOTE80', 'PRES80', 'IF80WHO', 'VOTE84', 'PRES84', 
-                        'IF84WHO', 'VOTE88', 'PRES88', 'IF88WHO', 'VOTE92', 'PRES92', 'IF92WHO', 'VOTE96', 'PRES96', 
-                        'IF96WHO', 'VOTE00', 'PRES00', 'IF00WHO', 'VOTE04', 'PRES04', 'IF04WHO', 'VOTE08', 'PRES08', 
-                        'IF08WHO', 'VOTE12', 'PRES12', 'IF12WHO', 'VOTE16', 'PRES16', 'IF16WHO', 'VOTE20', 'PRES20', 
-                        'IF20WHO', 'RELIG', 'ATTEND', 'RACOPEN', 'NEWS', 'TVHOURS', 'RELITEN']
-columns_of_interest = columns_of_interest + ['YEAR', 'ID', 'BALLOT']
-
 
 #------------------------------------------------------------------------------
 # FOR TESTING (if run as script)
 #------------------------------------------------------------------------------
 if __name__ == "__main__":
-    # Example usage with specific columns
-    # These are the standard columns that we will use for the analysis. Adding more columns will slow down the loading process... be careful! 🐱
-    columns_of_interest = ['PARTYID', 'POLVIEWS', 'NATSPAC', 'NATENVIR', 'NATHEAL', 'NATCITY', 'NATCRIME', 'NATDRUG', 
-                           'NATEDUC', 'NATRACE', 'NATARMS', 'NATAID', 'NATFARE', 'NATROAD', 'NATSOC', 'NATMASS', 'NATPARK', 
-                           'NATCHLD', 'NATSCI', 'NATENRGY', 'NATSPACY', 'NATENVIY', 'NATHEALY', 'NATCITYY', 'NATCRIMY', 
-                           'NATDRUGY', 'NATEDUCY', 'NATRACEY', 'NATARMSY', 'NATAIDY', 'NATFAREY', 'EQWLTH', 'SPKATH', 
-                           'COLATH', 'LIBATH', 'SPKRAC', 'COLRAC', 'LIBRAC', 'SPKCOM', 'COLCOM', 'LIBCOM', 'SPKMIL', 
-                           'COLMIL', 'LIBMIL', 'SPKHOMO', 'COLHOMO', 'LIBHOMO', 'SPKMSLM', 'COLMSLM', 'LIBMSLM', 'CAPPUN', 
-                           'GUNLAW', 'COURTS', 'GRASS', 'POSTLIFE', 'PRAYER', 'AFFRMACT', 'WRKWAYUP', 'HELPFUL', 
-                           'FAIR', 'TRUST', 'CONFINAN', 'CONBUS', 'CONCLERG', 'CONEDUC', 'CONFED', 'CONLABOR', 'CONPRESS', 
-                           'CONMEDIC', 'CONTV', 'CONJUDGE', 'CONSCI', 'CONLEGIS', 'CONARMY', 'OBEY', 'POPULAR', 'THNKSELF', 
-                           'WORKHARD', 'HELPOTH', 'GETAHEAD', 'FEPOL', 'ABDEFECT', 'ABNOMORE', 'ABHLTH', 'ABPOOR', 'ABRAPE', 
-                           'ABSINGLE', 'ABANY', 'SEXEDUC', 'DIVLAW', 'PREMARSX', 'TEENSEX', 'XMARSEX', 'HOMOSEX', 'PORNLAW', 
-                           'SPANKING', 'LETDIE1', 'SUICIDE1', 'SUICIDE2', 'POLHITOK', 'POLABUSE', 'POLMURDR', 'POLESCAP', 
-                           'POLATTAK', 'FECHLD', 'FEPRESCH', 'FEFAM', 'RACDIF1', 'RACDIF2', 'RACDIF3', 'RACDIF4', 
-                           'HELPPOOR', 'HELPNOT', 'HELPBLK', 'MARHOMO','VOTE68', 'PRES68', 'IF68WHO', 'VOTE72', 'PRES72', 
-                           'IF72WHO', 'VOTE76', 'PRES76', 'IF76WHO', 'VOTE80', 'PRES80', 'IF80WHO', 'VOTE84', 'PRES84', 
-                           'IF84WHO', 'VOTE88', 'PRES88', 'IF88WHO', 'VOTE92', 'PRES92', 'IF92WHO', 'VOTE96', 'PRES96', 
-                           'IF96WHO', 'VOTE00', 'PRES00', 'IF00WHO', 'VOTE04', 'PRES04', 'IF04WHO', 'VOTE08', 'PRES08', 
-                           'IF08WHO', 'VOTE12', 'PRES12', 'IF12WHO', 'VOTE16', 'PRES16', 'IF16WHO', 'VOTE20', 'PRES20', 
-                           'IF20WHO', 'RELIG', 'ATTEND', 'RACOPEN', 'NEWS', 'TVHOURS', 'RELITEN']
-    columns_of_interest = columns_of_interest + ['YEAR', 'ID', 'BALLOT']
-    
     df, meta = import_dataset()
     print("Dataset loaded successfully")

@@ -47,7 +47,7 @@ import os
 # Try to set the option if available (newer pandas versions)
 try:
     pd.set_option('future.no_silent_downcasting', True)
-except:
+except Exception:
     warnings.warn("Pandas version does not support 'future.no_silent_downcasting' option. This is expected for older versions.")
 
 # Add the parent directory to Python path

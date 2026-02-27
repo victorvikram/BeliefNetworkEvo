@@ -7,13 +7,18 @@ This project analyzes belief networks using GSS (General Social Survey) data, fo
 ```
 BeliefNetworkEvo/CLEAN/
 ├── datasets/           # Data processing and cleaning modules
-├── source_code/       # Core functionality
-│   ├── generators/    # Network generation algorithms
-│   ├── visualizers/   # Network visualization tools
-│   ├── analyzers/     # Network analysis utilities
-│   └── tests/         # Unit tests
-├── notebooks/         # Jupyter notebooks for analysis
-└── requirements.txt   # Project dependencies
+│   ├── raw_data/       # Place GSS .sas7bdat files here
+│   └── cached_data/    # Auto-generated pickle caches
+├── source_code/        # Core functionality
+│   ├── loaders/        # Data import and cleaning
+│   ├── generators/     # Network generation algorithms
+│   ├── visualizers/    # Network visualization tools
+│   ├── analyzers/      # Network analysis utilities
+│   └── tests/          # Unit tests
+├── notebooks/          # Jupyter notebooks for analysis
+│   ├── tutorials/      # Getting started notebooks
+│   └── results/        # Analysis result notebooks
+└── requirements.txt    # Project dependencies
 ```
 
 ## Installation
@@ -38,60 +43,62 @@ conda activate pythons_beliefs
 
 3. Install the package in development mode:
 ```bash
-pip install -e .
+pip install -e ".[dev]"
 ```
 
-This will install all required dependencies automatically. For development work, the following packages will also be installed:
-- pytest (testing)
-- black (code formatting)
-- flake8 (code linting)
-- jupyter and notebook (for running analysis notebooks)
+This will install all required dependencies automatically, including dev tools (pytest, black, flake8, jupyter).
+
+### Data Setup
+
+Download the GSS data file (`gss7222_r4.sas7bdat`) and place it in `datasets/raw_data/`. The first time you load data, it will be cached automatically.
 
 ### Verifying Installation
 
-To verify the installation, open a Python console or Jupyter notebook and try importing the main modules:
-
 ```python
-from datasets.import_gss import import_dataset
-from datasets.clean_raw_data import clean_datasets
+from source_code.loaders.import_gss import import_dataset
+from source_code.loaders.clean_raw_data import clean_datasets
 from source_code.generators.corr_make_network import calculate_correlation_matrix
+```
+
+### Running Tests
+
+```bash
+cd CLEAN
+python -m pytest source_code/tests/
 ```
 
 ## Dependencies
 
 Core dependencies:
-- pandas (≥2.0.0) - Data manipulation and analysis
-- numpy (≥1.24.0) - Numerical computations
-- networkx (≥3.1) - Network analysis and manipulation
-- matplotlib (≥3.7.0) - Plotting and visualization
-- seaborn (≥0.12.0) - Statistical data visualization
-- scipy (≥1.9.0) - Scientific computing
-- scikit-learn (≥1.3.0) - Required for partial correlations
-- sas7bdat (≥2.2.3) - Reading SAS data files
-
-Development dependencies:
-- jupyter (=1.0.0)
-- notebook (=7.0.6)
-- pytest (≥7.0.0)
-- black (≥22.0.0)
-- flake8 (≥5.0.0)
+- pandas (>=2.0.0) - Data manipulation and analysis
+- numpy (>=1.24.0) - Numerical computations
+- networkx (>=3.1) - Network analysis and manipulation
+- matplotlib (>=3.7.0) - Plotting and visualization
+- seaborn (>=0.12.0) - Statistical data visualization
+- scipy (>=1.9.0) - Scientific computing
+- scikit-learn (>=1.3.0) - Graphical lasso regularization
+- pyreadstat (>=1.2.0) - Reading SAS data files
+- pingouin (>=0.5.3) - Partial correlations
 
 ## Usage
 
 The project is organized into several main components:
 
-1. Data Processing (`datasets/`)
-   - `import_gss.py`: Functions for importing GSS survey data
-   - `clean_raw_data.py`: Data cleaning and preprocessing utilities
+1. **Data Processing** (`source_code/loaders/`)
+   - `import_gss.py`: Import and cache GSS survey data
+   - `clean_raw_data.py`: Data cleaning and normalization
 
-2. Belief Network Generation (`source_code/generators/`)
+2. **Network Generation** (`source_code/generators/`)
    - `corr_make_network.py`: Correlation network generation
-   - `corr_make_conditioned_network.py`: Conditioned correlation network analysis
+   - `corr_make_conditioned_network.py`: Conditioned correlation networks
 
-3. Visualisation (`source_code/visualizers/`)
-   - `network_visualizer.py`: Network visualization tools
+3. **Visualization** (`source_code/visualizers/`)
+   - `network_visualizer.py`: Static network visualization
+   - `temporal_network_visualizer.py`: Temporal network evolution
 
-4. Analysis (`source_code/analyzers/`)
+4. **Analysis** (`source_code/analyzers/`)
    - `graph_similarity.py`: Graph comparison utilities
+   - `frustration_analyzer.py`: Belief frustration analysis
+   - `centrality_analyzer.py`: Node centrality measures
 
-Example usage can be found in the notebooks directory.
+Example usage can be found in the `notebooks/tutorials/` directory.

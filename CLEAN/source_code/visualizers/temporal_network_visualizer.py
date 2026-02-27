@@ -57,8 +57,6 @@ def generate_temporal_correlation_matrix(
     """
     correlation_matrices = {}
     
-    print("Is this shit on")
-    
     # Iterate through time windows
     for window_start in range(start_year, end_year - time_window_length + 1, step_size):
         window_end = window_start + time_window_length
@@ -861,7 +859,10 @@ def create_network_data_with_centrality(corr_matrix: pd.DataFrame, highlight_nod
     # Calculate different centrality metrics
     betweenness = nx.betweenness_centrality(G, weight='weight')
     degree = nx.degree_centrality(G)
-    eigenvector = nx.eigenvector_centrality_numpy(G, weight='weight')
+    try:
+        eigenvector = nx.eigenvector_centrality_numpy(G, weight='weight')
+    except Exception:
+        eigenvector = {node: 0.0 for node in G.nodes()}
     
     # Calculate edge weight centrality (sum of absolute edge weights)
     edge_weight = {}

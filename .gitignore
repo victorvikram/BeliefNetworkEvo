@@ -9,14 +9,12 @@ build/
 *.egg-info/
 
 # Jupyter Notebook
-.ipynb_checkpoints
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
 
-# Dataset specific
-datasets/cached_data/
-datasets/raw_data/
-datasets/cleaned_data/
-datasets/validation_plots/
+# Data files (large, should not be in git)
 *.pkl
+*.sas7bdat
 *.csv
 *.xlsx
 *.xls
@@ -25,11 +23,21 @@ datasets/validation_plots/
 *.h5
 *.hdf5
 
-# Large file formats that might appear in data analysis
+# Generated output files
+*.html
+*.graphml
+
+# Large binary formats
 *.zip
 *.tar.gz
 *.tar
 *.rar
+*.pdf
+*.pptx
+*.png
+*.jpg
+*.jpeg
+*.gif
 
 # Environment
 .env
@@ -46,4 +54,4 @@ ENV/
 
 # OS specific files
 .DS_Store
-Thumbs.db 
+Thumbs.db

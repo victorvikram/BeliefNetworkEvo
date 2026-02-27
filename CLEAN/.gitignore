@@ -21,7 +21,7 @@ wheels/
 *.egg
 
 # Jupyter
-.ipynb_checkpoints
+.ipynb_checkpoints/
 */.ipynb_checkpoints/*
 
 # Environment
@@ -31,11 +31,35 @@ env/
 venv/
 ENV/
 
-# Data and caches
+# Data files (large, should not be in git)
 datasets/raw_data/
 datasets/cached_data/
 *.pkl
 *.sas7bdat
+*.csv
+*.xlsx
+*.xls
+*.parquet
+*.feather
+*.h5
+*.hdf5
+
+# Generated output files
+*.html
+outputs/
+
+# Large file formats
+*.zip
+*.tar.gz
+*.tar
+*.rar
+*.pdf
+*.pptx
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.graphml
 
 # IDE
 .idea/
@@ -46,36 +70,3 @@ datasets/cached_data/
 # OS
 .DS_Store
 Thumbs.db
-
-# Distribution / packaging
-*.egg-info/
-
-# Dataset specific
-datasets/cached_data/
-datasets/raw_data/
-datasets/cleaned_data/
-datasets/validation_plots/
-*.pkl
-*.csv
-*.xlsx
-*.xls
-*.parquet
-*.feather
-*.h5
-*.hdf5
-
-# Large file formats that might appear in data analysis
-*.zip
-*.tar.gz
-*.tar
-*.rar
-
-# IDE specific files
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# OS specific files
-.DS_Store
-Thumbs.db 
