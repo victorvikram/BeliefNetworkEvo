@@ -2,14 +2,6 @@
 
 This project analyzes belief networks using data from the General Social Survey (GSS). It processes GSS data to explore correlations between beliefs, attitudes, and social factors, generating network visualizations that reveal how different beliefs and social attitudes interconnect.
 
-## Repository Organization
-
-This repository contains two main directories:
-- `CLEAN/`: The current, actively maintained codebase with improved structure and documentation
-- `MESSY/`: The original codebase that is being gradually migrated to CLEAN
-
-We are in the process of migrating functionality from MESSY to CLEAN while improving code quality, documentation, and testing. All new development should happen in the CLEAN directory.
-
 ## Project Purpose
 
 The main goal is to analyze and visualize belief networks by:
@@ -23,66 +15,48 @@ The main goal is to analyze and visualize belief networks by:
 ## Project Structure
 
 ```
-CLEAN/
-├── datasets/                          # Data processing pipeline
-│   ├── raw_data/                      # Original GSS data
-│   ├── cleaned_data/                  # Processed datasets
-│   ├── cached_data/                   # Intermediate processing results
-│   ├── validation_plots/              # Data quality visualizations
-│   └── validate_cleaned_datasets.py   # Validation checks
-│
-├── source_code/                       # Main analysis code
-│   ├── analysis/                      # Analysis scripts
-│   │   └── corr_make_network.py       # Main network generation script
-│   ├── visualization/                 # Plotting utilities
-│   └── generators/                    # Data generation tools
-│   └── loaders/       
-|       ├── import_gss.py                  # Initial data import
-|       └── clean_data.py                  # Core cleaning functions
-│
-└── notebooks/                         # Analysis notebooks
-    └── network_analysis.ipynb         # Interactive network exploration
-MESSY/                                 # Old codebase
+BeliefNetworkEvo/
+├── src/                    # Main source code
+│   ├── analyzers/          # Network analysis (frustration, centrality, graph similarity, etc.)
+│   ├── generators/         # Network generation (correlation matrices, conditioned networks)
+│   ├── loaders/            # Data loading and cleaning (GSS import, cleaning pipeline)
+│   └── visualizers/        # Network visualization (pyvis, temporal, static)
+├── tests/                  # Test suite (pytest)
+├── notebooks/              # Jupyter notebooks (tutorials + results)
+├── data/                   # Data directory (see data/README.md)
+│   ├── raw/                # Raw GSS data (gitignored)
+│   ├── cache/              # Cached cleaned data (gitignored)
+│   └── validation_plots/   # Data quality visualizations
+├── docs/                   # Documentation (GSS codebook)
+├── outputs/                # Generated outputs (gitignored)
+├── archive/                # Legacy codebase (gitignored)
+├── pyproject.toml          # Project configuration and dependencies
+└── pytest.ini              # Test configuration
 ```
 
 ## Quick Start
 
-1. **Install Conda**
-   - Download and install [Miniconda](https://docs.anaconda.com/miniconda/install/#)
-   - Run this code to install Miniconda and add it to PATH:
-      ```bash
-      curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe -o .\miniconda.exe
-      start /wait "" .\miniconda.exe /S /AddToPath=1
-      del .\miniconda.exe
-      ```
-   - Close and reopen your terminal/command prompt
-
-2. **Clone and Setup Environment**
+1. **Install Dependencies**
    ```bash
-   # Clone repository
-   git clone [repository-url]
-
-   # Create and activate conda environment
-   conda env create -f pythons_beliefs.yml
-   conda activate pythons_beliefs
+   pip install -e .
+   # Or for development:
+   pip install -e ".[dev]"
    ```
 
-
-3. **Get Data**
+2. **Get Data**
    - Download [GSS data](https://gss.norc.org/content/dam/gss/get-the-data/documents/sas/GSS_sas.zip)
-   - Extract and place `gss7222_r4.sas7bdat` in `CLEAN/datasets/raw_data/`
+   - Extract and place `gss7222_r4.sas7bdat` in `data/raw/`
 
-4. **Process Data**
+3. **Run Tests**
    ```bash
-   # Import and clean data
-   python CLEAN/datasets/import_gss.py
-   python CLEAN/datasets/prepare_clean_datasets.py
+   python -m pytest tests/ -v -m "not slow"
    ```
 
-5. **Generate Networks**
-   ```bash
-   python CLEAN/source_code/generators/corr_make_network.py
-   ```
+4. **Explore Notebooks**
+   - `notebooks/lesson_0_creating_a_belief_network.ipynb` — Tutorial: create a belief network from scratch
+   - `notebooks/constructing_frustration_measure.ipynb` — Constructing the frustration measure
+   - `notebooks/edge_frustration_and_change.ipynb` — Edge frustration and belief change analysis
+   - `notebooks/prog_cons_comparison.ipynb` — Progressive vs. conservative belief network comparison
 
 ## Data Cleaning Details
 
@@ -102,45 +76,6 @@ Some GSS variables have multiple versions across years. The cleaning process:
 1. Identifies variant pairs (e.g., NATSPAC and NATSPACY)
 2. Combines variants while preserving temporal information
 3. Standardizes coding schemes across years
-
-### Quality Checks
-
-The validation process includes:
-- Missing value analysis
-- Distribution plots
-- Correlation matrices
-- Data type verification
-- Range checks for numerical variables
-- Category consistency checks
-- Year span analysis
-- Dataset comparison reports
-
-## Output Files
-
-The pipeline generates several outputs:
-1. **Cleaned Datasets**
-   - `cleaned_data_1.pkl`: Regular version
-   - `cleaned_data_2.pkl`: Median-centered version
-
-2. **Validation Results**
-   - Data completeness visualizations
-   - Distribution comparisons
-   - Year coverage analysis
-   - Data quality reports
-
-3. **Network Analysis**
-   - Network visualizations
-   - Correlation matrices
-   - Network metrics (centrality, clustering)
-   - Interactive visualizations (via notebooks)
-
-## Contributing
-
-When adding new variables or modifying transformations:
-1. Update the variable mappings in `clean_data.py`
-2. Add appropriate validation checks
-3. Run the full validation suite
-4. Document any special handling requirements
 
 ## References
 
