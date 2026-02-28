@@ -1,0 +1,19 @@
+[project]
+name = "belief-network-evo"
+version = "0.1.0"
+requires-python = ">=3.9"
+dependencies = [
+    "pandas",
+    "numpy",
+    "networkx",
+    "matplotlib",
+    "seaborn",
+    "scipy",
+    "scikit-learn",
+    "pyreadstat",
+    "pingouin",
+    "pyvis",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "black", "flake8", "jupyter", "notebook"]
