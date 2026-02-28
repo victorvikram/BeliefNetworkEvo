@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from source_code.loaders.clean_raw_data import transform_column, DataConfig
+from src.loaders.clean_raw_data import transform_column, DataConfig
 
 
 class TestTransformColumn:

@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from numpy.testing import assert_almost_equal
 
-from source_code.generators.corr_make_network import (
+from src.generators.corr_make_network import (
     calculate_correlation_matrix,
     calculate_partial_correlations,
     calculate_regularized_partial_correlations,

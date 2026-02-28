@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from source_code.generators.corr_make_conditioned_network import calculate_conditioned_correlation_matrix
+from src.generators.corr_make_conditioned_network import calculate_conditioned_correlation_matrix
 
 
 class TestNoConditioning:

@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from source_code.analyzers.graph_similarity import graph_similarity, SimilarityResult
+from src.analyzers.graph_similarity import graph_similarity, SimilarityResult
 
 
 class TestGraphEditDistance:

@@ -5,9 +5,6 @@ This file contains functions to find edges that are frustrated in the network
 import numpy as np
 import pandas as pd
 import networkx as nx
-import sys
-
-sys.path.append("..")  # Adjust the path as necessary
 
 from .optimization_analyzer import multi_pass_optimize, simulated_annealing, hamiltonian_objective_function, flip_step_function
 

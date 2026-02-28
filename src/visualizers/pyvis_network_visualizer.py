@@ -11,9 +11,7 @@ from IPython.display import display, HTML
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
-import sys
-sys.path.append("..")  # Adjust the path as necessary
-from generators.graph_representation import create_graph_from_adj_mat
+from src.generators.graph_representation import create_graph_from_adj_mat
 
 def add_node_values_to_graph(G, node_values):
     

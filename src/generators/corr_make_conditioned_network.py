@@ -1,15 +1,8 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import sys
-import os
 from typing import Optional, Union, Dict, Any, List, Tuple
 
-# Add the root directory to Python path
-project_root = os.path.dirname(os.path.dirname(os.path.abspath("..")))
-if project_root not in sys.path:
-    sys.path.append(project_root)
-from source_code.generators.corr_make_network import CorrelationMethod, EdgeSuppressionMethod, calculate_correlation_matrix
+from .corr_make_network import CorrelationMethod, EdgeSuppressionMethod, calculate_correlation_matrix
 
 
 

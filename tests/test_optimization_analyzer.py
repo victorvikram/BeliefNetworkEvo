@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from source_code.analyzers.optimization_analyzer import (
+from src.analyzers.optimization_analyzer import (
     flip_step_function,
     hamiltonian_objective_function,
     multi_pass_optimize,

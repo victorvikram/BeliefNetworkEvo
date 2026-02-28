@@ -40,7 +40,6 @@ import numpy as np
 from typing import Dict, List, Tuple, Union
 from dataclasses import dataclass
 import warnings
-import sys
 from pathlib import Path
 import os
 
@@ -50,10 +49,7 @@ try:
 except Exception:
     warnings.warn("Pandas version does not support 'future.no_silent_downcasting' option. This is expected for older versions.")
 
-# Add the parent directory to Python path
-sys.path.append(str(Path(__file__).parent))
-
-from import_gss import import_dataset
+from .import_gss import import_dataset
 
 #------------------------------------------------------------------------------
 # Data Configuration Class
@@ -434,9 +430,7 @@ def clean_datasets() -> pd.DataFrame:
     
     # Cache the cleaned datasets
     project_root = Path(__file__).resolve().parent.parent.parent
-    if project_root not in sys.path:
-        sys.path.append(project_root)
-    cache_dir = os.path.join(project_root, 'datasets', 'cached_data')
+    cache_dir = os.path.join(project_root, 'data', 'cache')
     os.makedirs(cache_dir, exist_ok=True)
     cache_file_1 = os.path.join(cache_dir, 'df_clean.pkl')
     
@@ -451,25 +445,4 @@ def clean_datasets() -> pd.DataFrame:
 
 if __name__ == '__main__':
     df_clean = clean_datasets()
-    
-    
-    # Add the project root directory to the Python path
-    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    if project_root not in sys.path:
-        sys.path.append(project_root)
-    
-    
-    # Cache the cleaned datasets
-    cache_dir = os.path.join(project_root, 'datasets', 'cached_data')
-    os.makedirs(cache_dir, exist_ok=True)
-    
-    
-    
-    # Cache each version separately
-    cache_file_1 = os.path.join(cache_dir, 'df_clean.pkl')
-    
-    # Save the datasets
-    df_clean.to_pickle(cache_file_1)
-
-    # Print list of all variables
-    # print(list(df_clean.columns))
+    print(f"Cleaned dataset shape: {df_clean.shape}")

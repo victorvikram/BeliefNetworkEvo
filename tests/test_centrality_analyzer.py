@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from source_code.analyzers.centrality_analyzer import (
+from src.analyzers.centrality_analyzer import (
     betweenness_centrality_weighted,
     calculate_centrality_measures,
     create_centrality_dataframes,

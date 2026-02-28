@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from source_code.analyzers.frustration_analyzer import (
+from src.analyzers.frustration_analyzer import (
     calculate_frustration,
     get_satisfaction_mats,
     get_frust_percentage,

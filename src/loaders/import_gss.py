@@ -74,8 +74,8 @@ def import_dataset() -> Tuple[pd.DataFrame, Dict]:
     #columns = columns + ["SEXFREQ"]
     
     # Get the current file's directory
-    data_dir = Path(__file__).parent.parent.parent / "datasets"
-    cache_dir = data_dir / "cached_data"
+    data_dir = Path(__file__).parent.parent.parent / "data"
+    cache_dir = data_dir / "cache"
     cache_file = cache_dir / "gss_cache.pkl"
     
     # Try to load from cache first
@@ -97,14 +97,14 @@ def import_dataset() -> Tuple[pd.DataFrame, Dict]:
     animation_thread.start()
 
     try:
-        file_path = data_dir / "raw_data" / "gss7222_r4.sas7bdat"
+        file_path = data_dir / "raw" / "gss7222_r4.sas7bdat"
         
         if not file_path.exists():
             stop_animation.set()
             animation_thread.join()
             raise FileNotFoundError(
                 f"Data file not found at: {file_path}\n"
-                f"Please download the GSS data file (gss7222_r4.sas7bdat) and place it in: {data_dir / 'raw_data'}"
+                f"Please download the GSS data file (gss7222_r4.sas7bdat) and place it in: {data_dir / 'raw'}"
             )
 
         raw_df, meta = prs.read_sas7bdat(

@@ -4,7 +4,7 @@ import networkx as nx
 import numpy as np
 import pytest
 
-from source_code.analyzers.module_analyzer import calculate_interaction_strength
+from src.analyzers.module_analyzer import calculate_interaction_strength
 
 
 class TestInteractionStrength:
