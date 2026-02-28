@@ -9,7 +9,7 @@ import sys
 
 sys.path.append("..")  # Adjust the path as necessary
 
-from analyzers.optimization_analyzer import multi_pass_optimize, simulated_annealing, hamiltonian_objective_function, flip_step_function
+from .optimization_analyzer import multi_pass_optimize, simulated_annealing, hamiltonian_objective_function, flip_step_function
 
 def calculate_frustration(adj_mat, optimizer="multi_pass"):
     """
