@@ -7,11 +7,34 @@ For each of 22 rolling time windows (4-year, step=2), we run:
 1. **Permutation test** (1000 iterations): Shuffle lib/con labels to test whether
    the observed Euclidean distance between networks is greater than expected by chance.
 2. **Bootstrap** (1000 iterations per group): Resample with replacement within
-   each ideological group to obtain 95% CIs on network properties.
+   each ideological group to obtain 95% CIs on within-group network properties
+   (density, clustering, centrality).
 
 Variables: 62 fixed across all windows (intersection), excluding
 POLVIEWS and PARTYID to avoid circularity. Relaxed LASSO (tol=1e-3, max_iter=50)
 for bootstrap/permutation iterations; standard tolerance for observed networks.
+
+### What each test measures
+
+- **Permutation test** answers: "Is the lib/con difference real?" It shuffles
+  group labels to build a null distribution, then asks how extreme the observed
+  distance is compared to random label assignments. Gives per-window p-values
+  and z-scores.
+
+- **Bootstrap** answers: "How stable are within-group network properties?" It
+  resamples with replacement within each group to get 95% CIs on density,
+  clustering, and centrality. Bootstrap CIs capture sampling variability within
+  a group, NOT between-group differences.
+
+### Convergence verification
+
+A convergence test (sound_09b) ran 20,000 permutations and 20,000 bootstraps
+on the earliest window (1974-1978), tracking cumulative statistics every 250
+iterations. Results show:
+- **z-score**: stable at 4.69-4.80 from N=1000 onward (final at 20k: 4.77)
+- **p-value**: stable at 0.0000 throughout
+- **Bootstrap CI width**: converges by N=1000, negligible change through 20k
+- **Conclusion**: 1000 iterations per window is sufficient.
 
 ## Per-Window Significance
 
@@ -41,6 +64,8 @@ for bootstrap/permutation iterations; standard tolerance for observed networks.
 | 2018-2022 | 3054 | 0.1079 [0.1031, 0.1262] | 0.1021 [0.1009, 0.1185] | 0.9172 | 0.0000 | 14.33 |
 
 **Summary**: 22/22 windows significant at p<0.05, 16/22 at p<0.001.
+Z-scores increase over time (2.8-4.7 early vs 9.0-14.3 late), providing
+independent evidence that the divergence is accelerating.
 
 ## Network Accuracy (Edge Stability)
 
@@ -71,13 +96,51 @@ Fraction of edges appearing in >95% of bootstrap samples:
 | 2014-2018 | 0.049 | 0.056 |
 | 2018-2022 | 0.048 | 0.058 |
 
+## Raw Pearson Robustness Check (sound_10)
+
+To rule out the possibility that LASSO regularization creates spurious differences,
+we repeated the permutation test using raw pairwise Pearson correlations (no partial
+correlations, no regularization — just `df.corr()`).
+
+### Results
+
+- **All 22 windows significant** at p<0.05 in both raw Pearson and LASSO
+- Raw Pearson z-scores are much higher (10-28) than LASSO (2.8-14.3), because
+  raw correlation matrices are denser and carry more signal
+- Raw Pearson distance trend: slope=0.034/yr, r=0.878, p<0.0001
+- LASSO distance trend: slope=0.004/yr, r=0.675, p=0.0006
+- Correlation between raw and LASSO distances across windows: **r=0.910**
+
+### Interpretation
+
+The lib/con divergence is **not** a LASSO artifact. The same signal appears —
+even more strongly — in raw correlations. The LASSO reduces the absolute distance
+(by zeroing weak edges) but preserves the temporal pattern. Both methods agree
+on which windows show larger or smaller differences (r=0.910).
+
+The higher z-scores in raw Pearson make sense: raw correlation matrices are fully
+connected (~1891 edges each), so there are many more edge weights contributing to
+the distance. LASSO sparsifies to ~200-400 edges, reducing the signal but also
+reducing noise. Both approaches tell the same story.
+
+## Figures
+
+### Main results (LASSO-based)
+![Bootstrap Windows](../figures/sound_09_bootstrap_windows.png)
+
+### Convergence test
+![Convergence](../figures/sound_09b_convergence.png)
+
+### Raw Pearson robustness
+![Raw Pearson](../figures/sound_10_raw_pearson.png)
+
 ## Interpretation
 
 The permutation test confirms that lib/con network differences are not an artifact
 of random label assignment at any individual time point. Bootstrap CIs provide
-uncertainty quantification on network properties, showing that observed density
-and clustering differences are robust to sampling variability.
+uncertainty quantification on within-group network properties, showing that observed
+density and clustering differences are robust to sampling variability.
 
-## Figure
-
-![Bootstrap Windows](../figures/sound_09_bootstrap_windows.png)
+The convergence test confirms that 1000 iterations is sufficient for stable
+estimates. The raw Pearson robustness check confirms that the divergence signal
+is present in the raw data and is not introduced by regularization.
