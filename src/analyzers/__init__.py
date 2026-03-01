@@ -12,4 +12,5 @@ from . import module_analyzer
 from . import overlap_analyzer
 from . import optimization_analyzer
 from . import triad_analyzer
-from . import matrix_compare 
+from . import matrix_compare
+from . import temporal
