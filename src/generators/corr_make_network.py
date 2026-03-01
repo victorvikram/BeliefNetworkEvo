@@ -166,14 +166,16 @@ def precision_mat_to_partial_corr(precision_matrix):
     return partial_correlations
 
 
-def calculate_regularized_partial_correlations(cov_mat, alpha=0.1):
+def calculate_regularized_partial_correlations(cov_mat, alpha=0.1, tol=1e-4, max_iter=100):
     """
     `cov_mat` is a covariance matrix
     `alpha` is the regularization parameter
+    `tol` is the convergence tolerance for graphical lasso (sklearn default: 1e-4)
+    `max_iter` is the maximum number of iterations (sklearn default: 100)
 
     takes a covariance matrix and returns the estimated regularized covariances and partial
-    correlations. 
-    
+    correlations.
+
     Note that a correlation matrix can also be passed in since the correlation matrix is
     simply the covariance of the standardized variables, and the partial correlations between
     the standardized variables should be equal to the partial correlations between the untransformed
@@ -183,7 +185,7 @@ def calculate_regularized_partial_correlations(cov_mat, alpha=0.1):
     """
     with warnings.catch_warnings():
         #warnings.simplefilter("ignore", message="Failed to calculate partial correlations")
-        cov, precision = graphical_lasso(cov_mat, alpha=alpha)
+        cov, precision = graphical_lasso(cov_mat, alpha=alpha, tol=tol, max_iter=max_iter)
     partial_cor_mat = precision_mat_to_partial_corr(precision)
 
     return partial_cor_mat
@@ -458,7 +460,11 @@ def calculate_correlation_matrix(
                 if suppression_params is None or "regularization" not in suppression_params:
                     raise ValueError("Regularization parameter 'regularization' must be provided in suppression_params")
                 alpha = suppression_params["regularization"]
-                partial_correlations = calculate_regularized_partial_correlations(clean_matrix, alpha=alpha)
+                tol = suppression_params.get("tol", 1e-4)
+                max_iter = suppression_params.get("max_iter", 100)
+                partial_correlations = calculate_regularized_partial_correlations(
+                    clean_matrix, alpha=alpha, tol=tol, max_iter=max_iter
+                )
             else:
                 partial_correlations = calculate_partial_correlations(clean_matrix)
             
