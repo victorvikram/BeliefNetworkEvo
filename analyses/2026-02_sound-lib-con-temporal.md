@@ -73,3 +73,8 @@ The acceleration after ~2004 is notable and coincides with increased political p
 2. **Liberals have always had denser networks** -- this is not a recent phenomenon or a sample size artifact.
 3. **Network similarity is declining** (Pearson r: 0.90 -> 0.80) -- the two groups increasingly disagree on which beliefs are connected.
 4. **Conservative clustering advantage is not stable** -- it appears in some periods but not others.
+
+## Figures
+
+![Temporal trajectories](../figures/sound_03_trajectories.png)
+![Structural differences](../figures/sound_03_differences.png)

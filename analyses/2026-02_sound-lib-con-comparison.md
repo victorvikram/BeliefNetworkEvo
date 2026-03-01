@@ -111,3 +111,9 @@ However, the conservative network has **higher clustering** (0.421 vs 0.369) and
 3. **Liberals have a denser network even after matching** (405 vs 356 edges). This is robust to sample size.
 4. **Conservatives have higher clustering** (0.421 vs 0.369), suggesting tighter local belief clusters despite fewer total connections.
 5. **Community structure reorganizes:** Conservatives merge abortion with morality and integrate partisan identity into the policy cluster. Liberals keep these domains more separate.
+
+## Figures
+
+![Permutation test](../figures/sound_02_permutation.png)
+![Edge differences](../figures/sound_02_edge_diffs.png)
+![Communities](../figures/sound_02_communities.png)

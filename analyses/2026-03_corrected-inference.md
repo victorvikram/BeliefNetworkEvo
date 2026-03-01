@@ -127,3 +127,7 @@ For the paper, we recommend:
 3. **Report Durbin-Watson**: Shows the autocorrelation structure explicitly
 4. **FDR correction**: All per-variable results should use FDR-corrected q-values
 5. **Structural breaks**: Report segmented regression results
+
+## Figures
+
+![Corrected inference](../figures/sound_08_corrected_inference.png)

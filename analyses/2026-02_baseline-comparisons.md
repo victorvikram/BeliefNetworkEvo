@@ -150,3 +150,7 @@ Interactive temporal network visualization (1976–2020) saved to: `outputs/base
 3. **Liberal networks are denser:** Liberals have 27% more edges than conservatives, suggesting more interconnected belief systems. Conservatives show more distinct belief communities (higher spectral gap).
 4. **Structural balance is universal:** All networks (early, late, liberal, conservative) show >98.8% balanced triads with the same tension points (child-rearing values, religion categories).
 5. **Centrality shifted from civil liberties to partisanship:** Bridge variables moved from tolerance/spending items (early) to partisan voting and cultural issues (late).
+
+## Figures
+
+![Comparison](../figures/baseline_03_comparison.png)

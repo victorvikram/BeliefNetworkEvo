@@ -134,3 +134,8 @@ Interactive HTML visualization saved to: `outputs/baseline_reference_network_200
 2. HOMOSEX and PRESLAST_DEMREP are the most central beliefs, bridging moral/religious and political/partisan clusters.
 3. The network is overwhelmingly structurally balanced (99%) with very low frustration.
 4. The only tension points involve child-rearing values (OBEY vs THNKSELF) and religion category indicators.
+
+## Figures
+
+![Degree distribution](../figures/baseline_02_degree_dist.png)
+![Communities](../figures/baseline_02_communities.png)

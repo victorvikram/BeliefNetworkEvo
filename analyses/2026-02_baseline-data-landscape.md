@@ -64,3 +64,10 @@ After cleaning (all variables mapped to [-1, 1]):
 2. Variable availability increases substantially over time, which affects temporal comparisons.
 3. Most core attitude variables are reasonably symmetric after cleaning, but some consensus items and rare-category indicators are heavily skewed.
 4. Analysts should be cautious about early-period networks having fewer variables (77 vs 130).
+
+## Figures
+
+![Respondents per year](../figures/baseline_01_respondents_per_year.png)
+![Availability heatmap](../figures/baseline_01_availability_heatmap.png)
+![Overlap matrix](../figures/baseline_01_overlap_matrix.png)
+![Response distributions](../figures/baseline_01_distributions.png)

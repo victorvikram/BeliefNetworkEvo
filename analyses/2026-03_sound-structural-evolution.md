@@ -68,3 +68,12 @@ Centrality rankings are highly stable window-to-window. Conservative networks sh
 3. **Culture war issues are losing structural importance.** Variables about homosexuality, marijuana, and pornography are becoming less central — not because they're unimportant, but because consensus is forming. When everyone agrees, the variable no longer differentiates.
 
 4. **Religion is rising in centrality.** CONCLERG and RELIG_None are gaining connections, reflecting the increasing structural role of religiosity in organizing the full belief system.
+
+## Figures
+
+![NMI trajectory](../figures/sound_05_nmi_trajectory.png)
+![Centrality rank correlation](../figures/sound_05_centrality_rank_corr.png)
+![Centrality gainers and losers](../figures/sound_05_centrality_gainers_losers.png)
+![Hub degree top 10](../figures/sound_05_hub_degree_top10.png)
+![Community cores](../figures/sound_05_community_cores.png)
+![Community switchers](../figures/sound_05_community_switchers.png)

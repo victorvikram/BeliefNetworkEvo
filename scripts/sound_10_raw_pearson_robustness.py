@@ -255,48 +255,26 @@ def main():
     fig, axes = plt.subplots(2, 2, figsize=(16, 12))
     mid = df_res["mid_year"].values
 
-    # Panel A: Raw vs LASSO distance over time
+    # Panel A: Raw Pearson distance with null band (shows significance alone)
     ax = axes[0, 0]
-    ax.plot(mid, df_res["raw_distance"], "bs-", linewidth=2, markersize=5,
-            label="Raw Pearson")
-    if lasso_mask.any():
-        ax.plot(df_res.loc[lasso_mask, "mid_year"],
-                df_res.loc[lasso_mask, "lasso_distance"],
-                "ko-", linewidth=2, markersize=5, label="LASSO partial")
-    # Trend lines
+    null_lo = np.array([np.percentile(r["null_distances"], 2.5) for r in results])
+    null_hi = np.array([np.percentile(r["null_distances"], 97.5) for r in results])
+    ax.fill_between(mid, null_lo, null_hi, alpha=0.25, color="gray",
+                     label="Null 95% range (permutation)")
+    ax.plot(mid, df_res["raw_distance"], "ko-", linewidth=2, markersize=5,
+            label="Observed")
     x = mid.astype(float)
     i_raw = linregress(x, df_res["raw_distance"].values).intercept
-    ax.plot(x, i_raw + sl_raw * x, "b--", alpha=0.5,
-            label=f"Raw trend: slope={sl_raw:.4f}, p={p_raw:.3f}")
-    if not np.isnan(sl_lasso):
-        x_l = df_res.loc[lasso_mask, "mid_year"].values.astype(float)
-        i_l = linregress(x_l, df_res.loc[lasso_mask, "lasso_distance"].values).intercept
-        ax.plot(x_l, i_l + sl_lasso * x_l, "k--", alpha=0.5,
-                label=f"LASSO trend: slope={sl_lasso:.4f}, p={p_lasso:.3f}")
+    ax.plot(x, i_raw + sl_raw * x, "r--", alpha=0.7,
+            label=f"Trend: slope={sl_raw:.4f}/yr, p={p_raw:.3f}")
     ax.set_xlabel("Window Midpoint (year)")
     ax.set_ylabel("Euclidean Distance (Lib-Con)")
-    ax.set_title("A. Distance: Raw Pearson vs LASSO", fontweight="bold")
-    ax.legend(fontsize=7)
+    ax.set_title("A. Raw Pearson: Distance vs Null", fontweight="bold")
+    ax.legend(fontsize=8)
     ax.grid(True, alpha=0.3)
 
-    # Panel B: Raw z-scores vs LASSO z-scores
+    # Panel B: Raw p-values per window
     ax = axes[0, 1]
-    ax.plot(mid, df_res["raw_z"], "bs-", linewidth=2, markersize=5,
-            label="Raw Pearson")
-    if lasso_mask.any():
-        ax.plot(df_res.loc[lasso_mask, "mid_year"],
-                df_res.loc[lasso_mask, "lasso_z"],
-                "ko-", linewidth=2, markersize=5, label="LASSO partial")
-    ax.axhline(1.96, color="orange", linewidth=1, linestyle="--",
-               label="z=1.96 (p=0.05)")
-    ax.set_xlabel("Window Midpoint (year)")
-    ax.set_ylabel("z-score")
-    ax.set_title("B. Per-Window z-scores", fontweight="bold")
-    ax.legend(fontsize=7)
-    ax.grid(True, alpha=0.3)
-
-    # Panel C: Raw p-values
-    ax = axes[1, 0]
     p_vals = df_res["raw_p"].values
     colors = ["green" if p < 0.001 else "blue" if p < 0.05 else "red"
               for p in p_vals]
@@ -305,10 +283,29 @@ def main():
     ax.axhline(0.001, color="red", linewidth=1.5, linestyle="--", label="p=0.001")
     ax.set_xlabel("Window Midpoint (year)")
     ax.set_ylabel("p-value")
-    ax.set_title("C. Raw Pearson Permutation p-values", fontweight="bold")
+    ax.set_title("B. Raw Pearson Permutation p-values", fontweight="bold")
     ax.legend(fontsize=8)
     ax.grid(True, alpha=0.3)
     ax.set_ylim(bottom=0)
+
+    # Panel C: Raw vs LASSO distance comparison
+    ax = axes[1, 0]
+    ax.plot(mid, df_res["raw_distance"], "bs-", linewidth=2, markersize=5,
+            label="Raw Pearson")
+    if lasso_mask.any():
+        ax.plot(df_res.loc[lasso_mask, "mid_year"],
+                df_res.loc[lasso_mask, "lasso_distance"],
+                "ko-", linewidth=2, markersize=5, label="LASSO partial")
+    ax.set_xlabel("Window Midpoint (year)")
+    ax.set_ylabel("Euclidean Distance (Lib-Con)")
+    ax.set_title("C. Raw vs LASSO Distance (both diverge)", fontweight="bold")
+    ax.legend(fontsize=8)
+    ax.grid(True, alpha=0.3)
+    # Note different y-axis scales
+    ax.text(0.02, 0.98, f"Raw trend: slope={sl_raw:.4f}/yr, r={r_raw:.3f}\n"
+            f"LASSO trend: slope={sl_lasso:.4f}/yr, r={r_lasso:.3f}" if not np.isnan(sl_lasso) else "",
+            transform=ax.transAxes, fontsize=7, verticalalignment="top",
+            bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.5))
 
     # Panel D: Example null distribution (middle window)
     ax = axes[1, 1]
@@ -320,13 +317,10 @@ def main():
             label=f"Null (N={len(nd)})")
     ax.axvline(obs_d, color="red", linewidth=2, linestyle="--",
                label=f"Observed ({obs_d:.3f})")
-    if not np.isnan(repr_res["lasso_distance"]):
-        ax.axvline(repr_res["lasso_distance"], color="black", linewidth=2,
-                   linestyle=":", label=f"LASSO ({repr_res['lasso_distance']:.3f})")
     ax.set_xlabel("Euclidean Distance")
     ax.set_ylabel("Count")
-    ax.set_title(f"D. Null Distribution — Raw Pearson "
-                 f"(~{repr_res['mid_year']:.0f})", fontweight="bold")
+    ax.set_title(f"D. Null Distribution (~{repr_res['mid_year']:.0f}): "
+                 f"z={repr_res['raw_z']:.1f}", fontweight="bold")
     ax.legend(fontsize=8)
     ax.grid(True, alpha=0.3)
 

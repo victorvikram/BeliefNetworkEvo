@@ -120,3 +120,11 @@ Edge sign distribution: 243 positive (64.6%), 133 negative (35.4%). Even with th
 2. **Communities map onto interpretable domains**: political, civil liberties, morality, institutional confidence, spending, abortion, child-rearing, policing, religion, and social trust.
 3. **Centrality is not just PC1 loading** (r=0.415 for betweenness). The most interesting nodes are *bridge variables* (NATFARE, AFFRMACT, CONLEGIS) that connect different belief domains without strongly loading on the dominant dimension.
 4. **99% structural balance is highly significant** (p < 0.001). This is not a trivial consequence of the graph structure -- it reflects genuine consistency in how beliefs relate to each other.
+
+## Figures
+
+![Scree plot](../figures/sound_01_scree.png)
+![PC loadings scatter](../figures/sound_01_loadings_scatter.png)
+![Centrality vs PC1](../figures/sound_01_centrality_vs_pc1.png)
+![Communities](../figures/sound_01_communities.png)
+![Balance null model](../figures/sound_01_balance_null.png)

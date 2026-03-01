@@ -141,3 +141,13 @@ The pattern is substantively coherent: conservatives increasingly organize their
 5. **Centrality is the key structural divergence.** The groups increasingly disagree on which beliefs are structurally central (rho declining from 0.79 to 0.58, p<0.0001). Conservatives are centering their networks around prayer, discipline, and military; liberals around urban policy, foreign aid, and police accountability.
 
 6. **The divergence is broadly distributed.** No single edge or small set of edges drives the divergence — it's spread across hundreds of edges, with the fastest-diverging spanning racial attitudes, partisan alignment, institutional trust, and morality/child-rearing crossovers.
+
+## Figures
+
+![Sign disagreements](../figures/sound_04_sign_disagree.png)
+![Dimensionality](../figures/sound_04_dimensionality.png)
+![Top diverging/converging edges](../figures/sound_04_top_edges.png)
+![Domain decomposition](../figures/sound_04_domain_decomp.png)
+![Domain within vs between](../figures/sound_04_domain_within_between.png)
+![Modularity](../figures/sound_04_modularity.png)
+![Centrality rank correlation](../figures/sound_04_centrality_rank.png)

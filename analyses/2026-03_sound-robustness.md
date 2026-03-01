@@ -120,3 +120,7 @@ All core findings survive the robustness checks. The divergence trend is not
 an artifact of changing variable counts, is stable across regularization levels,
 and is not driven by the circularity of including POLVIEWS/PARTYID as nodes.
 The paper's temporal claims can be stated with confidence.
+
+## Figures
+
+![Robustness checks](../figures/sound_07_robustness.png)
