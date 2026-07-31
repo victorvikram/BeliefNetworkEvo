@@ -40,3 +40,9 @@ Thumbs.db
 # Generated output files
 *.html
 *.graphml
+
+# Project management (HQ workflow — local only, not shared)
+project.md
+notes/
+inbox/
+CLAUDE.md
