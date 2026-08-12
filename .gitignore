@@ -2,10 +2,17 @@
 data/raw/
 data/cache/
 *.sas7bdat
+*.sas7bcat
 *.pkl
 
 # Archive
 archive/
+
+# Pre-restructure trees — flattened into data/, src/ and archive/ by 04485e6.
+# Anyone working from an old clone still has these on disk; keep them out of git.
+CLEAN/
+MESSY/
+datasets/
 
 # Outputs
 outputs/
