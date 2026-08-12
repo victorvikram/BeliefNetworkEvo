@@ -36,17 +36,17 @@ opposite directions. Agreement is not stability.
 ## The narrative, in four beats
 
 1. **The problem.** Correlations between survey items cannot tell us why two beliefs
-   occur together, so they cannot describe how individuals think.
+   occur together, so they cannot describe how individuals think. // i'd decompose the problem as lacking causal structure and lacking individual resolution
 
 2. **The solution.** They do describe something else accurately — the pattern of which
-   beliefs occur together across a whole population — and that pattern has real effects.
+   beliefs occur together across a whole population — and that pattern has real effects. // sounds like we are focusing on downstream causation. is this what we want?
 
 3. **What we did.** We set out what you have to assume to study that pattern, what it
-   can and cannot tell you, and why claims about it have to be comparative.
+   can and cannot tell you, and why claims about it have to be comparative. // 
 
 4. **Why it matters.** Two populations sharing a country can drift into hearing
    different things in the same words, and into responding to the same event in
-   opposite directions.
+   opposite directions. // this is just one example from downstream causation and upstream causation
 
 **This is the working structure.** The six sections below and the appendix beats are
 detail to draw on, not a competing outline.
@@ -75,7 +75,7 @@ Beats 1 and 2 are one section each; beat 3 is three; beat 4 is one.
    figures say little and comparisons using the same questions say a lot.
 
 6. **Polarization potential.** Two populations can hold nearly the same beliefs and
-   still be set to move in opposite directions, and we show how to measure that.
+   still be set to move in opposite directions, and we show how to measure that.  // I feel like we might want to give one example for each of the "what is it good for"
 
 ---
 
