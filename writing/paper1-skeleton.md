@@ -4,9 +4,7 @@ Built 2026-08-13 from Victor's `merged_outline.md` and our `paper1-narrative-dra
 Comparison and reasoning: `notes/2026-08-12-victor-outline-comparison.md`.
 
 This is the structure at the level of manuscript sections, with a few points under each.
-Every point is written to stand on its own, so the shape can be argued with directly. A
-more detailed pass is parked in `paper1-skeleton-detail.md`; it was written before this
-structure was agreed and should not be trusted until it is.
+Every point is written to stand on its own, so the shape can be argued with directly.
 
 Audience: practitioners, sociologists, and computational social scientists who think about
 theory. Not philosophers of mind. The piece should partly create its reader.
