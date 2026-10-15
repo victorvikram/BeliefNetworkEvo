@@ -14,6 +14,31 @@ in `docs/`; this folder is for work we cite and argue with.
   DellaPosta treats the structure as the *explanandum* throughout.
   *(Title corrected 2026-08-14: previously recorded as "Mass Political Polarization".)*
 
+Added 2026-10-15 for the lead paper's spillover test. All open access; reading notes are in
+`analyses/2026-10_spill-01-homosex-pilot.md` and the tracker.
+
+- `TurnerZwinkels-DynamicConstraintNetworks-2022.pdf` — Turner-Zwinkels, Felicity M., and
+  Mark J. Brandt. 2022. "Belief System Networks Can Be Used to Predict Where to Expect Dynamic
+  Constraint." *Journal of Experimental Social Psychology* 100:104279. **The direct
+  precedent**: a pooled network predicts where induced two-week change spreads.
+- `FishmanDavis-ChangeWeCanBelieveIn-2022.pdf` — Fishman, Nic, and Nicholas T. Davis. 2022.
+  "Change We Can Believe In." *American Journal of Political Science* 66(3). Accepted
+  manuscript. **The null to answer**: centrality does not predict individual belief change.
+- `Keskinturk-DynamicConstraint-2026.pdf` — Keskintürk, Turgut. 2026. "Evaluating Dynamic
+  Constraint in Belief Systems." SocArXiv, doi:10.31235/osf.io/yh2fm_v2. Survey experiment;
+  no induced spillover.
+- `RestrepoOchoa-MeasuringMovement-2024.pdf` — Restrepo Ochoa, Nicolás, and Turgut
+  Keskintürk. 2024. "Measuring Movement in Cultural Landscapes." *Poetics*,
+  doi:10.1016/j.poetic.2024.101965. Accepted manuscript; check page numbers against the
+  published version.
+- `Kiley-PredictablyUnpredictable-Dissertation-2021.pdf` — Kiley, Kevin. 2021. Duke PhD
+  dissertation; the chapter "Predictably Unpredictable" is pp. 119–176. The 2023 manuscript of
+  that title is not public.
+- `Guo-ThreeFacetsPolarization-2026.pdf` — Guo, Yufan, Yilang Peng, and Tian Yang. 2026.
+  "Disentangling the Three Facets of Mass Ideological Polarization: A Network Approach Across
+  78 Societies." *Public Opinion Quarterly*, doi:10.1093/poq/nfag037. CC-BY. Measurement
+  precedent; one magnitude score per society.
+
 ## Still to add
 
 All citation details below were **verified against OpenAlex on 2026-08-14** and are safe for
