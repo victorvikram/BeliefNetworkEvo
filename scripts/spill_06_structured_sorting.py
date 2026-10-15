@@ -26,12 +26,18 @@ Fixed before the first run (tracker, 2026-10-15):
   - verdict: relative fit > 0 with p < 0.05 in the full model, for at least one estimator
     (regularized partial correlations primary, raw correlations secondary)
 
+Replication: `--panel 2020` runs the same test on the 2016-20 panel — 2016 and 2018
+respondents re-interviewed in 2020 — with networks from the 2012-18 cross-sections (these
+respondents removed; 2020 left out because of its mode change) and two extra controls,
+origin year and web vs phone in 2020, since the 2020 wave had no in-person interviews.
+Specified before running (tracker, 2026-10-15).
+
 Supplementary: a permutation null that shuffles camp labels in the cross-section before the
 networks are estimated, so relative fit is computed against networks that differ only by
 noise.
 
-Usage: PYTHONIOENCODING=utf-8 python scripts/spill_06_structured_sorting.py [--quick]
-Outputs: data/cache/spill_06_results.pkl, stdout
+Usage: PYTHONIOENCODING=utf-8 python scripts/spill_06_structured_sorting.py [--panel 2020] [--quick]
+Outputs: data/cache/spill_06_results<_2020>.pkl, stdout
 """
 import sys
 from pathlib import Path
@@ -61,7 +67,10 @@ PANEL_FILES = {
     2008: "GSS_2008_Panel_stata/GSS_panel08w123_R6 - stata.dta",
     2010: "GSS_2010_Panel_stata/GSS_panel2010w123_R6 - stata.dta",
 }
-XS_YEARS = list(range(2004, 2015))
+PANEL_2020 = "GSS_2020_panel_stata_1a/gss2020panel_r1a.dta"
+PANEL_SET = sys.argv[sys.argv.index("--panel") + 1] if "--panel" in sys.argv else "2006-14"
+XS_YEARS = list(range(2012, 2019)) if PANEL_SET == "2020" else list(range(2004, 2015))
+TAG = "_2020" if PANEL_SET == "2020" else ""
 NOT_IN_FIT = {"POLVIEWS", "PARTYID"}
 ESTIMATORS = ("partial", "raw")
 ALPHA = 0.2
@@ -79,7 +88,37 @@ def upper(series):
     return series.map(lambda v: v.upper() if isinstance(v, str) else v)
 
 
+def load_panel_2020(items):
+    """2016 and 2018 respondents re-interviewed in 2020, in the same layout as load_panel_wave1."""
+    mappings = DataConfig().all_mappings
+    path = PANEL_DIR / PANEL_2020
+    _, meta = prs.read_dta(str(path), metadataonly=True, encoding="latin1")
+    lower = {c.lower(): c for c in meta.column_names}
+    present = [i for i in items if f"{i.lower()}_1a" in lower and f"{i.lower()}_1b" in lower]
+    wave1 = [i.lower() for i in present] + ["id", "year", "age", "sex", "degree", "polviews"]
+    cols = [lower[f"{v}_{w}"] for v in wave1 for w in ("1a", "1b")]
+    cols += [lower["polviews_2"], lower["mode_2"], lower["year_2"], lower["samptype"]]
+    raw, _ = prs.read_dta(str(path), usecols=cols, user_missing=True, encoding="latin1")
+    raw.columns = [c.lower() for c in raw.columns]
+    raw = raw[pd.to_numeric(raw["year_2"], errors="coerce").notna()].reset_index(drop=True)
+    from_2016 = raw["samptype"] == 2016
+
+    def first_wave(v):
+        return raw[f"{v}_1a"].where(from_2016, raw[f"{v}_1b"])
+
+    out = pd.DataFrame({i: transform_column(upper(first_wave(i.lower())), mappings[i]) for i in present})
+    out["POL1"] = transform_column(upper(first_wave("polviews")), mappings["POLVIEWS"])
+    out["POL3"] = transform_column(upper(raw["polviews_2"]), mappings["POLVIEWS"])
+    for v in ("id", "year", "age", "sex", "degree"):
+        out[f"{v.upper()}_1"] = pd.to_numeric(first_wave(v), errors="coerce")
+    out["PANEL"] = raw["samptype"].astype(int)
+    out["MODE_WEB"] = (pd.to_numeric(raw["mode_2"], errors="coerce") == 4).astype(float)
+    return out
+
+
 def load_panel_wave1(items):
+    if PANEL_SET == "2020":
+        return finish_panel(load_panel_2020(items), items)
     mappings = DataConfig().all_mappings
     parts = []
     for panel, rel in PANEL_FILES.items():
@@ -98,7 +137,11 @@ def load_panel_wave1(items):
             out[e.upper()] = pd.to_numeric(raw[e], errors="coerce")
         out["PANEL"] = panel
         parts.append(out)
-    df = pd.concat(parts, ignore_index=True)
+    return finish_panel(pd.concat(parts, ignore_index=True), items)
+
+
+def finish_panel(df, items):
+    """Shared tail: complete the item columns, define camp and the switching outcome."""
     for i in items:
         if i not in df:
             df[i] = np.nan
@@ -210,8 +253,10 @@ def design(panel, pred, est, controls=True):
         X["age"] = zscore(panel["AGE_1"])
         X["degree"] = panel["DEGREE_1"]
         X["female"] = (panel["SEX_1"] == 2).astype(float)
-        X["p2008"] = (panel["PANEL"] == 2008).astype(float)
-        X["p2010"] = (panel["PANEL"] == 2010).astype(float)
+        for pv in sorted(panel["PANEL"].unique())[1:]:
+            X[f"p{pv}"] = (panel["PANEL"] == pv).astype(float)
+        if "MODE_WEB" in panel:
+            X["web"] = panel["MODE_WEB"]
     return sm.add_constant(X)
 
 
@@ -251,7 +296,7 @@ def main():
     xs = xs[items]
 
     print("=" * 70)
-    print("SPILL 06: STRUCTURE-GUIDED SORTING (GSS 2006-14 panels)")
+    print(f"SPILL 06: STRUCTURE-GUIDED SORTING (GSS {PANEL_SET} panel{'s' if PANEL_SET != '2020' else ''})")
     print("=" * 70)
     print(f"Cross-section networks: {XS_YEARS[0]}-{XS_YEARS[-1]}, {len(xs)} respondents "
           f"(panel wave-1 respondents removed), {len(items)} items")
@@ -298,13 +343,13 @@ def main():
     print(f"VERDICT: {'SUPPORTED via ' + ', '.join(supported) if supported else 'NOT SUPPORTED'}")
     print("=" * 70)
 
-    with open(CACHE_DIR / "spill_06_results.pkl", "wb") as fh:
+    with open(CACHE_DIR / f"spill_06_results{TAG}.pkl", "wb") as fh:
         pickle.dump({"pred": pred, "panel": panel[["camp", "switch", "POL1", "POL3", "PANEL"]],
                      "coefs": {e: results[e]["full"].params.to_dict() for e in ESTIMATORS},
                      "pvalues": {e: results[e]["full"].pvalues.to_dict() for e in ESTIMATORS},
                      "p_perm": {e: results[e]["p_perm"] for e in ESTIMATORS},
                      "supported": supported}, fh)
-    print(f"Saved data/cache/spill_06_results.pkl; elapsed {time.time() - t0:.0f}s")
+    print(f"Saved data/cache/spill_06_results{TAG}.pkl; elapsed {time.time() - t0:.0f}s")
 
 
 if __name__ == "__main__":

@@ -1,9 +1,11 @@
 # Spill 06: Structure-Guided Sorting
 
 **Date:** 2026-10-15
-**Script:** `scripts/spill_06_structured_sorting.py`
-**Log:** `logs/spill_06_structured_sorting.log`
-**Data:** GSS 2006, 2008 and 2010 three-wave panels (people), GSS cross-sections 2004–14 (networks)
+**Scripts:** `scripts/spill_06_structured_sorting.py`, `scripts/spill_06b_pool_panels.py`
+**Logs:** `logs/spill_06_structured_sorting.log`, `logs/spill_06_structured_sorting_2020.log`,
+`logs/spill_06b_pool_panels.log`
+**Data:** GSS 2006, 2008 and 2010 three-wave panels and the 2016–20 panel (people); GSS
+cross-sections 2004–14 and 2012–18 (networks)
 
 ## Question
 
@@ -62,11 +64,46 @@ The effect is the same size in both camps (partial OR 1.16 for liberals and 1.15
 conservatives; raw 1.26 and 1.27), and each half is less significant on its own, as expected
 with half the sample.
 
+## Replication: the 2016–20 panel
+
+Specified before running (tracker, 2026-10-15): the same model and verdict rule on the 2016 and
+2018 respondents re-interviewed in 2020, with networks from the 2012–18 cross-sections (these
+respondents removed) and two extra controls, origin year and web vs phone in 2020. The 2020
+wave had no in-person interviews, which adds noise to apparent switching.
+
+| | 2006–14 panels | 2016–20 panel |
+|---|---|---|
+| People (left camp) | 2,284 (774) | 1,115 (323) |
+| Raw: OR per SD (p) | 1.245 (0.001) | 1.244 (0.072) |
+| Partial: OR per SD (p) | 1.135 (0.036) | 0.965 (0.74) |
+| Issue position: OR per SD | 2.41 | 4.06 |
+
+**By the pre-set rule the replication fails.** But the two estimators part company. The raw
+estimate is the same to three decimal places and misses significance only because the sample
+is half the size (permutation p = 0.055). The partial estimate does not replicate at all.
+Position-based sorting is much stronger in the later panel, and relative fit correlates more
+with position there (+0.47 on raw correlations, against +0.38), which leaves less independent
+variation for arrangement to explain.
+
+**Pooled across eras (exploratory, `spill_06b_pool_panels.py`):**
+
+| Estimator | Pooled OR per SD [95% CI] | p | Difference between eras |
+|---|---|---|---|
+| Raw | 1.245 [1.111, 1.394] | 0.0002 | p = 0.998 |
+| Partial | 1.091 [0.984, 1.209] | 0.097 | p = 0.18 |
+
 ## Reading
 
 This is the first result in the downstream-effects work that survives a design where sorting
-cannot fake it — because here sorting is the outcome. It says that **the arrangement of a
-camp's beliefs selects its members**: people stay where their beliefs fit together the way the
+cannot fake it — because here sorting is the outcome. Across two panel eras it holds for fit
+measured on **raw correlations** — what co-occurs in each camp — with an identical effect size,
+and it does not hold reliably for fit measured on **partial correlations**, the camp's direct
+links. So the claim it supports is about the camp's pattern of co-occurrence, not its network of
+direct associations. That is also the estimator the project's own framework assigns to claims
+about effects in the world (P1.2: raw correlations for what co-occurs, partial for direct
+structure) — but that alignment was noticed after the results, and the partial failure should be
+reported as a result in its own right. It says that **the arrangement of a camp's beliefs selects
+its members**: people stay where their beliefs fit together the way the
 camp's do, and leave when they fit another camp's wiring better, whatever their positions.
 That is a population-level consequence of belief structure, and it is the mechanism the
 spillover decomposition pointed to: camps shift along their own structure because of who joins
@@ -84,16 +121,14 @@ literature search found, is not.
   one; full crossings are too rare to model separately.
 - **Measurement error in POLVIEWS** produces some apparent switching; ideological strength is
   controlled, which absorbs most of the boundary effect, but not all.
-- **One set of panels, one era.** The 2016–20 panel is an independent replication waiting to be
-  run.
+- **The pre-specified replication failed its rule.** The raw effect replicates in size and pools
+  to p = 0.0002, but that pooling was not pre-specified.
 - **Raw versus partial.** The raw estimate is larger. Raw correlations carry the camps' whole
   correlated blocks, which is legitimate for a claim about fit to what co-occurs in a camp, but
   the partial estimate is the cleaner test of fit to direct links.
 
 ## Next
 
-- **Replicate in the 2016–20 panel**: an independent sample, a different era, and the period
-  after the ~2008 break.
 - Does arrangement-based sorting account for the camp-level co-movement the spillover tests
   found? Simulating camp change from the estimated switching model would answer it.
 - Robustness: switching between waves 1 and 2; full crossings only; panel weights.
