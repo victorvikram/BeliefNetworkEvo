@@ -13,6 +13,7 @@ dependencies = [
     "pyreadstat",
     "pingouin",
     "pyvis",
+    "statsmodels",
 ]
 
 [project.optional-dependencies]
