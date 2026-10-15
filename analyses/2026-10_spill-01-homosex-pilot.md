@@ -1,10 +1,12 @@
-# Spill 01: HOMOSEX Spillover Pilot, GRASS and CAPPUN Replications, Sorting Control
+# Spill 01–05: HOMOSEX Spillover Pilot, Replications, Sorting Control, Panel Test
 
 **Date:** 2026-10-15
 **Script:** `scripts/spill_01_homosex_pilot.py`
 **Logs:** `logs/spill_01_homosex_pilot.log`, `logs/spill_01_grass_pilot.log`,
 `logs/spill_01_cappun_1993-1996_2006-2010_pilot.log`, `logs/spill_01_cappun_pilot.log`,
-`logs/spill_02_focal_embeddedness.log`, `logs/spill_03_fuzziness_benchmark.log`
+`logs/spill_02_focal_embeddedness.log`, `logs/spill_03_fuzziness_benchmark.log`,
+`logs/spill_04_panel_test.log`, `logs/spill_04_panel_test_mean13.log`,
+`logs/spill_05_change_decomposition.log`
 **Figures:** `figures/spill_01_homosex_pilot.png`, `figures/spill_01_grass_pilot.png`
 **Data:** GSS, base window 1987–91, late window 2014–18; 300 permutations and 300 bootstraps per condition
 
@@ -275,12 +277,70 @@ iteration limit, so partial-correlation estimates wobble slightly between proces
 r_own was +0.111 in one run and +0.100 in another). Conclusions are unaffected at this
 precision, but final estimates should use a converged fit.
 
+## Panel test: the same people, camps fixed
+
+`scripts/spill_04_panel_test.py`, specified before running. The GSS 2006, 2008 and 2010 panels
+follow the same respondents over three waves; pooling respondents present at waves 1 and 3
+gives 2,323 people in the two camps (2006→10, 2008→12, 2010→14). A person's camp is fixed, so
+nobody can re-sort. Networks come from wave-1 answers and change is each person's wave-3 minus
+wave-1 answer. The smoke run exposed regression to the mean — camps chosen on a noisy wave-1
+POLVIEWS drift towards the centre — so a corrected rule (camp from the mean of wave-1 and
+wave-3 POLVIEWS, still fixed per person) was added and is reported alongside the
+pre-specified wave-1 rule.
+
+| Camp rule | Focal | Shift lib / con (SD) | Estimator | β p (perm) | r_own | r_swap |
+|---|---|---|---|---|---|---|
+| wave 1 | HOMOSEX | −0.015 / −0.102 | partial | 0.457 | +0.02 | +0.11 |
+| wave 1 | HOMOSEX | | raw | 0.319 | +0.09 | +0.16 |
+| mean of waves 1, 3 | HOMOSEX | −0.034 / −0.088 | partial | 0.747 | −0.05 | −0.02 |
+| mean of waves 1, 3 | HOMOSEX | | raw | 0.413 | +0.05 | +0.04 |
+
+**Null under both rules, for all three items.** But the decisive fact is the size of the shifts:
+over four years liberals moved −0.03 SD on HOMOSEX and conservatives −0.09. There is almost no
+within-person shift to spread, so the panel cannot detect spillover even if it exists. What it
+does show is that individuals change slowly.
+
+## Decomposition: what moves a camp?
+
+`scripts/spill_05_change_decomposition.py`, exploratory. For each four-year panel window, a
+camp's cross-sectional change in the focal item is split into cohort replacement (total minus
+within-cohort change), individual change (the panel's own respondents) and re-sorting between
+camps (within-cohort minus individual). Raw [−1, 1] units; each cell carries sampling error of
+roughly ±0.04.
+
+| Focal | Camp | Total | Replacement | Individual | Re-sorting |
+|---|---|---|---|---|---|
+| HOMOSEX | lib (mean of 3 windows) | −0.085 | −0.004 | −0.032 | −0.049 |
+| HOMOSEX | con | −0.134 | −0.007 | −0.083 | −0.045 |
+| GRASS | lib | +0.194 | −0.010 | +0.209 | −0.006 |
+| GRASS | con | +0.136 | +0.009 | +0.109 | +0.018 |
+
+Over four years cohort replacement contributes almost nothing. For conservatives most of the
+HOMOSEX change is individuals changing their minds. **For liberals more of it is re-sorting** —
+people entering or leaving the camp — than individual change, although the windows disagree
+(2008–12 runs the other way). GRASS change is carried by individuals in both camps.
+
+## Where the evidence now points
+
+The cross-sectional pattern is real: a camp's own arrangement predicts which of its beliefs
+move together, beyond what the two camps share. But the evidence that this is *spillover* — a
+shift in one belief spreading to others inside people's heads — has fallen away at each step
+that isolates individuals. It shrinks when re-sorting is removed (F, G), and the panel shows
+individuals change too slowly to test it. The decomposition suggests why: for liberals, a large
+share of camp change on HOMOSEX is re-sorting.
+
+The reading this supports — **an interpretation, not a tested result** — is that camps change
+along their own belief structure substantially because of *who joins and leaves them*. People
+whose beliefs fit a camp's bundle move into it, so the camp's averages shift along the lines
+its network describes. That is still a population-level consequence of belief structure, which
+is the paper's claim, but the mechanism is composition rather than diffusion within persons,
+and "spillover" is the wrong word for it. It is directly testable in the panels: do the people
+who switch camps hold beliefs that fit the destination camp's network?
+
 ## Next
 
-- **A panel test of sorting.** The GSS 2006–14 panels follow the same people. Fixing each
-  respondent's camp at their first wave removes sorting entirely while keeping camps sharply
-  ideological, and HOMOSEX moved fast over exactly those years. This is the cleanest test
-  available and needs the separate GSS panel files.
+- **Test the sorting mechanism directly in the panels:** whether switchers' wave-1 beliefs fit
+  the network of the camp they move to, better than the one they leave.
 - **Raise power without sorting:** pool the test across focal items rather than one at a time,
   using sorting-proof groups (education, predicted camps).
 - **Converged graphical LASSO** (higher max_iter) for any estimate that goes into the paper.
