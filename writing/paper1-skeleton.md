@@ -44,7 +44,7 @@ stability.
 
 ---
 
-## 1. Introduction
+## 1. Introduction (The Problem)
 
 - Open on one real correlation between two GSS survey items, then list everything that could
   have produced it: a person reasoning from a shared premise, both beliefs taught by the
