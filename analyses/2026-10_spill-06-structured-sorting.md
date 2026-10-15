@@ -1,9 +1,11 @@
-# Spill 06: Structure-Guided Sorting
+# Spill 06–07: Structure-Guided Sorting, and Whether It Moves the Camps
 
 **Date:** 2026-10-15
-**Scripts:** `scripts/spill_06_structured_sorting.py`, `scripts/spill_06b_pool_panels.py`
+**Scripts:** `scripts/spill_06_structured_sorting.py`, `scripts/spill_06b_pool_panels.py`,
+`scripts/spill_07_sorting_simulation.py`, `scripts/spill_07b_benchmark_check.py`
 **Logs:** `logs/spill_06_structured_sorting.log`, `logs/spill_06_structured_sorting_2020.log`,
-`logs/spill_06b_pool_panels.log`
+`logs/spill_06b_pool_panels.log`, `logs/spill_07_sorting_simulation.log`,
+`logs/spill_07b_benchmark_check.log`
 **Data:** GSS 2006, 2008 and 2010 three-wave panels and the 2016–20 panel (people); GSS
 cross-sections 2004–14 and 2012–18 (networks)
 
@@ -113,6 +115,57 @@ It also gives specification leg 2 — arrangement, not magnitude — an empirica
 of persons. Position-based sorting is well documented; arrangement-based sorting, as far as the
 literature search found, is not.
 
+## Simulation: does arrangement-based sorting move the camps?
+
+`scripts/spill_07_sorting_simulation.py`, specified before running. If camps changed *only*
+through who joins and leaves, with every person's beliefs frozen at wave 1, would they move the
+way the cross-sections show — and how much of that is sorting by arrangement rather than by
+position? Using the 2006–14 panels, the exit model above and entry models for wave-1
+moderates, camp shifts were computed under four scenarios: the *actual* moves, the *full*
+model, a *position-only* model with the relative-fit terms set to zero, and the difference
+between those two, the **arrangement contribution**. Each was compared with the observed
+cross-sectional camp change over the same windows, and checked for whether it moves each camp
+along its own network more than along the other camp's (own minus swapped network lag).
+
+| Networks | Scenario | Corr. with observed 4-year change [95%] | Own − swapped lag [95%] |
+|---|---|---|---|
+| partial | actual | −0.07 [−0.20, +0.11] | −0.05 [−0.07, +0.03] |
+| partial | full | +0.05 [−0.07, +0.14] | −0.00 [−0.01, +0.01] |
+| partial | arrangement | +0.07 [−0.17, +0.22] | **+0.06 [+0.01, +0.10]** |
+| raw | arrangement | +0.08 [−0.05, +0.19] | +0.06 [−0.00, +0.14] |
+
+**By the pre-set rule, not supported:** no scenario matches the observed four-year change. Two
+things survive:
+
+- **Arrangement-based sorting moves each camp along its own structure.** All sorting moves the
+  camps along the structure they share (own and swapped lags both about 0.9, which is partly
+  mechanical, since a composition shift follows the covariance of the beliefs). Only the
+  arrangement part favours each camp's own network, clearly on partial correlations and just
+  short on raw.
+- **The four-year benchmark could not have worked** (`spill_07b_benchmark_check.py`,
+  exploratory). Camp-differenced change in two windows with no shared respondents correlates at
+  only +0.17, and two windows sharing the 2010 sample correlate at −0.57 — the signature of
+  sampling noise, since 2010 enters one as an end point and the other as a start. Even the
+  actual sorting does not match it.
+
+Against a benchmark with real signal — the 27-year within-cohort camp change from spill_01's
+condition B — the simulated sorting points the way the camps actually travelled:
+
+| Networks | Full | Position-only | Arrangement | Arrangement beyond position (partial r) [95%] |
+|---|---|---|---|---|
+| partial | +0.49 | +0.47 | +0.54 | +0.34 [−0.04, +0.57] |
+| raw | +0.48 | +0.45 | +0.49 | +0.26 [−0.04, +0.55] |
+
+But the arrangement shift mostly points where position sorting points (r ≈ 0.7 between them).
+What it adds beyond position leans the same way as the long-run change, with intervals that
+just include zero. And the comparison sets four-year sorting against three decades of change,
+so it speaks only to direction.
+
+**Net:** the end-to-end link — arrangement-based sorting producing the camp-level co-movement —
+is **consistent with the evidence but not demonstrated.** The person-level result (spill_06)
+stands on its own; the simulation shows it moves camps along their own structure and in the
+direction they have travelled, without isolating how much of the observed change it explains.
+
 ## Limits
 
 - **Modest effect.** One SD of relative fit raises the odds of leaving by 14–25%, against 141%
@@ -129,7 +182,8 @@ literature search found, is not.
 
 ## Next
 
-- Does arrangement-based sorting account for the camp-level co-movement the spillover tests
-  found? Simulating camp change from the estimated switching model would answer it.
+- A sharper end-to-end test needs a benchmark with signal over the panel windows: the
+  long-run cross-sections give direction only. Pooling more panel waves (wave 2 transitions,
+  the 2016–20 panel) would give the simulation itself more precision.
 - Robustness: switching between waves 1 and 2; full crossings only; panel weights.
 - Position this against Levendusky (2009), Mason (2018) and Hillygus & Shields (2008).

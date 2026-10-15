@@ -116,9 +116,9 @@ def load_panel_2020(items):
     return out
 
 
-def load_panel_wave1(items):
+def load_panel_wave1(items, keep_moderates=False):
     if PANEL_SET == "2020":
-        return finish_panel(load_panel_2020(items), items)
+        return finish_panel(load_panel_2020(items), items, keep_moderates)
     mappings = DataConfig().all_mappings
     parts = []
     for panel, rel in PANEL_FILES.items():
@@ -137,17 +137,24 @@ def load_panel_wave1(items):
             out[e.upper()] = pd.to_numeric(raw[e], errors="coerce")
         out["PANEL"] = panel
         parts.append(out)
-    return finish_panel(pd.concat(parts, ignore_index=True), items)
+    return finish_panel(pd.concat(parts, ignore_index=True), items, keep_moderates)
 
 
-def finish_panel(df, items):
-    """Shared tail: complete the item columns, define camp and the switching outcome."""
+def finish_panel(df, items, keep_moderates=False):
+    """Shared tail: complete the item columns, define camp and the switching outcome.
+
+    With keep_moderates, wave-1 moderates stay in with camp "mod"; their switch value is
+    meaningless and must not be used.
+    """
     for i in items:
         if i not in df:
             df[i] = np.nan
     df[items] = df[items].astype(float)
-    df = df[df["POL1"].notna() & (df["POL1"] != 0) & df["POL3"].notna()].reset_index(drop=True)
-    df["camp"] = np.where(df["POL1"] < 0, "lib", "con")
+    keep = df["POL1"].notna() & df["POL3"].notna()
+    if not keep_moderates:
+        keep &= df["POL1"] != 0
+    df = df[keep].reset_index(drop=True)
+    df["camp"] = np.where(df["POL1"] < 0, "lib", np.where(df["POL1"] > 0, "con", "mod"))
     df["switch"] = np.where(df["camp"] == "lib", df["POL3"] >= 0, df["POL3"] <= 0).astype(int)
     return df
 
