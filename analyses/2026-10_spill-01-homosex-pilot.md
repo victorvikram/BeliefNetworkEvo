@@ -1,9 +1,10 @@
-# Spill 01: HOMOSEX Spillover Pilot, GRASS Replication
+# Spill 01: HOMOSEX Spillover Pilot, GRASS and CAPPUN Replications, Sorting Control
 
 **Date:** 2026-10-15
 **Script:** `scripts/spill_01_homosex_pilot.py`
 **Logs:** `logs/spill_01_homosex_pilot.log`, `logs/spill_01_grass_pilot.log`,
-`logs/spill_02_focal_embeddedness.log`
+`logs/spill_01_cappun_1993-1996_2006-2010_pilot.log`, `logs/spill_01_cappun_pilot.log`,
+`logs/spill_02_focal_embeddedness.log`, `logs/spill_03_fuzziness_benchmark.log`
 **Figures:** `figures/spill_01_homosex_pilot.png`, `figures/spill_01_grass_pilot.png`
 **Data:** GSS, base window 1987–91, late window 2014–18; 300 permutations and 300 bootstraps per condition
 
@@ -169,15 +170,121 @@ theory, since a focal item with larger edge differences gives a less noisy predi
 ranks near the top of r_own in B and D on partial correlations, which makes it a candidate
 third focal item — chosen post hoc, so it would need its own pre-specified test.
 
+## Sorting control
+
+Specified before running (tracker, 2026-10-15). Self-identified liberals in 2014–18 are not the
+people who called themselves liberal in 1987–91, and a change in who is in a camp moves its
+averages with no spillover at all. Two new conditions:
+
+- **E** — actual camps, each late window reweighted to its baseline mix of party (Dem/Ind/Rep)
+  and denomination fundamentalism as well as demographics.
+- **F, predicted camps — decisive.** A 1987–91 model predicts liberal vs conservative from traits
+  fixed before adulthood (region, place type, religion and fundamentalism at 16, parents'
+  degrees, own degree, cohort, race, sex). The same model assigns everyone in both windows; top
+  third vs bottom third; US-born, born 1925–62. Membership never depends on self-identification.
+
+Verdict rule: survives sorting if F gives β > 0, permutation p < 0.05 and r_own > r_swap for at
+least one estimator.
+
+| Focal | Cond. | Estimator | β p (perm) | r_own | r_swap |
+|---|---|---|---|---|---|
+| HOMOSEX | E | partial | 0.106 | +0.10 | −0.09 |
+| HOMOSEX | E | raw | 0.110 | +0.30 | −0.26 |
+| HOMOSEX | F | partial | 0.090 | +0.11 | −0.11 |
+| HOMOSEX | F | raw | 0.269 | +0.14 | −0.01 |
+| GRASS | F | partial | 0.020 | +0.14 | −0.14 |
+| GRASS | F | raw | 0.189 | +0.10 | +0.08 |
+
+**By the pre-set rule, the HOMOSEX result does not survive the sorting control.** In F it points
+the right way (own network positive, other network negative) but at about a third of its
+within-cohort size and short of significance. E, which reweights the late window on party,
+weakens it similarly; the reweighting is heavy there (late liberal effective sample 551 of 955).
+GRASS, oddly, passes the F rule on partial correlations, although it failed everything else.
+
+**F is weak partly by construction.** The background model separates the camps only modestly
+(AUC 0.66): the predicted-liberal group is 42% liberal and 24% conservative, the
+predicted-conservative group 20% and 42%. Groups that fuzzy have small network differences, so
+F has little power. F also shows sorting directly: over the period the predicted-conservative
+group went from 42% to 51% conservative.
+
+### Benchmark G: fuzziness or sorting?
+
+Exploratory, designed after F's smoke-test estimates and before its full results
+(`scripts/spill_03_fuzziness_benchmark.py`). G builds groups exactly as fuzzy as F's — the same
+eligible respondents, sizes, reweighting and liberal/moderate/conservative mix — but from
+*self-identified* respondents, so they remain exposed to re-sorting. If F's weakness were only
+fuzziness, F and G would agree; if sorting drives the effect, G would exceed F. 30 random draws.
+
+| Focal | Estimator | F r_own | G mean r_own [95% range] | Share of G draws above F |
+|---|---|---|---|---|
+| HOMOSEX | partial | +0.10 | +0.05 [−0.12, +0.24] | 30% |
+| HOMOSEX | raw | +0.14 | +0.26 [+0.04, +0.52] | 73% |
+| GRASS | partial | +0.15 | +0.05 [−0.20, +0.27] | 17% |
+| GRASS | raw | +0.10 | +0.15 [−0.17, +0.42] | 57% |
+| CAPPUN | partial | +0.16 | +0.07 [−0.12, +0.22] | 23% |
+| CAPPUN | raw | −0.13 | +0.28 [+0.06, +0.52] | 100% |
+
+The two estimators split cleanly.
+
+- **Raw correlations: sorting inflates the result.** Sorting-exposed groups beat sorting-free
+  groups for every item, completely so for CAPPUN, whose raw effect vanishes once sorting is
+  removed. This fits the earlier sign that the raw lib/con result is non-specific: re-sorting
+  shifts whole correlated blocks of beliefs together, and raw correlations encode those blocks.
+- **Partial correlations: no sign that sorting drives it.** For every item the sorting-free F
+  matches or beats the sorting-exposed G. But at this fuzziness the effect is small (r ≈ 0.1)
+  and F cannot confirm it.
+
+## Replication: CAPPUN (held-out windows)
+
+CAPPUN surfaced in the GRASS run's focal placebo on the 1987–91/2014–18 windows, so a test on
+those windows is not independent. The primary test used held-out windows — **1993–96 vs
+2006–10**, entirely different respondents — under the strict rule (condition B; top-quartile
+focal rank; significant condition D).
+
+| Windows | Cond. | Estimator | β p (perm) | r_own | r_swap | Focal rank |
+|---|---|---|---|---|---|---|
+| held-out | B | partial | 0.233 | +0.09 | −0.03 | 13 of 21 |
+| held-out | B | raw | 0.106 | +0.38 | +0.15 | 6 of 26 |
+| held-out | D | raw | 0.007 | +0.48 | −0.49 | 2 of 19 |
+| held-out | F | partial | 0.990 | −0.24 | +0.24 | |
+| selection | B | partial | 0.003 | +0.35 | −0.01 | 1 of 46 |
+| selection | B | raw | 0.003 | +0.68 | +0.06 | 5 of 53 |
+
+**CAPPUN fails its independent test.** On the held-out windows condition B is not significant,
+the focal rank is mid-pack, and F goes the wrong way. Only the education contrast holds. On the
+selection windows it looks as strong as HOMOSEX, which is exactly why the held-out test was
+needed. One mitigation: the held-out shifts are smaller (liberals −0.33 SD, conservatives
+−0.16) and fewer items moved, so that test has less power.
+
+## Where this leaves the claim
+
+1. **HOMOSEX passes the strict rule** (condition B, top-quartile rank, significant D) on partial
+   correlations. No other item does.
+2. **The raw-correlation version is partly sorting.** The headline raw numbers (r_own ≈ 0.6)
+   should not be quoted as spillover.
+3. **The partial-correlation version is not sorting-driven but is underpowered** once sorting is
+   removed with these fuzzy groups.
+4. **The first fully independent test of a new item failed.**
+
+Net: group-specific spillover is **suggestive for HOMOSEX on partial correlations and not yet
+established**. The decisive next test needs groups that are both sorting-proof and sharply
+ideological.
+
+A numerical caveat: graphical LASSO at the project's settings (max_iter = 100) often stops at its
+iteration limit, so partial-correlation estimates wobble slightly between processes (F HOMOSEX
+r_own was +0.111 in one run and +0.100 in another). Conclusions are unaffected at this
+precision, but final estimates should use a converged fit.
+
 ## Next
 
-- **Sorting control for the lib/con contrast.** Candidates: reweight each camp's late window
-  on religious tradition (FUND) and party identification as well as demographics; add
-  moderates as a third group; or treat re-identification directly by bounding how much of
-  each camp's movement a plausible flow of switchers could produce.
-- **Stricter go criteria** for any further focal item: condition B as before, plus a top-quartile
-  focal rank and a significant condition D.
-- **CAPPUN as a pre-specified third focal item**, under those criteria.
+- **A panel test of sorting.** The GSS 2006–14 panels follow the same people. Fixing each
+  respondent's camp at their first wave removes sorting entirely while keeping camps sharply
+  ideological, and HOMOSEX moved fast over exactly those years. This is the cleanest test
+  available and needs the separate GSS panel files.
+- **Raise power without sorting:** pool the test across focal items rather than one at a time,
+  using sorting-proof groups (education, predicted camps).
+- **Converged graphical LASSO** (higher max_iter) for any estimate that goes into the paper.
+
 - **A design that can test the strong form.** Either a focal item whose edges flip between
   camps, or the network-lag version restricted to sign-flipped edges.
 - **Rolling windows**, to connect spillover to the ~2008 break in divergence.

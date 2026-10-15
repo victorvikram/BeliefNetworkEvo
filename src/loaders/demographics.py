@@ -40,6 +40,13 @@ DEMOGRAPHIC_COLS = [
     "REALINC",   # family income, constant dollars
     "CONINC",
     "FUND",      # religious fundamentalism of denomination
+    # Background fixed before adulthood
+    "REG16",     # region at age 16
+    "RES16",     # type of place at age 16
+    "RELIG16",   # religion raised in
+    "FUND16",    # fundamentalism at age 16
+    "PADEG",     # father's highest degree
+    "MADEG",     # mother's highest degree
 ]
 
 DESIGN_COLS = [
