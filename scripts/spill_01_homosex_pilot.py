@@ -43,6 +43,10 @@ Placebos:
   focal     every other item that shifted in both groups used as the focal item, to ask
             whether HOMOSEX is special or any item's edges predict movement equally well
 
+Graphical LASSO occasionally fails on the pairwise-complete correlation matrix, which need
+not be positive definite (it happened for the college group in D). `partial_network()` then
+refits on the nearest positive definite correlation matrix, and the run reports when it did.
+
 Robustness: Spearman rank version of r_own (guards against a few high-leverage items),
 and r_own with the homosexuality items left in.
 
@@ -55,9 +59,14 @@ is a no-go or a redesign, reported as such. The homosexuality-item exclusion, co
 (US-born only) and the joint-observation floor for raw correlations were added after a 12-replicate
 smoke run, to close threats it exposed; the criterion itself was not changed.
 
-Usage: PYTHONIOENCODING=utf-8 python scripts/spill_01_homosex_pilot.py [--quick]
+Replication: `--focal GRASS` reruns the identical design with marijuana legalisation as the
+focal item, under the same go criterion. GRASS has no same-object exclusions, since the item
+set holds no other marijuana items.
+
+Usage: PYTHONIOENCODING=utf-8 python scripts/spill_01_homosex_pilot.py [--focal ITEM] [--quick]
+       --focal defaults to HOMOSEX; GRASS is the pre-specified replication
        --quick runs 12 permutations and 12 bootstraps, for checking the pipeline only
-Outputs: figures/spill_01_homosex_pilot.png, data/cache/spill_01_results.pkl, stdout
+Outputs: figures/spill_01_<focal>_pilot.png, data/cache/spill_01_<focal>_results.pkl, stdout
 """
 import sys
 from pathlib import Path
@@ -80,12 +89,20 @@ from sklearn.linear_model import LogisticRegression
 
 from src.loaders.clean_raw_data import clean_datasets, DataConfig
 from src.loaders.demographics import load_demographics, attach_demographics
-from src.generators.corr_make_network import calculate_correlation_matrix
+from src.generators.corr_make_network import (
+    calculate_correlation_matrix, calculate_regularized_partial_correlations, filter_nans,
+)
 
 FIGURES_DIR = Path(__file__).resolve().parent.parent / "figures"
 CACHE_DIR = Path(__file__).resolve().parent.parent / "data" / "cache"
 
-FOCAL = "HOMOSEX"
+FOCAL_SETTINGS = {
+    "HOMOSEX": {"same_object": {"MARHOMO", "SPKHOMO", "COLHOMO", "LIBHOMO"},
+                "direction": "higher = more disapproving"},
+    "GRASS": {"same_object": set(), "direction": "higher = favours legalisation"},
+}
+FOCAL = sys.argv[sys.argv.index("--focal") + 1] if "--focal" in sys.argv else "HOMOSEX"
+SAME_OBJECT = FOCAL_SETTINGS[FOCAL]["same_object"]
 BASE_YEARS = list(range(1987, 1992))    # before the shift
 LATE_YEARS = list(range(2014, 2019))    # before the 2021 mode switch
 ESTIMATORS = ("partial", "raw")
@@ -93,14 +110,13 @@ CONDITIONS = ("A", "B", "C", "D")
 GROUPS = {"A": ("lib", "con"), "B": ("lib", "con"), "C": ("lib", "con"),
           "D": ("college", "nocollege")}
 NOT_OUTCOMES = {"POLVIEWS", "PARTYID"}
-SAME_OBJECT = {"MARHOMO", "SPKHOMO", "COLHOMO", "LIBHOMO"}
 ALPHA = 0.2
 MIN_N = 100                 # minimum non-missing per group x window, and joint obs for raw r
 COHORT_RANGE = {"B": (1925, 1969), "C": (1925, 1969), "D": (1925, 1965)}
 REWEIGHT_COLS = {"C": ["COHORT_BAND", "DEGREE", "RACE", "SEX", "REGION"],
                  "D": ["COHORT_BAND", "RACE", "SEX", "REGION"]}
 MIN_FOCAL_SHIFT = 0.10      # focal placebo: |shift| in pooled SDs, both groups
-R_STRONG = 0.05             # strong form: |raw r| with HOMOSEX in both groups
+R_STRONG = 0.05             # strong form: |raw r| with the focal item in both groups
 N_PERM = 12 if "--quick" in sys.argv else 300
 N_BOOT = 12 if "--quick" in sys.argv else 300
 N_JOBS = 12
@@ -165,6 +181,34 @@ def propensity_weights(sample, condition):
 # ── Core statistics ────────────────────────────────────────────────
 
 
+def partial_network(base):
+    """Regularized partial correlations, with a fallback for ill-conditioned input.
+
+    Pairwise-complete correlation matrices need not be positive definite, and graphical
+    LASSO then fails as ill-conditioned. On failure, the correlation matrix is projected to
+    the nearest positive definite correlation matrix (eigenvalues floored at 1e-4, unit
+    diagonal restored) and refitted. Returns (network, used_fallback).
+    """
+    net = calculate_correlation_matrix(
+        base, method="pearson", partial=True,
+        edge_suppression="regularization", suppression_params={"regularization": ALPHA},
+    )
+    if net is not None:
+        return net, False
+    corr = base.corr()
+    clean, removed = filter_nans(corr.values)
+    cols = [c for i, c in enumerate(corr.columns) if i not in removed]
+    vals, vecs = np.linalg.eigh(clean)
+    psd = (vecs * np.clip(vals, 1e-4, None)) @ vecs.T
+    d = np.sqrt(np.diag(psd))
+    psd = psd / np.outer(d, d)
+    pcor = calculate_regularized_partial_correlations(psd, alpha=ALPHA)
+    net = pd.DataFrame(pcor, index=cols, columns=cols)
+    np.fill_diagonal(net.values, 0)
+    return net, True
+
+
+
 def weighted_means(frame, cols, w):
     x = frame[cols]
     present = x.notna()
@@ -181,10 +225,7 @@ def networks_and_shifts(sample, belief_vars, condition):
     nets = {}
     for group in groups:
         base = sample[(sample["group"] == group) & (sample["window"] == "base")][belief_vars]
-        nets[group, "partial"] = calculate_correlation_matrix(
-            base, method="pearson", partial=True,
-            edge_suppression="regularization", suppression_params={"regularization": ALPHA},
-        )
+        nets[group, "partial"], nets[group, "fallback"] = partial_network(base)
         raw = base.corr(min_periods=MIN_N).fillna(0)
         np.fill_diagonal(raw.values, 0)
         nets[group, "raw"] = raw
@@ -347,7 +388,7 @@ def focal_neighbours(nets, groups, estimator, k=8):
 
 
 def strong_form(nets, shifts, groups):
-    """Items whose raw correlation with HOMOSEX has opposite signs in the two groups."""
+    """Items whose raw correlation with the focal item has opposite signs in the two groups."""
     g1, g2 = groups
     items = outcome_items(nets, shifts, groups, "raw", FOCAL, SAME_OBJECT)
     r1 = nets[g1, "raw"].loc[FOCAL, items]
@@ -382,7 +423,7 @@ def main():
     df, belief_vars = load_sample()
 
     print("=" * 70)
-    print("SPILL 01: HOMOSEX SPILLOVER PILOT")
+    print(f"SPILL 01: {FOCAL} SPILLOVER PILOT")
     print("=" * 70)
     print(f"Windows: base {BASE_YEARS[0]}-{BASE_YEARS[-1]}, late {LATE_YEARS[0]}-{LATE_YEARS[-1]}; "
           f"{N_PERM} permutations, {N_BOOT} bootstraps per condition")
@@ -403,8 +444,11 @@ def main():
             observed[est]["lag_r"] = network_lag(nets, shifts, groups, est)
             observed[est]["r_own_incl_same_object"] = spillover(
                 nets, shifts, groups, est, exclude=set())["r_own"]
-        print(f"HOMOSEX shift (pooled SDs): {groups[0]} {shifts[groups[0]][FOCAL]:+.3f}, "
+        print(f"{FOCAL} shift (pooled SDs): {groups[0]} {shifts[groups[0]][FOCAL]:+.3f}, "
               f"{groups[1]} {shifts[groups[1]][FOCAL]:+.3f}")
+        fell_back = [g for g in groups if nets[g, "fallback"]]
+        if fell_back:
+            print(f"Partial network needed the positive-definite fallback for: {', '.join(fell_back)}")
 
         seeds = np.random.default_rng(SEED + ord(condition)).integers(0, 2**31, N_PERM + N_BOOT)
         perms = run_replicates("perm", sample, belief_vars, condition, seeds[:N_PERM])
@@ -431,7 +475,7 @@ def main():
             print(f"  [{est:7s}] items={s['n_items']:3d}  beta={s['beta']:+.3f} "
                   f"bootCI[{s['beta_ci'][0]:+.3f},{s['beta_ci'][1]:+.3f}] p_perm={s['p_beta']:.3f}")
             print(f"            r_own={s['r_own']:+.3f} (spearman {s['rho_own']:+.3f}; "
-                  f"with homosexuality items {s['r_own_incl_same_object']:+.3f})  "
+                  f"with same-object items {s['r_own_incl_same_object']:+.3f})  "
                   f"r_swap={s['r_swap']:+.3f}  gap={gap:+.3f} "
                   f"bootCI[{s['gap_ci'][0]:+.3f},{s['gap_ci'][1]:+.3f}] p_perm={s['p_gap']:.3f}")
             print(f"            network lag r={s['lag_r']:+.3f} p_perm={s['p_lag']:.3f}")
@@ -442,9 +486,9 @@ def main():
         }
 
         if condition in ("B", "D"):
-            print(f"HOMOSEX neighbours, baseline ({condition}, partial):")
+            print(f"{FOCAL} neighbours, baseline ({condition}, partial):")
             print(focal_neighbours(nets, groups, "partial"))
-            print(f"HOMOSEX neighbours, baseline ({condition}, raw):")
+            print(f"{FOCAL} neighbours, baseline ({condition}, raw):")
             print(focal_neighbours(nets, groups, "raw"))
             sf = strong_form(nets, shifts, groups)
             results["conditions"][condition]["strong_form"] = sf
@@ -456,7 +500,7 @@ def main():
                 fp = focal_placebo(nets, shifts, groups, est)
                 rank = int((fp >= fp.get(FOCAL, np.nan)).sum())
                 results["conditions"][condition][f"focal_placebo_{est}"] = fp
-                print(f"Focal placebo ({est}): HOMOSEX r_own={fp.get(FOCAL, np.nan):+.3f}, "
+                print(f"Focal placebo ({est}): {FOCAL} r_own={fp.get(FOCAL, np.nan):+.3f}, "
                       f"rank {rank} of {len(fp)} items shifting >= {MIN_FOCAL_SHIFT} SD in both "
                       f"groups; median r_own={fp.median():+.3f}")
 
@@ -470,9 +514,10 @@ def main():
     results["go"] = go
 
     make_figure(results)
-    with open(CACHE_DIR / "spill_01_results.pkl", "wb") as f:
+    out_pkl = CACHE_DIR / f"spill_01_{FOCAL.lower()}_results.pkl"
+    with open(out_pkl, "wb") as f:
         pickle.dump(results, f)
-    print(f"Saved {CACHE_DIR / 'spill_01_results.pkl'}")
+    print(f"Saved {out_pkl}")
     print(f"Elapsed {time.time() - t0:.0f}s")
 
 
@@ -490,7 +535,7 @@ def make_figure(results):
         ax.plot(series.index, series.values, marker="o", ms=3, color=colour, label=camp)
     for years in (BASE_YEARS, LATE_YEARS):
         ax.axvspan(years[0] - 0.5, years[-1] + 0.5, color="grey", alpha=0.15)
-    ax.set_title("A. HOMOSEX by camp (higher = more disapproving)", fontweight="bold")
+    ax.set_title(f"A. {FOCAL} by camp ({FOCAL_SETTINGS[FOCAL]['direction']})", fontweight="bold")
     ax.set_xlabel("Year")
     ax.legend()
 
@@ -535,11 +580,11 @@ def make_figure(results):
     if FOCAL in fp:
         ax.axvline(fp[FOCAL], color="#c0392b", lw=2, label=FOCAL)
     ax.set_xlabel("r_own with item as focal (partial, B)")
-    ax.set_title("D. Focal placebo: is HOMOSEX special?", fontweight="bold")
+    ax.set_title(f"D. Focal placebo: is {FOCAL} special?", fontweight="bold")
     ax.legend()
 
     plt.tight_layout()
-    out_fig = FIGURES_DIR / "spill_01_homosex_pilot.png"
+    out_fig = FIGURES_DIR / f"spill_01_{FOCAL.lower()}_pilot.png"
     plt.savefig(out_fig, dpi=150)
     print(f"\nSaved {out_fig}")
 

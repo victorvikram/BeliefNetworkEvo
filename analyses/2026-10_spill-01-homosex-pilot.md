@@ -1,9 +1,10 @@
-# Spill 01: HOMOSEX Spillover Pilot
+# Spill 01: HOMOSEX Spillover Pilot, GRASS Replication
 
 **Date:** 2026-10-15
 **Script:** `scripts/spill_01_homosex_pilot.py`
-**Log:** `logs/spill_01_homosex_pilot.log`
-**Figure:** `figures/spill_01_homosex_pilot.png`
+**Logs:** `logs/spill_01_homosex_pilot.log`, `logs/spill_01_grass_pilot.log`,
+`logs/spill_02_focal_embeddedness.log`
+**Figures:** `figures/spill_01_homosex_pilot.png`, `figures/spill_01_grass_pilot.png`
 **Data:** GSS, base window 1987–91, late window 2014–18; 300 permutations and 300 bootstraps per condition
 
 ## Question
@@ -49,7 +50,9 @@ The go criterion was fixed before the first run: in condition B, β > 0 with per
 p < 0.05 for at least one estimator, and `r_own > r_swap` for that estimator. The exclusion of
 the homosexuality items, condition D, the US-born restriction and the joint-observation floor
 were added after a 12-replicate smoke run to close threats it exposed. The criterion was not
-changed.
+changed. A later fallback for ill-conditioned graphical LASSO fits (refitting on the nearest
+positive definite correlation matrix) was added when the GRASS run failed on one network; both
+items were rerun with it, and the HOMOSEX numbers moved by at most 0.001 in p.
 
 ## Results
 
@@ -59,9 +62,9 @@ changed.
 | A | raw | +0.94 | 0.003 | +0.56 | +0.57 | −0.18 | 0.003 | |
 | B | partial | +4.79 | 0.003 | +0.36 | +0.46 | −0.28 | 0.007 | 1 of 47 |
 | B | raw | +1.27 | 0.003 | +0.59 | +0.60 | −0.05 | 0.007 | 8 of 53 |
-| C | partial | +3.70 | 0.003 | +0.28 | +0.38 | −0.23 | 0.024 | |
+| C | partial | +3.70 | 0.003 | +0.28 | +0.38 | −0.23 | 0.023 | |
 | C | raw | +1.17 | 0.007 | +0.49 | +0.51 | −0.24 | 0.003 | |
-| D | partial | +1.74 | 0.014 | +0.24 | +0.28 | −0.23 | 0.014 | 2 of 40 |
+| D | partial | +1.74 | 0.013 | +0.24 | +0.28 | −0.23 | 0.013 | 2 of 40 |
 | D | raw | +0.36 | 0.146 | +0.28 | +0.31 | −0.25 | 0.020 | 5 of 48 |
 
 p = 0.003 is the floor at 300 permutations. "Focal rank" places HOMOSEX among every item that
@@ -75,7 +78,7 @@ shifted at least 0.1 SD in both groups, each used in turn as the focal item.
    null in all eight cells.
 2. **It survives the cohort and composition controls.** B and C barely change the picture.
 3. **It survives the sorting-proof contrast, at reduced size.** In D the partial-correlation
-   version holds (β p = 0.014, gap p = 0.014); the raw β does not (p = 0.146), although its
+   version holds (β p = 0.013, gap p = 0.013); the raw β does not (p = 0.146), although its
    own-minus-swap gap does (p = 0.020).
 4. **HOMOSEX is special, not just any item.** Using every other item that shifted as the
    focal item, HOMOSEX ranks first of 47 (partial, B) and second of 40 (partial, D). In D the
@@ -111,14 +114,70 @@ shifted at least 0.1 SD in both groups, each used in turn as the focal item.
    to the estimated edges, which attenuates β, so several observed βs sit near the top of
    their bootstrap intervals. The permutation test is the primary inference.
 
+## Replication: GRASS
+
+Specified before running: identical design, windows, conditions and go criterion, with
+marijuana legalisation as the focal item. Both camps bottom out on GRASS in 1987–91 and move
+towards legalisation by 2014–18 (within-cohort shifts +0.99 liberal, +0.63 conservative). The
+item set has no other marijuana items, so nothing is excluded as same-object.
+
+| Cond. | Estimator | β | p (perm) | r_own | r_swap | p (own − swap) | Focal rank |
+|---|---|---|---|---|---|---|---|
+| B | partial | +3.36 | 0.003 | +0.17 | −0.11 | 0.066 | 18 of 47 |
+| B | raw | +1.65 | 0.003 | +0.60 | −0.29 | 0.003 | 7 of 53 |
+| C | partial | +2.14 | 0.050 | +0.12 | −0.08 | 0.156 | |
+| C | raw | +1.35 | 0.003 | +0.53 | −0.32 | 0.003 | |
+| D | partial | +0.68 | 0.282 | +0.08 | −0.08 | 0.226 | 13 of 40 |
+| D | raw | +0.24 | 0.126 | +0.17 | −0.15 | 0.080 | 18 of 48 |
+
+**GRASS passes the letter of the go criterion and fails its spirit.** Condition B clears the
+criterion through both estimators. But every check that distinguishes a GRASS-specific
+effect from the generic lib/con pattern fails: the partial own-minus-swap gap is not
+significant, GRASS sits mid-pack among items used as focal (18th of 47), and the
+sorting-proof education contrast is null. Its raw lib/con result (r_own +0.60) is no larger
+than the median item's (+0.45), which is the non-specific block movement already flagged for
+HOMOSEX.
+
+Two lessons. First, **the pre-set criterion was too lenient**: the generic lib/con movement
+passes it for most items, so passing says little. Future criteria must include specificity —
+the focal-item rank and condition D. Second, **the evidence for group-specific spillover
+currently rests on HOMOSEX alone.**
+
+The strong form remains untestable here too: GRASS has five opposite-sign edges in B, and the
+camp-item predictions match 6 of 10 times, which is chance.
+
+## Exploratory: spillover against focal embeddedness
+
+Specified after the GRASS result and reported as exploratory (`scripts/spill_02_focal_embeddedness.py`).
+GRASS has almost no partial-correlation edges — at most 0.10 among liberals and near zero among
+conservatives and the non-college — and spillover needs edges to travel along. Across every
+item used as focal, r_own was correlated with the item's embeddedness: its mean absolute edge
+weight (*strength*) and how differently the two groups wire it (*difference*).
+
+| Condition | Estimator | r_own vs strength | r_own vs difference |
+|---|---|---|---|
+| B (lib/con) | partial | ρ = +0.34 (p = 0.021) | ρ = +0.52 (p < 0.001) |
+| B (lib/con) | raw | ρ = +0.26 (p = 0.065) | ρ = +0.15 (p = 0.30) |
+| D (education) | partial | ρ = +0.09 (p = 0.57) | ρ = +0.07 (p = 0.66) |
+| D (education) | raw | ρ = +0.24 (p = 0.095) | ρ = +0.28 (p = 0.056) |
+
+In the lib/con partial networks, spillover is strongest for the items the two camps wire most
+differently, as the account predicts; HOMOSEX ranks first of 47 on that difference and GRASS
+31st on strength. Two cautions. The relationship does not hold in the education contrast,
+where only HOMOSEX and CAPPUN stand out. And part of it may be signal-to-noise rather than
+theory, since a focal item with larger edge differences gives a less noisy predictor. CAPPUN
+ranks near the top of r_own in B and D on partial correlations, which makes it a candidate
+third focal item — chosen post hoc, so it would need its own pre-specified test.
+
 ## Next
 
 - **Sorting control for the lib/con contrast.** Candidates: reweight each camp's late window
   on religious tradition (FUND) and party identification as well as demographics; add
   moderates as a third group; or treat re-identification directly by bounding how much of
   each camp's movement a plausible flow of switchers could produce.
-- **Second focal item.** GRASS (marijuana legalisation) also shifted massively and is a
-  different attitude domain; replicating there separates a HOMOSEX finding from a general one.
+- **Stricter go criteria** for any further focal item: condition B as before, plus a top-quartile
+  focal rank and a significant condition D.
+- **CAPPUN as a pre-specified third focal item**, under those criteria.
 - **A design that can test the strong form.** Either a focal item whose edges flip between
   camps, or the network-lag version restricted to sign-flipped edges.
 - **Rolling windows**, to connect spillover to the ~2008 break in divergence.

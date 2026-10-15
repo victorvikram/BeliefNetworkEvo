@@ -38,6 +38,14 @@ Added 2026-10-15 for the lead paper's spillover test. All open access; reading n
   "Disentangling the Three Facets of Mass Ideological Polarization: A Network Approach Across
   78 Societies." *Public Opinion Quarterly*, doi:10.1093/poq/nfag037. CC-BY. Measurement
   precedent; one magnitude score per society.
+- `KileyVaisey-StabilityChangePersonalCulture-2020.pdf` — Kiley, Kevin, and Stephen Vaisey.
+  2020. "Measuring Stability and Change in Personal Culture Using Panel Data." *American
+  Sociological Review* 85(3):477–506, doi:10.1177/0003122420921538. OSF preprint copy. GSS
+  2006–14 panels; adults mostly hold settled dispositions — the basis for cohort replacement as
+  the rival to any population-level spillover.
+- `Underwood-CohortSuccessionLiteraryCulture-2022.pdf` — Underwood, Ted, Kevin Kiley, Wenyi
+  Shang, and Stephen Vaisey. 2022. "Cohort Succession Explains Most Change in Literary
+  Culture." *Sociological Science* 9:184–205, doi:10.15195/v9.a8.
 
 ## Still to add
 
